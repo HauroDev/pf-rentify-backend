@@ -1,13 +1,13 @@
 const { DataTypes } = require('sequelize')
 const { sequelize } = require('../db.js')
 
-const Usuario = sequelize.define('Usuario', {
-  Id: {
+const User = sequelize.define('User', {
+  id: {
     primaryKey: true,
     type: DataTypes.UUID,
     allowNull: false
   },
-  nombre: {
+  name: {
     type: DataTypes.STRING,
     allowNull: false
   },
@@ -22,10 +22,13 @@ const Usuario = sequelize.define('Usuario', {
     type: DataTypes.STRING,
     allowNull: true // consultar
   },
-  membresia: {
-    type: DataTypes.ENUM(['normal', 'plata']),
+  membership: {
+    type: DataTypes.ENUM(['normal', 'silver']),
     allowNull: false
+  },
+  status: {
+    type: DataTypes.ENUM('active', 'inactive', 'pause', 'ban')
   }
 })
 
-module.exports = Usuario
+module.exports = User
