@@ -12,7 +12,8 @@
   "dependencies": {
     "dotenv": "^16.1.4",
     "express": "^4.18.2",
-    "morgan": "^1.10.0"
+    "morgan": "^1.10.0",
+    "sequelize": "^6.32.0"
   },
   "devDependencies": {
     "eslint": "^8.42.0",
