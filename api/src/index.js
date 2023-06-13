@@ -1,13 +1,14 @@
 const express = require('express')
 const { PORT } = require('./config')
-const { sequelize } = require('../db/db')
+const { conn } = require('../db/db.js')
 
 const app = express()
 
-sequelize
+conn
   .sync({ force: false })
   .then(() => {
-    app.listen(PORT)
+    app.listen(PORT, () => console.log('estoy on en el puerto', PORT))
+    console.log(conn.getDatabaseName(), conn.models)
   })
   .catch((error) => {
     console.error(error)
