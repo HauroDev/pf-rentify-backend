@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize')
 
 module.exports = (sequelize) => {
-  sequelize.define('Comentario', {
+  sequelize.define('Comment', {
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
@@ -12,7 +12,7 @@ module.exports = (sequelize) => {
       type: DataTypes.STRING,
       allowNull: false
     },
-    punctuation: {
+    puntuation: {
       type: DataTypes.FLOAT,
       allowNull: false
     },
