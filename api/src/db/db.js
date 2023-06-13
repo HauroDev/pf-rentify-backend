@@ -34,13 +34,17 @@ fs.readdirSync(path.join(__dirname, '/models'))
 modelDefiners.forEach((model) => model(sequelize))
 // Capitalizamos los nombres de los modelos ie: product => Product
 
-sequelize.models = Object.fromEntries(modelDefiners)
 const entries = Object.entries(sequelize.models)
-const capsEntries = entries.map((entry) => [
-  entry[0][0].toUpperCase() + entry[0].slice(1),
-  entry[1]
-])
+const capsEntries = entries.map((entry) => {
+  console.log(entry)
+  return [entry[0][0].toUpperCase() + entry[0].slice(1), entry[1]]
+})
 sequelize.models = Object.fromEntries(capsEntries)
+
+const { User, Product } = sequelize.models
+
+User.hasMany(Product)
+Product.belongsTo(User)
 
 module.exports = {
   conn: sequelize,
