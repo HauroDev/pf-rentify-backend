@@ -2,7 +2,7 @@ const { Sequelize } = require('sequelize')
 const fs = require('fs')
 const path = require('path')
 
-const { DB_NAME, DB_USER, DB_PASSWORD, HOST, MODE } = require('../src/config')
+const { DB_NAME, DB_USER, DB_PASSWORD, HOST, MODE } = require('../../config')
 
 const sequelize = new Sequelize(DB_NAME, DB_USER, DB_PASSWORD, {
   host: HOST,
@@ -34,13 +34,27 @@ fs.readdirSync(path.join(__dirname, '/models'))
 modelDefiners.forEach((model) => model(sequelize))
 // Capitalizamos los nombres de los modelos ie: product => Product
 
-sequelize.models = Object.fromEntries(modelDefiners)
 const entries = Object.entries(sequelize.models)
 const capsEntries = entries.map((entry) => [
   entry[0][0].toUpperCase() + entry[0].slice(1),
   entry[1]
 ])
 sequelize.models = Object.fromEntries(capsEntries)
+
+const { User, Product, Comment, Category } = sequelize.models
+
+// un usuario crea muchos productos (vendedor)
+User.belongsToMany(Product, { through: 'UserProduct' })
+Product.belongsToMany(User, { through: 'UserProduct' })
+
+// un producto tiene muchos comentarios
+Product.hasMany(Comment)
+Comment.belongsTo(Product)
+
+// una categoria tiene muchos productos
+
+Category.belongsToMany(Product, { through: 'CategoryProduct' })
+Product.belongsToMany(Category, { through: 'CategoryProduct' })
 
 module.exports = {
   conn: sequelize,
