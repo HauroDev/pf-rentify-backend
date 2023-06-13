@@ -12,7 +12,7 @@ module.exports = (sequelize) => {
       type: DataTypes.STRING,
       allowNull: false
     },
-    punctuation: {
+    puntuation: {
       type: DataTypes.FLOAT,
       allowNull: false
     },

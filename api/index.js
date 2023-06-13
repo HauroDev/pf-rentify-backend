@@ -5,7 +5,7 @@ const { conn } = require('./src/db/db.js')
 const app = express()
 
 conn
-  .sync({ force: false })
+  .sync({ force: true })
   .then(() => {
     app.listen(PORT, () => console.log('estoy on en el puerto', PORT))
   })

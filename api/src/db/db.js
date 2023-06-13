@@ -35,16 +35,26 @@ modelDefiners.forEach((model) => model(sequelize))
 // Capitalizamos los nombres de los modelos ie: product => Product
 
 const entries = Object.entries(sequelize.models)
-const capsEntries = entries.map((entry) => {
-  console.log(entry)
-  return [entry[0][0].toUpperCase() + entry[0].slice(1), entry[1]]
-})
+const capsEntries = entries.map((entry) => [
+  entry[0][0].toUpperCase() + entry[0].slice(1),
+  entry[1]
+])
 sequelize.models = Object.fromEntries(capsEntries)
 
-const { User, Product } = sequelize.models
+const { User, Product, Comment, Category } = sequelize.models
 
-User.hasMany(Product)
-Product.belongsTo(User)
+// un usuario crea muchos productos (vendedor)
+User.belongsToMany(Product, { through: 'UserProduct' })
+Product.belongsToMany(User, { through: 'UserProduct' })
+
+// un producto tiene muchos comentarios
+Product.hasMany(Comment)
+Comment.belongsTo(Product)
+
+// una categoria tiene muchos productos
+
+Category.belongsToMany(Product, { through: 'CategoryProduct' })
+Product.belongsToMany(Category, { through: 'CategoryProduct' })
 
 module.exports = {
   conn: sequelize,
