@@ -14,7 +14,7 @@ app.use(morgan('dev'))
 */
 
 conn
-  .sync({ force: true })
+  .sync({ force: false })
   .then(() => {
     app.listen(PORT, () => console.log('estoy on en el puerto', PORT))
   })
