@@ -19,15 +19,15 @@ const User = sequelize.define('User', {
     type: DataTypes.STRING
   },
   image: {
-    type: DataTypes.STRING,
+    type: DataTypes.TEXT, //!cambie
     allowNull: true // consultar
   },
   membership: {
-    type: DataTypes.ENUM(['normal', 'silver']),
+    type: DataTypes.ENUM(['standard', 'premium']), //!cambie
     allowNull: false
   },
   status: {
-    type: DataTypes.ENUM('active', 'inactive', 'pause', 'ban')
+    type: DataTypes.ENUM('active', 'inactive', 'paused', 'banned') //!cambie
   }
 })
 
