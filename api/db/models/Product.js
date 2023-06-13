@@ -90,6 +90,11 @@ module.exports =
             allowNull: false,
             comment: 'Is the product featured?',
         },
+        // stock: {
+        //     type:DataTypes.INTEGER,
+        //     allowNull:false,
+        //     comment:'Stock of the product'
+        // }
        
         }, {
           comment: 'Table containing information about product',
