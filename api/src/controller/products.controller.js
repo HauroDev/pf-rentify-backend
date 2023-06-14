@@ -2,42 +2,32 @@ const { Product, Category, User, Comment } = require('../db/db.js')
 const { Op } = require('sequelize')
 
 const getProducts = async (req, res) => {
-  const {
-    name,
-    statusPub,
-    statusProd,
-    isFeatured,
-    location,
-    offset,
-    limit,
-    order
-  } = req.query
+  const { name, offset, limit, order } = req.query
 
   // agregar offset, limit, order = por fecha y condicional solo disponible cuando el usuario lo pida
 
   try {
-    /*
-      objeto de configuracion de busqueda
-      si no se manda ninguna query,
-      envia todos los productos
-    */
-    const searchOption = {
-      name: {
-        [Op.iLike]: `%${name}%`
-      }
-    }
-    if (statusProd) searchOption.statusProd = statusProd
-    if (statusPub) searchOption.statusPub = statusPub
-    if (isFeatured) searchOption.isFeatured = isFeatured
-    if (location) searchOption.location = location
-
     const count = await Product.count({
-      where: searchOption
+      where: {
+        name: {
+          [Op.iLike]: `%${name}%`
+        }
+      }
     })
 
     const products = await Product.findAll({
-      where: searchOption,
-      include: [{ model: Category, attributes: {} }],
+      where: {
+        name: {
+          [Op.iLike]: `%${name}%`
+        }
+      },
+      include: [
+        {
+          model: Category,
+          attributes: ['idCategory', 'name'],
+          through: { attributes: [] }
+        }
+      ],
       offset: offset || 0,
       limit: limit || 12,
       order: order || undefined
