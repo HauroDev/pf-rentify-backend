@@ -1,6 +1,0 @@
-HOST=dpg-ci3oft6nqqlbd9kalabg-a.oregon-postgres.render.com
-DB_USER=prueba_4zh2_user
-DB_PASSWORD=FBEW02vA7jQJAE3DJzD4j42ea5ncRgVH
-DB_NAME=prueba_4zh2
-
-MODE=DEVELOPMENT
