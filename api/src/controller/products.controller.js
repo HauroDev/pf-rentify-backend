@@ -48,8 +48,6 @@ const getProducts = async (req, res) => {
 const createProduct = async (req, res) => {
   const product = { ...req.body }
   try {
-    const productDb = await Product.create(product) // hacer un include, investigar
-
     let categoriesDb = await Category.findAll({
       where: { name: product.categories?.map((cat) => cat.name) }
     })
@@ -58,6 +56,7 @@ const createProduct = async (req, res) => {
       categoriesDb = await Category.bulkCreate(product?.categories)
       // throw new Error('No product categories were found')
     }
+    const productDb = await Product.create(product)
 
     await productDb.setCategories(categoriesDb)
 
