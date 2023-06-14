@@ -9,7 +9,10 @@
       "location": "Argentina",
       "statusPub": "active",
       "statusProd": "avalible",
-      "isFeatured": false
+      "isFeatured": false,
+      "categories": [
+        { "id": "hasdfjkdsf.f,dfsijfgoiehdfoawidh", "name": "audio" }
+      ]
     },
     {
       "id": 2,
@@ -20,7 +23,10 @@
       "location": "Argentina",
       "statusPub": "active",
       "statusProd": "rented",
-      "isFeatured": true
+      "isFeatured": true,
+      "categories": [
+        { "id": "hasdfjkdsf.f,dfsijfgoiehdfoawidh", "name": "audio" }
+      ]
     },
     {
       "id": 3,
@@ -31,7 +37,10 @@
       "location": "Argentina",
       "statusPub": "paused",
       "statusProd": "inactive",
-      "isFeatured": false
+      "isFeatured": false,
+      "categories": [
+        { "id": "hasdfjkdsf.f,dfsijfgoiehdfoawidh", "name": "audio" }
+      ]
     },
     {
       "id": 4,
