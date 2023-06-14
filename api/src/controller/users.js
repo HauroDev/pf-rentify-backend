@@ -37,7 +37,7 @@ const getUser = async (req, res) => {
         const { id } = req.params
         const userId = await User.findOne({
             where: {
-                id: id,
+                idUser: id,
             },
         })
         return res.status(200).json(userId);
