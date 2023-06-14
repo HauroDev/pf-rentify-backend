@@ -1,24 +1,17 @@
 const { Router } = require('express')
 
-const { Product } = require('../db/db.js')
+const {
+  getProducts,
+  createProduct,
+  getProductById
+} = require('../controller/products.controller.js')
 
 const router = Router()
 
-router.get('/products', async (req, res) => {
-  const queries = req.query
+/* ninguna ruta esta funcional */
 
-  try {
-    const searchOption = {}
+router.get('/', getProducts)
+router.post('/', createProduct)
+router.get('/:id', getProductById)
 
-    for (const prop in queries) {
-      searchOption[prop] = prop
-    }
-
-    const products = await Product.findAll({ where: { ...searchOption } })
-  } catch (error) {}
-})
-router.get('/products/search/:name')
-
-router.post('/products')
-
-router.get('/products/:id')
+module.exports = router

@@ -1,0 +1,57 @@
+{
+  "products": [
+    {
+      "id": 1,
+      "name": "Equipo de Sonido",
+      "description": "equipo de sonido para dj, microfono, parlantes, controlador,etc",
+      "image": "https://www.url-example.com/image.gif",
+      "price": 500.0,
+      "location": "Argentina",
+      "statusPub": "active",
+      "statusProd": "avalible",
+      "isFeatured": false,
+      "categories": [
+        { "id": "hasdfjkdsf.f,dfsijfgoiehdfoawidh", "name": "audio" }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Playstation 3",
+      "description": "con 3 joysticks y unas gafas VR",
+      "image": "https://www.url-example.com/image.gif",
+      "price": 5000.0,
+      "location": "Argentina",
+      "statusPub": "active",
+      "statusProd": "rented",
+      "isFeatured": true,
+      "categories": [
+        { "id": "hasdfjkdsf.f,dfsijfgoiehdfoawidh", "name": "audio" }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "elemento no publicable",
+      "description": "mensaje ofensivo",
+      "image": "https://www.url-example.com/image.gif",
+      "price": 10.0,
+      "location": "Argentina",
+      "statusPub": "paused",
+      "statusProd": "inactive",
+      "isFeatured": false,
+      "categories": [
+        { "id": "hasdfjkdsf.f,dfsijfgoiehdfoawidh", "name": "audio" }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Caloventor a gas",
+      "description": "caloventor a gas, recargable, para establecimientos grandes",
+      "image": "https://www.url-example.com/image.gif",
+      "price": 3000.0,
+      "location": "Argentina",
+      "statusPub": "active",
+      "statusProd": "avalible",
+      "isFeatured": false
+    }
+  ]
+}

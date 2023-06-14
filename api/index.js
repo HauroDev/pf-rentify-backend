@@ -2,7 +2,7 @@ const express = require('express')
 const { PORT } = require('./config')
 const { conn } = require('./src/db/db.js')
 const morgan = require('morgan')
-const router= require('./src/router/index.js')
+const router = require('./src/router/index.js')
 
 const app = express()
 
@@ -13,7 +13,9 @@ app.use(morgan('dev'))
 /*
   Agregen sus rutas
 */
-app.use('/api-rentify',router)
+
+app.use('/api-rentify', router)
+
 conn
   .sync({ force: false })
   .then(() => {

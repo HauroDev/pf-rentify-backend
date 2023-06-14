@@ -2,7 +2,7 @@ const { DataTypes } = require('sequelize')
 
 module.exports = (sequelize) => {
   sequelize.define('Admin', {
-    IdAdmin: {
+    idAdmin: {
       primaryKey: true,
       type: DataTypes.UUID,
       allowNull: false
