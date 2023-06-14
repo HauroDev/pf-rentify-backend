@@ -1,11 +1,9 @@
 const { Comment, Product } = require("../db/db");
 
 const newComment = async (req, res) => {
-  const { comment, puntuation, commentStatus, idProd, idUser } = req.body;
+  const { comment, puntuation, commentStatus, idProd } = req.body;
   try {
     const newComment = await Comment.create({
-      idProd,
-      idUser,
       comment,
       puntuation,
       commentStatus,
@@ -17,7 +15,7 @@ const newComment = async (req, res) => {
         {
           model: Product,
 
-          through: { attributes: [] },
+          //through: { attributes: [] },
         },
       ],
     });
