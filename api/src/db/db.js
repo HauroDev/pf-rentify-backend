@@ -56,6 +56,11 @@ Comment.belongsTo(Product)
 Category.belongsToMany(Product, { through: 'CategoryProduct' })
 Product.belongsToMany(Category, { through: 'CategoryProduct' })
 
+// un usuario tiene muchos comentarios
+
+User.hasMany(Comment)
+Comment.belongsTo(User)
+
 module.exports = {
   conn: sequelize,
   ...sequelize.models
