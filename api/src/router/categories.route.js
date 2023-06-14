@@ -4,7 +4,6 @@ const { getCategories } = require('../controller/categories.controller.js')
 
 const categoriesRoutes = Router()
 
-
 categoriesRoutes.get('/', getCategories)
 
-module.exports = categoriesRoutes;
+module.exports = categoriesRoutes
