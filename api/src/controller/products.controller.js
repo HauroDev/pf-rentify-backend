@@ -3,7 +3,7 @@ const { Op } = require('sequelize')
 
 const getProducts = async (req, res) => {
   const { name, statusPub, statusProd, isFeatured, location } = req.query
-
+  // agregar offset, limit, order = por fecha y condicional solo disponible cuando el usuario lo pida
   try {
     /*
       objeto de configuracion de busqueda
@@ -12,7 +12,7 @@ const getProducts = async (req, res) => {
     */
     const searchOption = {
       name: {
-        [Op.iLike]: `${name}`
+        [Op.iLike]: `%${name}%`
       },
       statusProd,
       statusPub,
@@ -64,7 +64,7 @@ const createProduct = async (req, res) => {
       isFeatured
     }
 
-    const productDb = await Product.create(product)
+    const productDb = await Product.create(product) // hacer un include, investigar
 
     const categoriesDb = await Category.findAll({
       where: { id: categories.map((cat) => cat.id) }
@@ -101,6 +101,10 @@ const getProductById = async (req, res) => {
       customError.status = 404
       throw customError
     }
+
+    // if()// condicion de busqueda statusPub =  active
+
+    res.status(200).json(product)
   } catch (error) {
     res.status(error?.status || 500).json({ message: error.message })
   }
