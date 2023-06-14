@@ -1,4 +1,7 @@
 const { DataTypes } = require('sequelize')
+
+// cambiar nombre de list a HistoryRent o algo asi  ;D
+
 // const User = require('../db.js')
 // const Product
 module.exports = (sequelize) => {

@@ -22,10 +22,11 @@ const postUser = async (req, res) => {
             membership,
             status
         });
-
+        
         // Envía la respuesta con el usuario creado
         res.status(201).json(newUser);
     } catch (error) {
+        console.log(error)
         // En caso de error, envía una respuesta de error
         res.status(500).json({ error: 'Error al crear el usuario' });
     }
