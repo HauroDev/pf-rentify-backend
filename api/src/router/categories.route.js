@@ -1,10 +1,10 @@
 const { Router } = require('express')
 
-const {getCategories} = require('../controller/categories.controller.js')
+const { getCategories } = require('../controller/categories.controller.js')
 
 const categoriesRoutes = Router()
 
 
-categoriesRoutes.get('/',getCategories)
+categoriesRoutes.get('/', getCategories)
 
 module.exports = categoriesRoutes;

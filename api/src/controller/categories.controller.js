@@ -7,7 +7,9 @@ const getCategories = async (req, res) =>{
         console.log(Category);
         const categories = await Category.findAll({
             include: {
-                model: Product
+                model: Product,
+                attributes: ["idProd","name"]
+
             }
         });
 
@@ -15,7 +17,7 @@ const getCategories = async (req, res) =>{
         
         res.status(200).json(categories)
     } catch (error) {
-        res.status(500).json(error)
+        res.status(500).json({ message: error.message })
     }
 }
 
