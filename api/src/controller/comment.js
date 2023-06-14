@@ -1,15 +1,16 @@
 const { Comment, Product } = require("../db/db");
 
 const newComment = async (req, res) => {
-  const { comment, puntuation, commentStatus, idProd } = req.query;
+  const { comment, puntuation, commentStatus, idProd } = req.body;
   try {
     const newComment = await Comment.create({
       comment,
       puntuation,
       commentStatus,
     });
-    await newComment.addPorduct(idProd);
-    const recordComment = await Comment.findByPk(newComment.id, {
+    const product = await Product.findByPk(idProd);
+    await product.addComment(newComment);
+    const recordComment = await Comment.findByPk(newComment.idComment, {
       include: [
         {
           model: Product,
