@@ -3,9 +3,8 @@ const { Op } = require('sequelize')
 const { obtenerNextPageProduct } = require('../utils/paginado.js')
 
 const getProducts = async (req, res) => {
-  let { name, offset, limit, order } = req.query
-
-  // agregar offset, limit, order = por fecha y condicional solo disponible cuando el usuario lo pida
+  // agregar price entre un rango a futuro
+  let { name, offset, limit, orderAlpha, orderPrice } = req.query
 
   const whereOptions = name
     ? {
@@ -14,6 +13,16 @@ const getProducts = async (req, res) => {
         }
       }
     : {}
+
+  const orderOptions = []
+
+  if (orderAlpha && (orderAlpha === 'ASC' || orderAlpha === 'DESC')) {
+    orderOptions.push(['name', orderAlpha])
+  }
+
+  if (orderPrice && (orderPrice === 'ASC' || orderPrice === 'DESC')) {
+    orderOptions.push(['price', orderPrice])
+  }
 
   try {
     const count = await Product.count(whereOptions)
@@ -29,7 +38,7 @@ const getProducts = async (req, res) => {
       ],
       offset: offset || 0,
       limit: limit || 12,
-      order: order || undefined
+      order: orderOptions.length ? orderOptions : undefined
     })
 
     offset = offset || offset > 0 ? +offset : 0
