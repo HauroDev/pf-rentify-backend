@@ -1,16 +1,16 @@
 const { Comment, Product } = require("../db/db");
 
-const { id, comment, puntuation, commentStatus, name } = res.query;
 const newComment = async (req, res) => {
+  const { id, comment, puntuation, commentStatus, idProduct } = req.query;
   try {
     const newComment = await Comment.create({
       id,
       comment,
       puntuation,
       commentStatus,
-      name,
+      idProduct,
     });
-    await newComment.addPorduct(name);
+    await newComment.addPorduct(idProduct);
     const recordComment = await Comment.findByPk(newComment.id, {
       include: [
         {
@@ -26,24 +26,24 @@ const newComment = async (req, res) => {
   }
 };
 
-const updateComment = async (req, res) => {
-  await Comment.update(
-    { id: id },
-    {
-      where: {
-        comment: null,
-      },
-    }
-  );
-};
+// const updateComment = async (req, res) => {
+//   await Comment.update(
+//     { id: id },
+//     {
+//       where: {
+//         comment: null,
+//       },
+//     }
+//   );
+// };
 
-const destroyComment = async (req, res) => {
-  await Comment.destroy({
-    where: {
-      id: id,
-    },
-  });
-};
+// const destroyComment = async (req, res) => {
+//   await Comment.destroy({
+//     where: {
+//       id: id,
+//     },
+//   });
+// };
 
 module.exports = { newComment, updateComment, destroyComment };
 
