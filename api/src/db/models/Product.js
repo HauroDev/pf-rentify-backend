@@ -1,5 +1,9 @@
 const { DataTypes } = require('sequelize')
 
+
+// en este modelo toca quitar el id de comentario de la relacion y unirlo a id de comentario 
+
+
 module.exports = (sequelize) => {
   sequelize.define(
     'Product',
