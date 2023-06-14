@@ -83,19 +83,20 @@ module.exports = (sequelize) => {
       },
       statusPub: {
         type: DataTypes.ENUM('active', 'inactive', 'paused'),
-        allowNull: false,
+        // allowNull: false,
         defaultValue: 'active',
         comment: 'Status of the publication'
       },
       statusProd: {
         type: DataTypes.ENUM('available', 'rented'),
-        allowNull: false,
+        // allowNull: false,
         defaultValue: 'available',
         comment: 'Status of the product'
       },
       isFeatured: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
+        defaultValue: false,
         comment: 'Is the product featured?'
       }
       // stock: {
