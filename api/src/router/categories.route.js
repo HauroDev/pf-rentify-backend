@@ -4,8 +4,7 @@ const { getCategories, createCategories } = require('../controller/categories.co
 
 const categoriesRoutes = Router()
 
-
 categoriesRoutes.get('/', getCategories)
 categoriesRoutes.post('/',createCategories )
 
-module.exports = categoriesRoutes;
+module.exports = categoriesRoutes
