@@ -7,18 +7,18 @@ module.exports = (sequelize) => {
       type: DataTypes.UUID,
       allowNull: false
     },
-    nameCategoria: {
+    nameCategory: {
       // ya arregle las categorias
       type: DataTypes.ENUM(
-        'electronico',
-        'moda y accesorios',
-        'hogar y decoración',
-        'deportes y fitness / salud y bienestar',
-        'libros y entretenimiento',
-        'automovil y motocicletas',
-        'jueguetes y niños',
-        'cuidado personal',
-        'artes y manualidades'
+        'electronics',
+        'fashion and accessories',
+        'home and decoration',
+        'sports and fitness / health and wellness',
+        'books and entertainment',
+        'cars and motorcycles',
+        'toys and kids',
+        'personal care',
+        'arts and crafts'
       ),
       allowNull: false
     }
