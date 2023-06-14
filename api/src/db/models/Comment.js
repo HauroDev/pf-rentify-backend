@@ -1,5 +1,5 @@
 const { DataTypes } = require("sequelize");
-const { Product, User } = require("../db");
+// const { Product, User } = require('../db.js')
 
 module.exports = (sequelize) => {
   sequelize.define(
@@ -30,24 +30,6 @@ module.exports = (sequelize) => {
         type: DataTypes.BOOLEAN,
         allowNull: false,
       },
-      // idProd: {
-      //   type: DataTypes.INTEGER,
-      //   references: {
-      //     // This is a reference to another model
-      //     model: Product,
-      //     // This is the column name of the referenced model
-      //     key: "idProd",
-      //   },
-      // },
-      // idUser: {
-      //   type: DataTypes.INTEGER,
-      //   references: {
-      //     // This is a reference to another model
-      //     model: User,
-      //     // This is the column name of the referenced model
-      //     key: "idUser",
-      //   },
-      // },
       // toca colocar en este modelo  el id del producto y id del usuario que comenta o que el usuario sea anonimo
       // para evitar que se actualice el producto cada vez que se comente
     },
