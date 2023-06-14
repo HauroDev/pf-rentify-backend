@@ -2,7 +2,7 @@ const express = require('express')
 const { PORT } = require('./config')
 const { conn } = require('./src/db/db.js')
 const morgan = require('morgan')
-const router = require('./src/router/index.js')
+const router = require('./src/routes/index.js')
 
 const app = express()
 
