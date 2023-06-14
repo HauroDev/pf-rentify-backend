@@ -1,26 +1,25 @@
 const { Product, Category, User, Comment } = require('../db/db.js')
 const { Op } = require('sequelize')
+const { obtenerNextPageProduct } = require('../utils/paginado.js')
 
 const getProducts = async (req, res) => {
-  const { name, offset, limit, order } = req.query
+  let { name, offset, limit, order } = req.query
 
   // agregar offset, limit, order = por fecha y condicional solo disponible cuando el usuario lo pida
 
-  try {
-    const count = await Product.count({
-      where: {
+  const whereOptions = name
+    ? {
         name: {
           [Op.iLike]: `%${name}%`
         }
       }
-    })
+    : {}
+
+  try {
+    const count = await Product.count(whereOptions)
 
     const products = await Product.findAll({
-      where: {
-        name: {
-          [Op.iLike]: `%${name}%`
-        }
-      },
+      where: whereOptions,
       include: [
         {
           model: Category,
@@ -33,14 +32,12 @@ const getProducts = async (req, res) => {
       order: order || undefined
     })
 
-    /*
-      en la carpeta mocks hay un ejemplo de lo que tendria que devolver
-      "list_products.json"
-    */
+    offset = offset || offset > 0 ? +offset : 0
+    limit = limit ? +limit : 12
 
     res.status(200).json({
       count,
-      next: '',
+      next: obtenerNextPageProduct(offset, limit, count),
       products
     })
   } catch (error) {
@@ -49,43 +46,26 @@ const getProducts = async (req, res) => {
 }
 
 const createProduct = async (req, res) => {
-  const {
-    name,
-    description,
-    image,
-    price,
-    location,
-    statusPub,
-    statusProd,
-    isFeatured,
-    categories
-  } = req.body
+  const product = { ...req.body }
   try {
-    const product = {
-      name,
-      description,
-      image,
-      price,
-      location,
-      statusPub,
-      statusProd,
-      isFeatured
-    }
-
-    const productDb = await Product.create(product) // hacer un include, investigar
-
     let categoriesDb = await Category.findAll({
-      where: { name: categories.map((cat) => cat.name) }
+      where: { name: product.categories?.map((cat) => cat.name) }
     })
 
     if (!categoriesDb.length) {
-      categoriesDb = await Category.bulkCreate(categories)
+      categoriesDb = await Category.bulkCreate(product?.categories)
       // throw new Error('No product categories were found')
     }
+    const productDb = await Product.create(product)
 
     await productDb.setCategories(categoriesDb)
 
-    const categoriesSeach = await productDb.getCategories()
+    let categoriesSeach = await productDb.getCategories()
+
+    categoriesSeach = categoriesSeach.map(({ idCategory, name }) => ({
+      idCategory,
+      name
+    }))
 
     res.status(200).json({
       ...productDb.toJSON(),
