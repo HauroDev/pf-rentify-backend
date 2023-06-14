@@ -5,9 +5,11 @@ module.exports = (sequelize) => {
     idCategory: {
       primaryKey: true,
       type: DataTypes.UUID,
-      allowNull: false
+      defaultValue: DataTypes.UUIDV4,
+      unique: true
+      // allowNull: false
     },
-    nameCategoria: {
+    name: {
       // ya arregle las categorias
       type: DataTypes.ENUM(
         'electronico',

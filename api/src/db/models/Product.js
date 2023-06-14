@@ -58,12 +58,16 @@ module.exports = (sequelize) => {
         type: DataTypes.FLOAT,
         allowNull: false,
         defaultValue: 0,
-        validate: {
-          min: {
-            args: 0,
-            msg: 'Price must be a positive number'
-          }
-        },
+        // validate: {
+        //   max: {
+        //     args: 100000000,
+        //     msg: 'price is too big'
+        //   },
+        //   min: {
+        //     args: 0,
+        //     msg: 'Price must be a positive number'
+        //   }
+        // },
         comment: 'Price of the product'
       },
       location: {
@@ -79,18 +83,20 @@ module.exports = (sequelize) => {
       },
       statusPub: {
         type: DataTypes.ENUM('active', 'inactive', 'paused'),
-        allowNull: false,
+        // allowNull: false,
         defaultValue: 'active',
         comment: 'Status of the publication'
       },
       statusProd: {
         type: DataTypes.ENUM('available', 'rented'),
-        allowNull: false,
+        // allowNull: false,
+        defaultValue: 'available',
         comment: 'Status of the product'
       },
       isFeatured: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
+        defaultValue: false,
         comment: 'Is the product featured?'
       }
       // stock: {
