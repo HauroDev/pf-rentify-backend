@@ -1,16 +1,14 @@
 const { Comment, Product } = require("../db/db");
 
 const newComment = async (req, res) => {
-  const { id, comment, puntuation, commentStatus, idProduct } = req.query;
+  const { comment, puntuation, commentStatus, idProd } = req.query;
   try {
     const newComment = await Comment.create({
-      id,
       comment,
       puntuation,
       commentStatus,
-      idProduct,
     });
-    await newComment.addPorduct(idProduct);
+    await newComment.addPorduct(idProd);
     const recordComment = await Comment.findByPk(newComment.id, {
       include: [
         {
@@ -22,6 +20,7 @@ const newComment = async (req, res) => {
     });
     res.json(recordComment);
   } catch (error) {
+    console.log(error);
     res.status(400).json(error);
   }
 };
@@ -45,7 +44,7 @@ const newComment = async (req, res) => {
 //   });
 // };
 
-module.exports = { newComment, updateComment, destroyComment };
+module.exports = { newComment };
 
 // Definición del modelo de Comentario
 // const Comentario = {
