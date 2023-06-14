@@ -8,8 +8,6 @@ const {
 
 const router = Router()
 
-/* ninguna ruta esta funcional */
-
 router.get('/', getProducts)
 router.post('/', createProduct)
 router.get('/:id', getProductById)

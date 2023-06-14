@@ -107,8 +107,7 @@ module.exports = (sequelize) => {
     },
     {
       comment: 'Table containing information about product',
-      tableName: 'product',
-      timestamps: false
+      tableName: 'products'
     }
   )
 
