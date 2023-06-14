@@ -24,12 +24,12 @@ const getProducts = async (req, res) => {
     const searchOption = {
       name: {
         [Op.iLike]: `%${name}%`
-      },
-      statusProd,
-      statusPub,
-      isFeatured,
-      location
+      }
     }
+    if (statusProd) searchOption.statusProd = statusProd
+    if (statusPub) searchOption.statusPub = statusPub
+    if (isFeatured) searchOption.isFeatured = isFeatured
+    if (location) searchOption.location = location
 
     const count = await Product.count({
       where: searchOption
@@ -37,10 +37,7 @@ const getProducts = async (req, res) => {
 
     const products = await Product.findAll({
       where: searchOption,
-      include: [
-        { model: Category, attributes: {} },
-        { model: User, attributes: {} }
-      ],
+      include: [{ model: Category, attributes: {} }],
       offset: offset || 0,
       limit: limit || 12,
       order: order || undefined
@@ -87,20 +84,25 @@ const createProduct = async (req, res) => {
 
     const productDb = await Product.create(product) // hacer un include, investigar
 
-    const categoriesDb = await Category.findAll({
-      where: { id: categories.map((cat) => cat.id) }
+    let categoriesDb = await Category.findAll({
+      where: { name: categories.map((cat) => cat.name) }
     })
 
     if (!categoriesDb.length) {
-      throw new Error('No product categories were found')
+      categoriesDb = await Category.bulkCreate(categories)
+      // throw new Error('No product categories were found')
     }
 
     await productDb.setCategories(categoriesDb)
 
-    res
-      .status(200)
-      .json({ ...productDb, categories: categoriesDb.map((cat) => cat.name) })
+    const categoriesSeach = await productDb.getCategories()
+
+    res.status(200).json({
+      ...productDb.toJSON(),
+      categories: categoriesSeach
+    })
   } catch (error) {
+    console.log(error)
     res.status(500).json({ message: error.message })
   }
 }
