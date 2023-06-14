@@ -4,7 +4,7 @@ const {
   postUser,
   getUser
   //   putUser, deleteUser, getUserMember
-} = require('../controller/users.js')
+} = require('../controller/users.controller.js')
 
 const router = Router()
 
