@@ -1,23 +1,23 @@
-const { DataTypes } = require('sequelize')
+const { DataTypes } = require("sequelize");
 // const { Product, User } = require('../db.js')
 
 module.exports = (sequelize) => {
   sequelize.define(
-    'Comment',
+    "Comment",
     {
       idComment: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
-        allowNull: false
+        allowNull: false,
       },
       comment: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: false,
       },
       puntuation: {
         type: DataTypes.FLOAT,
-        allowNull: false
+        allowNull: false,
         //  seria bueno cambiarlo a entero y añadir una validacion para limitar de 1 a 5 verificar el codigo de abajo :D
         // type: DataTypes.INTEGER,
         // allowNull: false,
@@ -28,32 +28,14 @@ module.exports = (sequelize) => {
       },
       commentStatus: {
         type: DataTypes.BOOLEAN,
-        allowNull: false
-      }
-      // idProd: {
-      //   type: DataTypes.INTEGER,
-      //   references: {
-      //     // This is a reference to another model
-      //     model: Product,
-      //     // This is the column name of the referenced model
-      //     key: 'idProd'
-      //   }
-      // },
-      // idUser: {
-      //   type: DataTypes.INTEGER,
-      //   references: {
-      //     // This is a reference to another model
-      //     model: User,
-      //     // This is the column name of the referenced model
-      //     key: 'idUser'
-      //   }
-      // }
+        allowNull: false,
+      },
       // toca colocar en este modelo  el id del producto y id del usuario que comenta o que el usuario sea anonimo
       // para evitar que se actualice el producto cada vez que se comente
     },
     {
-      comment: 'Table containing information about comments',
-      tableName: 'comments'
+      comment: "Table containing information about comments",
+      tableName: "comments",
     }
-  )
-}
+  );
+};
