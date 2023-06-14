@@ -48,7 +48,7 @@ User.belongsToMany(Product, { through: 'UserProduct' })
 Product.belongsToMany(User, { through: 'UserProduct' })
 
 // un producto tiene muchos comentarios
-Product.hasMany(Comment)
+Product.hasMany(Comment, { foreignKey: 'idProd' })
 Comment.belongsTo(Product)
 
 // una categoria tiene muchos productos
@@ -58,7 +58,7 @@ Product.belongsToMany(Category, { through: 'CategoryProduct' })
 
 // un usuario tiene muchos comentarios
 
-User.hasMany(Comment)
+User.hasMany(Comment, { foreignKey: 'idUser' })
 Comment.belongsTo(User)
 
 module.exports = {
