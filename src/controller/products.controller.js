@@ -4,8 +4,9 @@ const { obtenerNextPageProduct } = require('../utils/paginado.js')
 
 const getProducts = async (req, res) => {
   // agregar price entre un rango a futuro
-  let { name, offset, limit, orderAlpha, orderPrice } = req.query
-
+  let { name, offset, limit, orderAlpha, orderPrice, orderDate } = req.query;
+  const {categories} = req.body
+  //categories:[{idCategory,name}]
   const whereOptions = name
     ? {
         name: {
@@ -13,19 +14,27 @@ const getProducts = async (req, res) => {
         }
       }
     : {}
+  
 
   const orderOptions = []
-
-  if (orderAlpha && (orderAlpha === 'ASC' || orderAlpha === 'DESC')) {
-    orderOptions.push(['name', orderAlpha])
-  }
 
   if (orderPrice && (orderPrice === 'ASC' || orderPrice === 'DESC')) {
     orderOptions.push(['price', orderPrice])
   }
 
+  if (orderAlpha && (orderAlpha === 'ASC' || orderAlpha === 'DESC')) {
+    orderOptions.push(['name', orderAlpha])
+  }
+
+  if (orderDate && (orderDate === 'ASC' || orderDate === 'DESC')) {
+    orderOptions.push(['createdAt', orderDate])
+  }
+
+
+
   try {
     const count = await Product.count(whereOptions)
+
 
     const products = await Product.findAll({
       where: whereOptions,
@@ -44,10 +53,23 @@ const getProducts = async (req, res) => {
     offset = offset || offset > 0 ? +offset : 0
     limit = limit ? +limit : 12
 
+    let productsJSON = products.toJSON();
+    let productResponse = [];
+    if(categories.length){
+      for (const prod of productsJSON) {
+        for (const catg of categories) {
+          if(prod.Categories.include(catg) && productResponse.some(p=>p.idProd === prod.idProd)){
+            productResponse.push(prod)
+          }
+        }
+      }
+    }
+
+
     res.status(200).json({
       count,
       next: obtenerNextPageProduct(offset, limit, count),
-      products
+      products: productResponse.length ? productResponse : productsJSON
     })
   } catch (error) {
     res.status(500).json({ message: error.message })
