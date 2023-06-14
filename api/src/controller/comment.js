@@ -1,26 +1,30 @@
-const { Comment, Product } = require("../db/db");
+const { Comment, Product, User } = require("../db/db");
 
 const newComment = async (req, res) => {
   const { comment, puntuation, commentStatus, idProd, idUser } = req.body;
   try {
     const newComment = await Comment.create({
-      idProd,
-      idUser,
       comment,
       puntuation,
       commentStatus,
     });
     const product = await Product.findByPk(idProd);
     await product.addComment(newComment);
+    const userToComment = await User.findByPk(idUser);
+    await userToComment.addComment(newComment);
     const recordComment = await Comment.findByPk(newComment.idComment, {
       include: [
         {
           model: Product,
 
-          through: { attributes: [] },
+          //through: { attributes: [] },
+        },
+        {
+          model: User,
         },
       ],
     });
+
     res.json(recordComment);
   } catch (error) {
     console.log(error);
