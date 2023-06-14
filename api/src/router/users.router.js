@@ -7,15 +7,15 @@ const {postUser, getUser
 const router= Router();
 
 //metodos get
-router.get('/detail/:id', getUser); 
-// router.get('/',getUserMember); 
+router.get('/:id', getUser); 
+// router.get('/ aca iria  qry  de esta manera en testeo /users?membership=standard'  ,getUserMember); 
 
 //metodos post
 router.post('/', postUser);  
 
 //metodos put
-// router.put('/',putUser);
+// router.put('/:id',putUser);
 
 //metodos delete
-// router.delete('/', deleteUser);
+// router.delete('/:id', deleteUser);
 module.exports = router;
