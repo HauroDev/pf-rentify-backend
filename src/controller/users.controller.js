@@ -9,14 +9,20 @@ const { User } = require('../db/db')
 
 const postUser = async (req, res) => {
   try {
+    const regeexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     // Obtén los datos del cuerpo de la solicitud
     const { name, email, phone, image, membership, status } = req.body
-
     // Verifica si el email ya existe en la base de datos
-    const existingUser = await User.findOne({ email })
-    if (existingUser) {
+    const existingUser = await User.findOne({ where: { email } })
+    const numbeUser = await User.findOne({ where: { phone } })
+    // verificacion de formato de regeex para correo electronico
+    if (!regeexEmail.test(email)) {
+      return res.status(400).json({ error: 'formato de correo no valido ' })
+    } else if (existingUser) {
       // Si el email ya existe, devuelve una respuesta de error
-      return res.status(400).json({ error: 'El email ya está registrado' })
+      return res.status(400).json({ error: 'Error correo existente ' })
+    } else if (numbeUser) {
+      return res.status(400).json({ error: 'Error number ' })
     }
     // Crea un nuevo usuario en la base de datos
     const newUser = await User.create({
@@ -56,7 +62,7 @@ const getUsersByStatus = async (req, res) => {
     const { status } = req.query // Obtén el parámetro de consulta 'status'
     const users = await User.findAll({
       where: {
-        status // Filtrar por el estado proporcionado
+        status: status // Filtrar por el estado proporcionado
       }
     })
 
