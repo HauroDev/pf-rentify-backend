@@ -1,4 +1,5 @@
-const { Product, Category } = require('../db/db.js')
+const { Product, Category } = require('../db/db.js');
+const { Op } = require('sequelize');
 
 const getCategories = async (_req, res) => {
   try {
@@ -35,14 +36,25 @@ const createCategories = async (req, res) => {
     ]
 
     if (!allowedCategories.includes(name)) {
-      throw Error(`invalid category: ${name}`)
+      throw new Error(`Invalid category: ${name}`)
     }
+
+    const existingCategory = await Category.findOne({
+      where: {
+        name: name
+      }
+    })
+
+    if (existingCategory) {
+      throw new Error(`Category ${name} already exists`)
+    }
+
     const allCategories = await Category.findAll({
       attributes: ['name']
     })
 
-    if (allCategories.find((category) => category.name === name)) {
-      throw new Error(`Category ${name} already exists`)
+    if (allCategories.length === allowedCategories.length) {
+      throw new Error('All categories have already been created')
     }
 
     const categoryCreated = await Category.create({ name })
