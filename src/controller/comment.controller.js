@@ -1,34 +1,51 @@
-const { Comment, Product, User } = require('../db/db')
+const { Comment, Product, User } = require("../db/db");
 
+const validarUUID = (uuid) => {
+  const uuidRegex =
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  return uuidRegex.test(uuid);
+};
 const newComment = async (req, res) => {
-  const { comment, puntuation, commentStatus, idProd, idUser } = req.body
+  const { comment, puntuation, commentStatus, idProd, idUser } = req.body;
   try {
+    //Validations/////////////////
+    if (!idProd || !idUser) throw new Error("User or product is null");
+
+    const product = await Product.findByPk(idProd);
+    if (!product) throw new Error("The Product does not exist");
+
+    if (!validarUUID(idUser)) throw new Error("Username not format");
+
+    const userToComment = await User.findByPk(idUser);
+
+    if (!userToComment) throw new Error("Username does not exist");
+    /////////////////////
+
     const newComment = await Comment.create({
       comment,
       puntuation,
-      commentStatus
-    })
-    const product = await Product.findByPk(idProd)
-    await product.addComment(newComment)
-    const userToComment = await User.findByPk(idUser)
-    await userToComment.addComment(newComment)
+      commentStatus,
+    });
+
+    await product.addComment(newComment);
+    await userToComment.addComment(newComment);
     const recordComment = await Comment.findByPk(newComment.idComment, {
       include: [
         {
-          model: Product
+          model: Product,
         },
         {
-          model: User
-        }
-      ]
-    })
+          model: User,
+        },
+      ],
+    });
 
-    res.json(recordComment)
+    res.json(recordComment);
   } catch (error) {
-    console.log(error)
-    res.status(400).json(error)
+    console.log(error);
+    res.status(400).json(error);
   }
-}
+};
 
 // const updateComment = async (req, res) => {
 //   await Comment.update(
@@ -49,7 +66,7 @@ const newComment = async (req, res) => {
 //   });
 // };
 
-module.exports = { newComment }
+module.exports = { newComment };
 
 // Definición del modelo de Comentario
 // const Comentario = {
