@@ -4,9 +4,8 @@ const { obtenerNextPageProduct } = require('../utils/paginado.js')
 
 const getProducts = async (req, res) => {
   // agregar price entre un rango a futuro
-  let { name, offset, limit, orderAlpha, orderPrice, orderDate } = req.query;
-  const {categories} = req.body
-  //categories:[{idCategory,name}]
+  let { name, offset, limit, orderBy, orderType, idCategory } = req.query
+
   const whereOptions = name
     ? {
         name: {
@@ -14,35 +13,32 @@ const getProducts = async (req, res) => {
         }
       }
     : {}
-  
 
   const orderOptions = []
 
-  if (orderPrice && (orderPrice === 'ASC' || orderPrice === 'DESC')) {
-    orderOptions.push(['price', orderPrice])
+  switch (orderBy) {
+    case 'price':
+      orderOptions.push(['price', orderType])
+      break
+    case 'name':
+      orderOptions.push(['name', orderType])
+      break
+    case 'date':
+    default:
+      orderOptions.push(['updateAt', orderType])
   }
-
-  if (orderAlpha && (orderAlpha === 'ASC' || orderAlpha === 'DESC')) {
-    orderOptions.push(['name', orderAlpha])
-  }
-
-  if (orderDate && (orderDate === 'ASC' || orderDate === 'DESC')) {
-    orderOptions.push(['createdAt', orderDate])
-  }
-
-
 
   try {
-    const count = await Product.count(whereOptions)
-
+    const count = await Product.count({ where: whereOptions })
 
     const products = await Product.findAll({
       where: whereOptions,
       include: [
         {
           model: Category,
-          attributes: ['idCategory', 'name'],
-          through: { attributes: [] }
+          through: { attributes: [] },
+          as: 'categories', // si o si tiene que tener esto si la relacion en db.js tiene un "as" aun no se por que. att:victor
+          where: idCategory ? { idCategory: +idCategory } : {}
         }
       ],
       offset: offset || 0,
@@ -50,26 +46,14 @@ const getProducts = async (req, res) => {
       order: orderOptions.length ? orderOptions : undefined
     })
 
+    console.log(products)
+
     offset = offset || offset > 0 ? +offset : 0
     limit = limit ? +limit : 12
-
-    let productsJSON = products.toJSON();
-    let productResponse = [];
-    if(categories.length){
-      for (const prod of productsJSON) {
-        for (const catg of categories) {
-          if(prod.Categories.include(catg) && productResponse.some(p=>p.idProd === prod.idProd)){
-            productResponse.push(prod)
-          }
-        }
-      }
-    }
-
-
     res.status(200).json({
       count,
       next: obtenerNextPageProduct(offset, limit, count),
-      products: productResponse.length ? productResponse : productsJSON
+      results: products
     })
   } catch (error) {
     res.status(500).json({ message: error.message })
@@ -83,10 +67,12 @@ const createProduct = async (req, res) => {
       where: { name: product.categories?.map((cat) => cat.name) }
     })
 
+    // condicional temporal hasta tener post
+
     if (!categoriesDb.length) {
       categoriesDb = await Category.bulkCreate(product?.categories)
-      // throw new Error('No product categories were found')
     }
+
     const productDb = await Product.create(product)
 
     await productDb.setCategories(categoriesDb)
@@ -104,6 +90,7 @@ const createProduct = async (req, res) => {
     })
   } catch (error) {
     console.log(error)
+
     res.status(500).json({ message: error.message })
   }
 }
@@ -125,8 +112,6 @@ const getProductById = async (req, res) => {
       customError.status = 404
       throw customError
     }
-
-    // if()// condicion de busqueda statusPub =  active
 
     res.status(200).json(product)
   } catch (error) {
