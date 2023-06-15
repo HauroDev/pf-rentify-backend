@@ -2,7 +2,8 @@ const { Router } = require('express')
 
 const {
   postUser,
-  getUser
+  getUser,
+  getUsersByStatus
   //   putUser, deleteUser, getUserMember
 } = require('../controller/users.controller.js')
 
@@ -10,6 +11,7 @@ const router = Router()
 
 // metodos get
 router.get('/:id', getUser)
+router.get ('/',getUsersByStatus)
 // router.get('/ aca iria  qry  de esta manera en testeo /users?membership=standard'  ,getUserMember);
 
 // metodos post

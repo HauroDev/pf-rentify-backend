@@ -6,30 +6,36 @@ const { Sequelize } = require("sequelize");
 // -- Actuliazar datos de usuario (put)
 // -- Eliminar usuario (delete)
 // -- Obtener usurio por memebresia (get)
-
 // Crear nuevo usuario (POST /users)
-const postUser = async (req, res) => {
-    try {
-        // Obtén los datos del cuerpo de la solicitud
-        const { name, email, phone, image, membership, status } = req.body;
 
-        // Crea un nuevo usuario en la base de datos
-        const newUser = await User.create({
-            name,
-            email,
-            phone,
-            image,
-            membership,
-            status
-        });
-        
-        // Envía la respuesta con el usuario creado
-        res.status(201).json(newUser);
-    } catch (error) {
-        console.log(error)
-        // En caso de error, envía una respuesta de error
-        res.status(500).json({ error: 'Error al crear el usuario' });
-    }
+const postUser = async (req, res) => {
+  try {
+      // Obtén los datos del cuerpo de la solicitud
+      const { name, email, phone, image, membership, status } = req.body;
+
+      // Verifica si el email ya existe en la base de datos
+      const existingUser = await User.findOne({ email });
+      if (existingUser) {
+          // Si el email ya existe, devuelve una respuesta de error
+          return res.status(400).json({ error: 'El email ya está registrado' });
+      }
+      // Crea un nuevo usuario en la base de datos
+      const newUser = await User.create({
+          name,
+          email,
+          phone,
+          image,
+          membership,
+          status
+      });
+      
+      // Envía la respuesta con el usuario creado
+      res.status(201).json(newUser);
+  } catch (error) {
+      console.log(error);
+      // En caso de error, envía una respuesta de error
+      res.status(500).json({ error: 'Error al crear el usuario' });
+  }
 };
 // Obtener usuario por ID (GET)
 const getUser = async (req, res) => {
