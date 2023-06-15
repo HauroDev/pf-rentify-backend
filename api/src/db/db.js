@@ -48,8 +48,8 @@ User.belongsToMany(Product, { through: 'UserProduct' })
 Product.belongsToMany(User, { through: 'UserProduct' })
 
 // un producto tiene muchos comentarios
-Product.hasMany(Comment, { foreignKey: 'idProd' })
-Comment.belongsTo(Product)
+Product.hasMany(Comment, { as: 'comments', foreignKey: 'idProd' })
+Comment.belongsTo(Product, { foreignKey: 'idProd' })
 
 // una categoria tiene muchos productos
 
@@ -58,8 +58,8 @@ Product.belongsToMany(Category, { through: 'CategoryProduct' })
 
 // un usuario tiene muchos comentarios
 
-User.hasMany(Comment, { foreignKey: 'idUser' })
-Comment.belongsTo(User)
+User.hasMany(Comment, { as: 'comments', foreignKey: 'idUser' })
+Comment.belongsTo(User, { foreignKey: 'idUser' })
 
 module.exports = {
   conn: sequelize,
