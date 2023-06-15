@@ -62,7 +62,7 @@ const getUsersByStatus = async (req, res) => {
     const { status } = req.query // Obtén el parámetro de consulta 'status'
     const users = await User.findAll({
       where: {
-        status: status // Filtrar por el estado proporcionado
+        status // Filtrar por el estado proporcionado
       }
     })
 
