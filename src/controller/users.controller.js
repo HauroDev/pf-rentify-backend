@@ -12,12 +12,16 @@ const postUser = async (req, res) => {
   try {
       // Obtén los datos del cuerpo de la solicitud
       const { name, email, phone, image, membership, status } = req.body;
-
       // Verifica si el email ya existe en la base de datos
-      const existingUser = await User.findOne({ email });
+      const existingUser = await User.findOne({where:{ email }});
+      const numbeUser = await User.findOne({where:{ phone }});
+      
       if (existingUser) {
-          // Si el email ya existe, devuelve una respuesta de error
-          return res.status(400).json({ error: 'El email ya está registrado' });
+      // Si el email ya existe, devuelve una respuesta de error
+      return res.status(400).json({ error: 'Error correo existente ' });
+      } 
+      else if(numbeUser){
+        return res.status(400).json({ error: 'Error number ' });
       }
       // Crea un nuevo usuario en la base de datos
       const newUser = await User.create({
