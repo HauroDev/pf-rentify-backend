@@ -43,18 +43,35 @@ sequelize.models = Object.fromEntries(capsEntries)
 
 const { User, Product, Comment, Category } = sequelize.models
 
-// un usuario crea muchos productos (vendedor)
-User.belongsToMany(Product, { through: 'UserProduct' })
-Product.belongsToMany(User, { through: 'UserProduct' })
+User.belongsToMany(Product, {
+  through: 'UserProduct',
+  as: 'products',
+  foreignKey: 'idUser'
+})
 
-// un producto tiene muchos comentarios
-Product.hasMany(Comment)
-Comment.belongsTo(Product)
+Product.belongsToMany(User, {
+  through: 'UserProduct',
+  as: 'users',
+  foreignKey: 'idProd'
+})
 
-// una categoria tiene muchos productos
+Product.hasMany(Comment, { as: 'comments', foreignKey: 'idProd' })
+Comment.belongsTo(Product, { foreignKey: 'idProd' })
 
-Category.belongsToMany(Product, { through: 'CategoryProduct' })
-Product.belongsToMany(Category, { through: 'CategoryProduct' })
+Category.belongsToMany(Product, {
+  through: 'CategoryProduct',
+  as: 'products',
+  foreignKey: 'idCategory'
+})
+
+Product.belongsToMany(Category, {
+  through: 'CategoryProduct',
+  as: 'categories',
+  foreignKey: 'idProd'
+})
+
+User.hasMany(Comment, { as: 'comments', foreignKey: 'idUser' })
+Comment.belongsTo(User, { foreignKey: 'idUser' })
 
 module.exports = {
   conn: sequelize,
