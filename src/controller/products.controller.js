@@ -16,6 +16,8 @@ const getProducts = async (req, res) => {
 
   const orderOptions = []
 
+  orderType = orderType || 'ASC'
+
   switch (orderBy) {
     case 'price':
       orderOptions.push(['price', orderType])
@@ -25,7 +27,7 @@ const getProducts = async (req, res) => {
       break
     case 'date':
     default:
-      orderOptions.push(['updateAt', orderType])
+      orderOptions.push(['updatedAt', orderType])
   }
 
   try {
@@ -43,13 +45,12 @@ const getProducts = async (req, res) => {
       ],
       offset: offset || 0,
       limit: limit || 12,
-      order: orderOptions.length ? orderOptions : undefined
+      order: orderOptions
     })
-
-    console.log(products)
 
     offset = offset || offset > 0 ? +offset : 0
     limit = limit ? +limit : 12
+
     res.status(200).json({
       count,
       next: obtenerNextPageProduct(offset, limit, count),

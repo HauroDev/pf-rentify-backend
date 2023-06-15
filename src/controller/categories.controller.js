@@ -6,7 +6,9 @@ const getCategories = async (req, res) => {
     const categories = await Category.findAll({
       include: {
         model: Product,
-        attributes: ['idProd', 'name']
+        as: 'products',
+        attributes: ['idProd', 'name'],
+        through: { attributes: [] }
       }
     })
 
