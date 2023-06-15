@@ -3,9 +3,8 @@ const { Op } = require('sequelize')
 const { obtenerNextPageProduct } = require('../utils/paginado.js')
 
 const getProducts = async (req, res) => {
-  let { name, offset, limit, order } = req.query
-
-  // agregar offset, limit, order = por fecha y condicional solo disponible cuando el usuario lo pida
+  // agregar price entre un rango a futuro
+  let { name, offset, limit, orderBy, orderType, idCategory } = req.query
 
   const whereOptions = name
     ? {
@@ -15,21 +14,38 @@ const getProducts = async (req, res) => {
       }
     : {}
 
+  const orderOptions = []
+
+  orderType = orderType || 'ASC'
+
+  switch (orderBy) {
+    case 'price':
+      orderOptions.push(['price', orderType])
+      break
+    case 'name':
+      orderOptions.push(['name', orderType])
+      break
+    case 'date':
+    default:
+      orderOptions.push(['updatedAt', orderType])
+  }
+
   try {
-    const count = await Product.count(whereOptions)
+    const count = await Product.count({ where: whereOptions })
 
     const products = await Product.findAll({
       where: whereOptions,
       include: [
         {
           model: Category,
-          attributes: ['idCategory', 'name'],
-          through: { attributes: [] }
+          through: { attributes: [] },
+          as: 'categories', // si o si tiene que tener esto si la relacion en db.js tiene un "as" aun no se por que. att:victor
+          where: idCategory ? { idCategory: +idCategory } : {}
         }
       ],
       offset: offset || 0,
       limit: limit || 12,
-      order: order || undefined
+      order: orderOptions
     })
 
     offset = offset || offset > 0 ? +offset : 0
@@ -38,15 +54,17 @@ const getProducts = async (req, res) => {
     res.status(200).json({
       count,
       next: obtenerNextPageProduct(offset, limit, count),
-      products
+      results: products
     })
   } catch (error) {
     res.status(500).json({ message: error.message })
   }
 }
 
+// faltan hacer verificaciones para que no cree productos si no se cumplen ciertas reglas
 const createProduct = async (req, res) => {
-  const product = { ...req.body }
+  const { idUser, ...product } = req.body
+
   try {
     let categoriesDb = await Category.findAll({
       where: { name: product.categories?.map((cat) => cat.name) }
@@ -54,9 +72,16 @@ const createProduct = async (req, res) => {
 
     if (!categoriesDb.length) {
       categoriesDb = await Category.bulkCreate(product?.categories)
-      // throw new Error('No product categories were found')
     }
+
+    if (!idUser) throw new Error('idUser is required to create a product.')
+
     const productDb = await Product.create(product)
+    const user = await User.findByPk(idUser)
+
+    console.log(productDb.toJSON())
+
+    await productDb.addUser(user)
 
     await productDb.setCategories(categoriesDb)
 
@@ -72,7 +97,6 @@ const createProduct = async (req, res) => {
       categories: categoriesSeach
     })
   } catch (error) {
-    console.log(error)
     res.status(500).json({ message: error.message })
   }
 }
@@ -83,9 +107,8 @@ const getProductById = async (req, res) => {
   try {
     const product = await Product.findByPk(id, {
       include: [
-        { model: Category, attributes: {} },
-        { model: Comment, attributes: {} },
-        { model: User, attributes: {} }
+        { model: Category, as: 'categories', through: { attributes: [] } },
+        { model: Comment, as: 'comments' }
       ]
     })
 
@@ -95,11 +118,9 @@ const getProductById = async (req, res) => {
       throw customError
     }
 
-    // if()// condicion de busqueda statusPub =  active
-
     res.status(200).json(product)
   } catch (error) {
-    res.status(error?.status || 500).json({ message: error.message })
+    res.status(500).json({ message: error.message })
   }
 }
 

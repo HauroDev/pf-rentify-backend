@@ -5,11 +5,9 @@ module.exports = (sequelize) => {
     'Category',
     {
       idCategory: {
+        type: DataTypes.INTEGER,
         primaryKey: true,
-        type: DataTypes.UUID,
-        defaultValue: DataTypes.UUIDV4,
-        unique: true
-        // allowNull: false
+        autoIncrement: true
       },
       name: {
         // ya arregle las categorias

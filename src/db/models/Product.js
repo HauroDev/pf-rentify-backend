@@ -1,7 +1,5 @@
 const { DataTypes } = require('sequelize')
 
-// en este modelo toca quitar el id de comentario de la relacion y unirlo a id de comentario
-
 module.exports = (sequelize) => {
   sequelize.define(
     'Product',
@@ -58,16 +56,7 @@ module.exports = (sequelize) => {
         type: DataTypes.FLOAT,
         allowNull: false,
         defaultValue: 0,
-        // validate: {
-        //   max: {
-        //     args: 100000000,
-        //     msg: 'price is too big'
-        //   },
-        //   min: {
-        //     args: 0,
-        //     msg: 'Price must be a positive number'
-        //   }
-        // },
+
         comment: 'Price of the product'
       },
       location: {
@@ -110,14 +99,4 @@ module.exports = (sequelize) => {
       tableName: 'products'
     }
   )
-
-  // Product.belongsTo(User, {
-  //     foreignKey: 'userId',
-  //     as: 'user',
-  //   });
-
-  //   User.hasMany(Product, {
-  //     foreignKey: 'userId',
-  //     as: 'products',
-  //   });
 }
