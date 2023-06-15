@@ -10,13 +10,17 @@ const { Sequelize } = require("sequelize");
 
 const postUser = async (req, res) => {
   try {
+      const regeexEmail=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       // Obtén los datos del cuerpo de la solicitud
       const { name, email, phone, image, membership, status } = req.body;
       // Verifica si el email ya existe en la base de datos
       const existingUser = await User.findOne({where:{ email }});
       const numbeUser = await User.findOne({where:{ phone }});
-      
-      if (existingUser) {
+      // verificacion de formato de regeex para correo electronico 
+      if(!regeexEmail.test(email)){
+        return res.status(400).json({ error: 'formato de correo no valido ' });
+      }
+      else if (existingUser) {
       // Si el email ya existe, devuelve una respuesta de error
       return res.status(400).json({ error: 'Error correo existente ' });
       } 
