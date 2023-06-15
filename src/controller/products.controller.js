@@ -14,7 +14,7 @@ const getProducts = async (req, res) => {
       }
     : {}
 
-  const orderOptions = []
+  const orderOptions = [['isFeatured', 'DESC']]
 
   orderType = orderType || 'ASC'
 
@@ -66,22 +66,27 @@ const createProduct = async (req, res) => {
   const { idUser, ...product } = req.body
 
   try {
-    let categoriesDb = await Category.findAll({
+    const categoriesDb = await Category.findAll({
       where: { name: product.categories?.map((cat) => cat.name) }
     })
-
+    // Validaciones
     if (!categoriesDb.length) {
-      categoriesDb = await Category.bulkCreate(product?.categories)
+      throw new Error('categories not found')
+      // categoriesDb = await Category.bulkCreate(product?.categories)
     }
 
     if (!idUser) throw new Error('idUser is required to create a product.')
 
-    const productDb = await Product.create(product)
     const user = await User.findByPk(idUser)
 
+    if (!user) throw new Error('User is not found.')
+
+    // fin de Validaciones
+
+    const productDb = await Product.create(product)
     await productDb.addUser(user)
 
-    await productDb.setCategories(categoriesDb)
+    await productDb.addCategories(categoriesDb)
 
     let categoriesSeach = await productDb.getCategories()
 
@@ -95,6 +100,7 @@ const createProduct = async (req, res) => {
       categories: categoriesSeach
     })
   } catch (error) {
+    console.log(error)
     res.status(500).json({ message: error.message })
   }
 }
