@@ -1,36 +1,34 @@
-const { Comment, Product, User } = require("../db/db");
+const { Comment, Product, User } = require('../db/db')
 
 const newComment = async (req, res) => {
-  const { comment, puntuation, commentStatus, idProd, idUser } = req.body;
+  const { comment, puntuation, commentStatus, idProd, idUser } = req.body
   try {
     const newComment = await Comment.create({
       comment,
       puntuation,
-      commentStatus,
-    });
-    const product = await Product.findByPk(idProd);
-    await product.addComment(newComment);
-    const userToComment = await User.findByPk(idUser);
-    await userToComment.addComment(newComment);
+      commentStatus
+    })
+    const product = await Product.findByPk(idProd)
+    await product.addComment(newComment)
+    const userToComment = await User.findByPk(idUser)
+    await userToComment.addComment(newComment)
     const recordComment = await Comment.findByPk(newComment.idComment, {
       include: [
         {
-          model: Product,
-
-          //through: { attributes: [] },
+          model: Product
         },
         {
-          model: User,
-        },
-      ],
-    });
+          model: User
+        }
+      ]
+    })
 
-    res.json(recordComment);
+    res.json(recordComment)
   } catch (error) {
-    console.log(error);
-    res.status(400).json(error);
+    console.log(error)
+    res.status(400).json(error)
   }
-};
+}
 
 // const updateComment = async (req, res) => {
 //   await Comment.update(
@@ -51,7 +49,7 @@ const newComment = async (req, res) => {
 //   });
 // };
 
-module.exports = { newComment };
+module.exports = { newComment }
 
 // Definición del modelo de Comentario
 // const Comentario = {
