@@ -79,8 +79,6 @@ const createProduct = async (req, res) => {
     const productDb = await Product.create(product)
     const user = await User.findByPk(idUser)
 
-    console.log(productDb.toJSON())
-
     await productDb.addUser(user)
 
     await productDb.setCategories(categoriesDb)
@@ -105,6 +103,8 @@ const getProductById = async (req, res) => {
   const { id } = req.params
 
   try {
+    if (!id) throw new Error('You need an ID to obtain a product.')
+
     const product = await Product.findByPk(id, {
       include: [
         { model: Category, as: 'categories', through: { attributes: [] } },

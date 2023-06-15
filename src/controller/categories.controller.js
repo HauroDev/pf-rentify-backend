@@ -1,6 +1,6 @@
 const { Product, Category } = require('../db/db.js')
 
-const getCategories = async (req, res) => {
+const getCategories = async (_req, res) => {
   try {
     console.log(Category)
     const categories = await Category.findAll({
