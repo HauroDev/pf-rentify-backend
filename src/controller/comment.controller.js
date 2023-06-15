@@ -1,4 +1,5 @@
 const { Comment, Product, User } = require("../db/db");
+const { createError } = require("../utils/customErrors");
 
 const validarUUID = (uuid) => {
   const uuidRegex =
@@ -9,16 +10,32 @@ const newComment = async (req, res) => {
   const { comment, puntuation, commentStatus, idProd, idUser } = req.body;
   try {
     //Validations/////////////////
-    if (!idProd || !idUser) throw new Error("User or product is null");
+    if (!idProd || !idUser)
+      throw createError(
+        409,
+        "The request could not be completed, User or Product is null"
+      );
 
     const product = await Product.findByPk(idProd);
-    if (!product) throw new Error("The Product does not exist");
+    if (!product)
+      throw createError(
+        409,
+        "The request could not be completed, idProd does not exist"
+      );
 
-    if (!validarUUID(idUser)) throw new Error("Username not format");
+    if (!validarUUID(idUser))
+      throw createError(
+        409,
+        "The request could not be completed, Username not format"
+      );
 
     const userToComment = await User.findByPk(idUser);
 
-    if (!userToComment) throw new Error("Username does not exist");
+    if (!userToComment)
+      throw createError(
+        409,
+        "The request could not be completed, Username does not exist"
+      );
     /////////////////////
 
     const newComment = await Comment.create({
