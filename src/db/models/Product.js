@@ -4,7 +4,7 @@ module.exports = (sequelize) => {
   sequelize.define(
     'Product',
     {
-      id: {
+      idProd: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
         primaryKey: true,
@@ -56,12 +56,7 @@ module.exports = (sequelize) => {
         type: DataTypes.FLOAT,
         allowNull: false,
         defaultValue: 0,
-        validate: {
-          min: {
-            args: 0,
-            msg: 'Price must be a positive number'
-          }
-        },
+
         comment: 'Price of the product'
       },
       location: {
@@ -77,18 +72,20 @@ module.exports = (sequelize) => {
       },
       statusPub: {
         type: DataTypes.ENUM('active', 'inactive', 'paused'),
-        allowNull: false,
+        // allowNull: false,
         defaultValue: 'active',
         comment: 'Status of the publication'
       },
       statusProd: {
         type: DataTypes.ENUM('available', 'rented'),
-        allowNull: false,
+        // allowNull: false,
+        defaultValue: 'available',
         comment: 'Status of the product'
       },
       isFeatured: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
+        defaultValue: false,
         comment: 'Is the product featured?'
       }
       // stock: {
@@ -99,18 +96,7 @@ module.exports = (sequelize) => {
     },
     {
       comment: 'Table containing information about product',
-      tableName: 'product',
-      timestamps: false
+      tableName: 'products'
     }
   )
-
-  // Product.belongsTo(User, {
-  //     foreignKey: 'userId',
-  //     as: 'user',
-  //   });
-
-  //   User.hasMany(Product, {
-  //     foreignKey: 'userId',
-  //     as: 'products',
-  //   });
 }
