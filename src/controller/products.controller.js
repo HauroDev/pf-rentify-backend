@@ -61,20 +61,27 @@ const getProducts = async (req, res) => {
   }
 }
 
+// faltan hacer verificaciones para que no cree productos si no se cumplen ciertas reglas
 const createProduct = async (req, res) => {
-  const product = { ...req.body }
+  const { idUser, ...product } = req.body
+
   try {
     let categoriesDb = await Category.findAll({
       where: { name: product.categories?.map((cat) => cat.name) }
     })
 
-    // condicional temporal hasta tener post
-
     if (!categoriesDb.length) {
       categoriesDb = await Category.bulkCreate(product?.categories)
     }
 
+    if (!idUser) throw new Error('idUser is required to create a product.')
+
     const productDb = await Product.create(product)
+    const user = await User.findByPk(idUser)
+
+    console.log(productDb.toJSON())
+
+    await productDb.addUser(user)
 
     await productDb.setCategories(categoriesDb)
 
@@ -90,8 +97,6 @@ const createProduct = async (req, res) => {
       categories: categoriesSeach
     })
   } catch (error) {
-    console.log(error)
-
     res.status(500).json({ message: error.message })
   }
 }
@@ -102,9 +107,8 @@ const getProductById = async (req, res) => {
   try {
     const product = await Product.findByPk(id, {
       include: [
-        { model: Category, attributes: {} },
-        { model: Comment, attributes: {} },
-        { model: User, attributes: {} }
+        { model: Category, as: 'categories', through: { attributes: [] } },
+        { model: Comment, as: 'comments' }
       ]
     })
 
@@ -116,7 +120,7 @@ const getProductById = async (req, res) => {
 
     res.status(200).json(product)
   } catch (error) {
-    res.status(error?.status || 500).json({ message: error.message })
+    res.status(500).json({ message: error.message })
   }
 }
 

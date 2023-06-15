@@ -47,12 +47,13 @@ const { User, Product, Comment, Category } = sequelize.models
 User.belongsToMany(Product, {
   through: 'UserProduct',
   as: 'products',
-  foreignKey: 'idProd'
+  foreignKey: 'idUser'
 })
+
 Product.belongsToMany(User, {
   through: 'UserProduct',
   as: 'users',
-  foreignKey: 'idUser'
+  foreignKey: 'idProd'
 })
 
 // un producto tiene muchos comentarios
