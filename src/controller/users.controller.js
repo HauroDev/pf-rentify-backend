@@ -1,4 +1,5 @@
-const { User } = require("../db/db");
+const { User } = require('../db/db')
+const { createCustomError } = require('../utils/customErrors')
 
 // -- Obtener ususario por id (get userById)
 // -- Crear nuevo usuario (post user)
@@ -9,21 +10,23 @@ const { User } = require("../db/db");
 
 const postUser = async (req, res) => {
   try {
-    const regeexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const regeexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     // Obtén los datos del cuerpo de la solicitud
-    const { name, email, phone, image, membership, status } = req.body;
+    const { name, email, phone, image, membership, status } = req.body
     // Verifica si el email ya existe en la base de datos
-    const existingUser = await User.findOne({ where: { email } });
-    const numbeUser = await User.findOne({ where: { phone } });
+    const existingUser = await User.findOne({ where: { email } })
+    const numbeUser = await User.findOne({ where: { phone } })
     // verificacion de formato de regeex para correo electronico
+
     if (!regeexEmail.test(email)) {
-      return res.status(400).json({ error: "formato de correo no valido " });
+      throw createCustomError(400, 'formato de correo no valido ')
     } else if (existingUser) {
       // Si el email ya existe, devuelve una respuesta de error
-      return res.status(400).json({ error: "Error correo existente " });
+      throw createCustomError(400, 'Error correo existente')
     } else if (numbeUser) {
-      return res.status(400).json({ error: "Error number " });
+      throw createCustomError(400, 'Error number phone')
     }
+
     // Crea un nuevo usuario en la base de datos
     const newUser = await User.create({
       name,
@@ -31,49 +34,53 @@ const postUser = async (req, res) => {
       phone,
       image,
       membership,
-      status,
-    });
+      status
+    })
 
     // Envía la respuesta con el usuario creado
-    res.status(201).json(newUser);
+    res.status(201).json(newUser)
   } catch (error) {
-    console.log(error);
+    console.log(error)
     // En caso de error, envía una respuesta de error
-    res.status(500).json({ error: "Error al crear el usuario" });
+    res.status(error?.status || 500).json({ error: error?.message })
   }
-};
+}
 // Obtener usuario por ID (GET)
 const getUser = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { id } = req.params
     const userId = await User.findOne({
       where: {
-        idUser: id,
-      },
-    });
-    return res.status(200).json(userId);
+        idUser: id
+      }
+    })
+    if (!userId) throw createCustomError(404, 'usuario no existente')
+
+    return res.status(200).json(userId)
   } catch (error) {
-    res.status(400).json({ error: "Error en la busqueda de users" });
+    res
+      .status(error?.status || 500)
+      .json({ error: error?.message || 'Error en la busqueda de users' })
   }
-};
+}
 
 const getUsersByStatus = async (req, res) => {
   try {
-    const { status } = req.query; // Obtén el parámetro de consulta 'status'
+    const { status } = req.query // Obtén el parámetro de consulta 'status'
     const users = await User.findAll({
       where: {
-        status, // Filtrar por el estado proporcionado
-      },
-    });
+        status // Filtrar por el estado proporcionado
+      }
+    })
 
-    return res.status(200).json(users);
+    return res.status(200).json(users)
   } catch (error) {
-    console.log(error);
+    console.log(error)
     return res
       .status(500)
-      .json({ error: "Error en la búsqueda de usuarios por estado" });
+      .json({ error: 'Error en la búsqueda de usuarios por estado' })
   }
-};
+}
 
 // // Actualizar datos de usuario (PUT)
 // const putUser = async (req, res) => {
@@ -128,6 +135,6 @@ const getUsersByStatus = async (req, res) => {
 module.exports = {
   postUser,
   getUser,
-  getUsersByStatus,
+  getUsersByStatus
   //   putUser, deleteUser, getUserMember
-};
+}
