@@ -5,7 +5,25 @@ const morgan = require('morgan')
 const routerManager = require('./src/routes/index.js')
 const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
-
+// swagger
+const swaggerUI = require('swagger-ui-express')
+const swaggerJsDoc = require('swagger-jsdoc')
+const swaggerSpec = {
+  definition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'Api-Rentify',
+      version: '1.0.0'
+    },
+    servers: [
+      {
+        url: 'http://localhost:3001/api-rentify'
+      }
+    ]
+  },
+  apis: ['./src/routes/*.js']
+}
+//
 const app = express()
 
 app.use(express.json())
@@ -37,6 +55,11 @@ app.use((req, res, next) => {
 */
 
 app.use('/api-rentify', routerManager)
+
+// swagger
+app.use('/api-doc', swaggerUI.serve, swaggerUI.setup(swaggerJsDoc(swaggerSpec)))
+console.log('http://localhost:3001/api-doc ---> documentacion')
+//
 
 conn
   .sync({ force: false })
