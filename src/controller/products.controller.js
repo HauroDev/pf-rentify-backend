@@ -58,7 +58,6 @@ const getProducts = async (req, res) => {
       queryExtend += orderBy ? `&orderBy=${orderBy}` : ''
       queryExtend += orderType ? `&orderType=${orderType}` : ''
     }
-    console.log(queryExtend)
 
     res.status(200).json({
       count,
@@ -84,8 +83,8 @@ const createProduct = async (req, res) => {
         404,
         'The request could not be completed, Categories not found'
       )
-      // categoriesDb = await Category.bulkCreate(product?.categories)
     }
+    // categoriesDb = await Category.bulkCreate(product?.categories)
 
     if (!idUser) {
       throw createCustomError(
@@ -150,7 +149,17 @@ const getProductById = async (req, res) => {
       )
     }
 
-    res.status(200).json(product)
+    const userCreator = await product.getUsers({
+      order: [['createdAt', 'DESC']],
+      limit: 1
+    })
+
+    // no me dejo de otra sequelize que mutar los objetos del array
+    userCreator[0] = userCreator[0].toJSON()
+
+    delete userCreator[0]?.UserProduct
+
+    res.status(200).json({ ...product.toJSON(), users: userCreator })
   } catch (error) {
     res.status(500).json({ message: error.message })
   }
