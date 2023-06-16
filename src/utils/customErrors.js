@@ -1,8 +1,8 @@
 class CustomError extends Error {
-  constructor (statusCode, message) {
+  constructor (status, message) {
     super(message)
-    this.statusCode = statusCode
-    this.name = this.constructor.name
+    this.status = status
+    this.message = this.constructor.message
     Error.captureStackTrace(this, this.constructor)
   }
 }
@@ -10,8 +10,8 @@ class CustomError extends Error {
 // se establece la pila de llamadas específica del error.
 // se puede eliminar
 
-const createCustomError = (statusCode, message) => {
-  return new CustomError(statusCode, message)
+const createCustomError = (status, message) => {
+  return new CustomError(status, message)
 }
 
 module.exports = {

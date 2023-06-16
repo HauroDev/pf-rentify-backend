@@ -52,16 +52,17 @@ const getProducts = async (req, res) => {
     offset = offset || offset > 0 ? +offset : 0
     limit = limit ? +limit : 12
 
+    let queryExtend = obtenerNextPageProduct(offset, limit, count)
+    if (queryExtend) {
+      queryExtend += name ? `&name=${name}` : ''
+      queryExtend += orderBy ? `&orderBy=${orderBy}` : ''
+      queryExtend += orderType ? `&orderType=${orderType}` : ''
+    }
+    console.log(queryExtend)
+
     res.status(200).json({
       count,
-      next:
-        obtenerNextPageProduct(offset, limit, count) + name
-          ? `&name=${name}`
-          : '' + orderBy
-            ? `&orderBy=${orderBy}`
-            : '' + orderType
-              ? `&orderType=${orderType}`
-              : '',
+      next: queryExtend,
       results: products
     })
   } catch (error) {
