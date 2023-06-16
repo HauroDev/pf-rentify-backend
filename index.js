@@ -1,5 +1,5 @@
 const express = require('express')
-const { PORT } = require('./config')
+const { PORT, URL_DEPLOY, URL_PRUEBAS, MODE } = require('./config')
 const { conn } = require('./src/db/db.js')
 const morgan = require('morgan')
 const routerManager = require('./src/routes/index.js')
@@ -8,6 +8,9 @@ const cookieParser = require('cookie-parser')
 // swagger
 const swaggerUI = require('swagger-ui-express')
 const swaggerJsDoc = require('swagger-jsdoc')
+const url = MODE === 'PRODUCTION' ? URL_DEPLOY : URL_PRUEBAS
+const urlApi = url + '/api-rentify'
+const urlDoc = url + '/api-doc'
 const swaggerSpec = {
   definition: {
     openapi: '3.0.0',
@@ -17,7 +20,7 @@ const swaggerSpec = {
     },
     servers: [
       {
-        url: 'http://localhost:3001/api-rentify'
+        url: urlApi
       }
     ]
   },
@@ -58,13 +61,13 @@ app.use('/api-rentify', routerManager)
 
 // swagger
 app.use('/api-doc', swaggerUI.serve, swaggerUI.setup(swaggerJsDoc(swaggerSpec)))
-console.log('http://localhost:3001/api-doc ---> documentacion')
+console.log(urlDoc + '---> documentacion')
 //
 
 conn
   .sync({ force: false })
   .then(() => {
-    app.listen(PORT, () => console.log(PORT))
+    app.listen(PORT, () => console.log(PORT, urlApi))
   })
   .catch((error) => {
     console.error(error)
