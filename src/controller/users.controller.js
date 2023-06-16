@@ -78,27 +78,55 @@ const getUsersByStatus = async (req, res) => {
       return res.status(500).json({ error: 'Error en la búsqueda de usuarios por estado' });
     }
   };
+  // Obtener usuarios por membresía (GET)
 
-// // Actualizar datos de usuario (PUT)
-// const putUser = async (req, res) => {
-//     try {
-//         const { id } = req.params;
-//         const { name, email, phone, image, membership, status } = req.body;
+const getUserMember = async (req, res) => {
+  try {
+      const { membership } = req.query;
+      const users = await User.findAll({      
+       where: {
+        membership: membership // Filtrar por el membership proporcionado
+      } });
+      return res.status(200).json(users);
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({ error: 'Error en la búsqueda de usuarios por membrecia' });
+    }
+}
 
-//         const updatedUser = await User.update(
-//             { name, email, phone, image, membership, status },
-//             { where: { id } }
-//         );
 
-//         if (updatedUser[0] === 1) {
-//             res.json({ message: 'Usuario actualizado correctamente' });
-//         } else {
-//             res.status(404).json({ error: 'Usuario no encontrado' });
-//         }
-//     } catch (error) {
-//         res.status(500).json({ error: 'Error al actualizar el usuario' });
-//     }
-// }
+// Actualizar datos de usuario (PUT)
+const putUser = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { name, email, phone, image, membership, status } = req.body;
+
+        const updatedUser = await User.update(
+            { name, email, phone, image, membership, status },
+            { where: { id } }
+        );
+
+        if (updatedUser[0] === 1) {
+            res.json({ message: 'Usuario actualizado correctamente' });
+        } else {
+            res.status(404).json({ error: 'Usuario no encontrado' });
+        }
+    } catch (error) {
+        res.status(500).json({ error: 'Error al actualizar el usuario' });
+    }
+}
+ 
+//llamar a todos los usuarios 
+const getAllUsers = async (req, res) => {
+  try {
+    const allUsers = await User.findAll(); // Obtener todos los usuarios de la base de datos utilizando el método "findAll()" proporcionado por el modelo "User"
+    res.status(200).json(allUsers); // Devolver una respuesta HTTP con el estado 200 (OK) y los usuarios obtenidos en formato JSON
+  } catch (error) {
+    console.error(error); // Imprimir el error en la consola para facilitar la depuración
+    res.status(500).json({ error: 'Internal server error' }); // Si ocurre un error, devolver una respuesta HTTP con el estado 500 (Internal Server Error) y un mensaje de error en formato JSON
+  }
+};
+
 
 // // Eliminar usuario (DELETE)
 // const deleteUser = async (req, res) => {
@@ -117,19 +145,9 @@ const getUsersByStatus = async (req, res) => {
 //     }
 // }
 
-// // Obtener usuarios por membresía (GET)
-// const getUserMember = async (req, res) => {
-//     try {
-//         const { membership } = req.query;
-//         const users = await User.findAll({ where: { membership } });
-
-//         res.json(users);
-//     } catch (error) {
-//         res.status(500).json({ error: 'Error al obtener los usuarios' });
-//     }
-// }
 
 
-module.exports = { postUser, getUser,getUsersByStatus
+
+module.exports = { postUser, getUser,getUsersByStatus,getAllUsers,getUserMember
 //   putUser, deleteUser, getUserMember
      };

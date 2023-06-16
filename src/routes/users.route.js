@@ -3,16 +3,20 @@ const { Router } = require('express')
 const {
   postUser,
   getUser,
-  getUsersByStatus
+  getUsersByStatus,
+  getAllUsers,
+  getUserMember
   //   putUser, deleteUser, getUserMember
 } = require('../controller/users.controller.js')
 
 const router = Router()
 
 // metodos get
+router.get('/users',getAllUsers)
 router.get('/:id', getUser)
-router.get ('/',getUsersByStatus)
-// router.get('/ aca iria  qry  de esta manera en testeo /users?membership=standard'  ,getUserMember);
+// problemas en la parte  delos filtrados 
+router.get ('/s',getUsersByStatus)
+router.get('/',getUserMember);
 
 // metodos post
 router.post('/', postUser)
