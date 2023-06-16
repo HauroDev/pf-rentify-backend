@@ -2,7 +2,7 @@ const express = require('express')
 const { PORT } = require('./config')
 const { conn } = require('./src/db/db.js')
 const morgan = require('morgan')
-const router = require('./src/routes/index.js')
+const routerManager = require('./src/routes/index.js')
 const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
 
@@ -36,12 +36,12 @@ app.use((req, res, next) => {
   Agregen sus rutas
 */
 
-app.use('/api-rentify', router)
+app.use('/api-rentify', routerManager)
 
 conn
   .sync({ force: false })
   .then(() => {
-    app.listen(PORT, () => console.log('estoy on en el puerto', PORT))
+    app.listen(PORT, () => console.log(PORT))
   })
   .catch((error) => {
     console.error(error)

@@ -19,7 +19,7 @@ const userMembershipStatusController = async (idUser, mbship) => {
 
 const userStatusContoller = async (idUser, status) => {
   const allowedUserStatuses = ['active', 'inactive', 'paused', 'banned']
-  if (!allowedUserStatuses.includes(mbsstatuship)) {
+  if (!allowedUserStatuses.includes(status)) {
     throw new Error(`${status} not valid`)
   }
 

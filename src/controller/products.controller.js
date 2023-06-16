@@ -1,6 +1,7 @@
 const { Product, Category, User, Comment } = require('../db/db.js')
 const { Op } = require('sequelize')
 const { obtenerNextPageProduct } = require('../utils/paginado.js')
+const { createCustomError } = require('../utils/customErrors')
 
 const getProducts = async (req, res) => {
   // agregar price entre un rango a futuro
@@ -51,9 +52,17 @@ const getProducts = async (req, res) => {
     offset = offset || offset > 0 ? +offset : 0
     limit = limit ? +limit : 12
 
+    let queryExtend = obtenerNextPageProduct(offset, limit, count)
+    if (queryExtend) {
+      queryExtend += name ? `&name=${name}` : ''
+      queryExtend += orderBy ? `&orderBy=${orderBy}` : ''
+      queryExtend += orderType ? `&orderType=${orderType}` : ''
+    }
+    console.log(queryExtend)
+
     res.status(200).json({
       count,
-      next: obtenerNextPageProduct(offset, limit, count),
+      next: queryExtend,
       results: products
     })
   } catch (error) {
@@ -71,16 +80,28 @@ const createProduct = async (req, res) => {
     })
     // Validaciones
     if (!categoriesDb.length) {
-      throw new Error('categories not found')
+      throw createCustomError(
+        404,
+        'The request could not be completed, Categories not found'
+      )
       // categoriesDb = await Category.bulkCreate(product?.categories)
     }
 
-    if (!idUser) throw new Error('idUser is required to create a product.')
+    if (!idUser) {
+      throw createCustomError(
+        404,
+        'The request could not be completed, idUser is required to create a product.'
+      )
+    }
 
     const user = await User.findByPk(idUser)
 
-    if (!user) throw new Error('User is not found.')
-
+    if (!user) {
+      throw createCustomError(
+        404,
+        'The request could not be completed, User is not found.'
+      )
+    }
     // fin de Validaciones
 
     const productDb = await Product.create(product)
@@ -109,8 +130,12 @@ const getProductById = async (req, res) => {
   const { id } = req.params
 
   try {
-    if (!id) throw new Error('You need an ID to obtain a product.')
-
+    if (!id) {
+      throw createCustomError(
+        404,
+        'The request could not be completed, You need an ID to obtain a product.'
+      )
+    }
     const product = await Product.findByPk(id, {
       include: [
         { model: Category, as: 'categories', through: { attributes: [] } },
@@ -119,9 +144,10 @@ const getProductById = async (req, res) => {
     })
 
     if (!product) {
-      const customError = new Error(`Product id:${id} is not found`)
-      customError.status = 404
-      throw customError
+      throw createCustomError(
+        404,
+        `The request could not be completed, Product id:${id} is not found`
+      )
     }
 
     res.status(200).json(product)
