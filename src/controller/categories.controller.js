@@ -1,17 +1,20 @@
-const { Product, Category } = require('../db/db.js')
+const { Category } = require('../db/db.js')
 const { createCustomError } = require('../utils/customErrors')
 
 const getCategories = async (_req, res) => {
   try {
     console.log(Category)
-    const categories = await Category.findAll({
-      include: {
-        model: Product,
-        as: 'products',
-        attributes: ['idProd', 'name'],
-        through: { attributes: [] }
-      }
-    })
+    const categories = await Category.findAll()
+    //  crear un endpoint que agrege esto
+    //
+    // {
+    //   include: {
+    //     model: Product,
+    //     as: 'products',
+    //     attributes: ['idProd', 'name'],
+    //     through: { attributes: [] }
+    //   }
+    // }
 
     res.status(200).json(categories)
   } catch (error) {
