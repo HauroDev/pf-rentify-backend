@@ -1,5 +1,5 @@
 const express = require('express')
-const { PORT } = require('./config')
+const { PORT, URL_DEPLOY, URL_PRUEBAS, MODE } = require('./config')
 const { conn } = require('./src/db/db.js')
 const morgan = require('morgan')
 const routerManager = require('./src/routes/index.js')
@@ -17,7 +17,7 @@ const swaggerSpec = {
     },
     servers: [
       {
-        url: 'http://localhost:3001/api-rentify'
+        url: MODE === 'PRODUCTION' ? URL_DEPLOY : URL_PRUEBAS + '/api-rentify'
       }
     ]
   },
