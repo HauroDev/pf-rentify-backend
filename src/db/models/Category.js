@@ -22,7 +22,8 @@ module.exports = (sequelize) => {
           'personal care',
           'arts and crafts'
         ),
-        allowNull: false
+        allowNull: false,
+        unique: true
       }
     },
     {
