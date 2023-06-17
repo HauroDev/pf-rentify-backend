@@ -1,5 +1,5 @@
 const { User } = require('../db/db')
-const { createCustomError } = require('../utils/customErrors')
+const { CustomError } = require('../utils/customErrors')
 
 // -- Obtener ususario por id (get userById)
 // -- Crear nuevo usuario (post user)
@@ -19,12 +19,12 @@ const postUser = async (req, res) => {
     // verificacion de formato de regeex para correo electronico
 
     if (!regeexEmail.test(email)) {
-      throw createCustomError(400, 'formato de correo no valido ')
+      throw new CustomError(400, 'formato de correo no valido ')
     } else if (existingUser) {
       // Si el email ya existe, devuelve una respuesta de error
-      throw createCustomError(400, 'Error correo existente')
+      throw new CustomError(400, 'Error correo existente')
     } else if (numbeUser) {
-      throw createCustomError(400, 'Error number phone')
+      throw new CustomError(400, 'Error number phone')
     }
 
     // Crea un nuevo usuario en la base de datos
@@ -54,7 +54,7 @@ const getUser = async (req, res) => {
         idUser: id
       }
     })
-    if (!userId) throw createCustomError(404, 'usuario no existente')
+    if (!userId) throw new CustomError(404, 'usuario no existente')
 
     return res.status(200).json(userId)
   } catch (error) {
