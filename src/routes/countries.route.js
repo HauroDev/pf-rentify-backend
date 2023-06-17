@@ -1,11 +1,10 @@
 const { Router } = require('express')
-const { route } = require('./products.route')
 const { createCustomError } = require('../utils/customErrors')
 const { Country } = require('../db/db.js')
 
 const router = Router()
 
-route.get('/', async (_req, res) => {
+router.get('/', async (_req, res) => {
   try {
     const countries = await Country.findAll()
 
@@ -15,7 +14,7 @@ route.get('/', async (_req, res) => {
   }
 })
 
-route.post('/', async (req, res) => {
+router.post('/', async (req, res) => {
   try {
     const { name, currency } = req.body
 

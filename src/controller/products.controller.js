@@ -1,4 +1,4 @@
-const { Product, Category, User, Comment } = require('../db/db.js')
+const { Product, Category, User, Comment, Country } = require('../db/db.js')
 const { Op } = require('sequelize')
 const { obtenerNextPageProduct } = require('../utils/paginado.js')
 const { createCustomError } = require('../utils/customErrors')
@@ -7,13 +7,13 @@ const getProducts = async (req, res) => {
   // agregar price entre un rango a futuro
   let { name, offset, limit, orderBy, orderType, idCategory } = req.query
 
-  const whereOptions = name
-    ? {
-        name: {
-          [Op.iLike]: `%${name}%`
-        }
-      }
-    : {}
+  const whereOptions = {}
+
+  if (name) {
+    whereOptions.name = {
+      [Op.iLike]: `%${name}%`
+    }
+  }
 
   const orderOptions = [['isFeatured', 'DESC']]
 
@@ -40,7 +40,7 @@ const getProducts = async (req, res) => {
         {
           model: Category,
           through: { attributes: [] },
-          as: 'categories', // si o si tiene que tener esto si la relacion en db.js tiene un "as" aun no se por que. att:victor
+          as: 'categories',
           where: idCategory ? { idCategory: +idCategory } : {}
         }
       ],
@@ -54,9 +54,21 @@ const getProducts = async (req, res) => {
 
     let queryExtend = obtenerNextPageProduct(offset, limit, count)
     if (queryExtend) {
-      queryExtend += name ? `&name=${name}` : ''
-      queryExtend += orderBy ? `&orderBy=${orderBy}` : ''
-      queryExtend += orderType ? `&orderType=${orderType}` : ''
+      const params = []
+
+      if (name) {
+        params.push(`name=${name}`)
+      }
+
+      if (orderBy) {
+        params.push(`orderBy=${orderBy}`)
+      }
+
+      if (orderType) {
+        params.push(`orderType=${orderType}`)
+      }
+
+      queryExtend += params.length > 0 ? `&${params.join('&')}` : ''
     }
 
     res.status(200).json({
@@ -71,7 +83,7 @@ const getProducts = async (req, res) => {
 
 // faltan hacer verificaciones para que no cree productos si no se cumplen ciertas reglas
 const createProduct = async (req, res) => {
-  const { idUser, ...product } = req.body
+  const { idUser, idCountry, ...product } = req.body
 
   try {
     const categoriesDb = await Category.findAll({
@@ -84,7 +96,6 @@ const createProduct = async (req, res) => {
         'The request could not be completed, Categories not found'
       )
     }
-    // categoriesDb = await Category.bulkCreate(product?.categories)
 
     if (!idUser) {
       throw createCustomError(
@@ -101,12 +112,23 @@ const createProduct = async (req, res) => {
         'The request could not be completed, User is not found.'
       )
     }
+
+    const country = await Country.findByPk(idCountry)
+
+    if (!country) {
+      throw createCustomError(
+        404,
+        'The request could not be completed, Country not found.'
+      )
+    }
+
     // fin de Validaciones
 
     const productDb = await Product.create(product)
     await productDb.addUser(user)
-
     await productDb.addCategories(categoriesDb)
+
+    await product.addCountry(Country)
 
     let categoriesSeach = await productDb.getCategories()
 

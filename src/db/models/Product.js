@@ -55,7 +55,9 @@ module.exports = (sequelize) => {
         type: DataTypes.FLOAT,
         allowNull: false,
         defaultValue: 0,
-
+        validate: {
+          min: 0
+        },
         comment: 'Price of the product'
       },
       location: {
@@ -71,13 +73,11 @@ module.exports = (sequelize) => {
       },
       statusPub: {
         type: DataTypes.ENUM('active', 'inactive', 'paused'),
-        // allowNull: false,
         defaultValue: 'active',
         comment: 'Status of the publication'
       },
       statusProd: {
         type: DataTypes.ENUM('available', 'rented'),
-        // allowNull: false,
         defaultValue: 'available',
         comment: 'Status of the product'
       },
