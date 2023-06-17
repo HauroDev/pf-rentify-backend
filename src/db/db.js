@@ -74,7 +74,7 @@ User.hasMany(Comment, { as: 'comments', foreignKey: 'idUser' })
 Comment.belongsTo(User, { foreignKey: 'idUser' })
 
 Country.hasMany(Product, { as: 'products', foreignKey: 'idCountry' })
-Product.belongsTo(Country, { foreignKey: 'idCountry' })
+Product.belongsTo(Country, { as: 'country', foreignKey: 'idCountry' })
 
 module.exports = {
   conn: sequelize,

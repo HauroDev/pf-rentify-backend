@@ -1,11 +1,12 @@
 const { Product, Category, User, Comment, Country } = require('../db/db.js')
 const { Op } = require('sequelize')
 const { obtenerNextPageProduct } = require('../utils/paginado.js')
-const { createCustomError } = require('../utils/customErrors')
+const { CustomError } = require('../utils/customErrors.js')
 
 const getProducts = async (req, res) => {
   // agregar price entre un rango a futuro
-  let { name, offset, limit, orderBy, orderType, idCategory } = req.query
+  let { name, offset, limit, orderBy, orderType, idCategory, idCountry } =
+    req.query
 
   const whereOptions = {}
 
@@ -42,6 +43,12 @@ const getProducts = async (req, res) => {
           through: { attributes: [] },
           as: 'categories',
           where: idCategory ? { idCategory: +idCategory } : {}
+        },
+        {
+          model: Country,
+          as: 'country',
+          attributes: { exclude: ['createdAt', 'updatedAt'] }, // Excluye las propiedades createdAt y updatedAt
+          where: idCountry ? { idCountry: +idCountry } : {} // Filtra por idCountry si se proporciona
         }
       ],
       offset: offset || 0,
@@ -91,14 +98,14 @@ const createProduct = async (req, res) => {
     })
     // Validaciones
     if (!categoriesDb.length) {
-      throw createCustomError(
+      throw new CustomError(
         404,
         'The request could not be completed, Categories not found'
       )
     }
 
     if (!idUser) {
-      throw createCustomError(
+      throw new CustomError(
         404,
         'The request could not be completed, idUser is required to create a product.'
       )
@@ -107,7 +114,7 @@ const createProduct = async (req, res) => {
     const user = await User.findByPk(idUser)
 
     if (!user) {
-      throw createCustomError(
+      throw new CustomError(
         404,
         'The request could not be completed, User is not found.'
       )
@@ -116,7 +123,7 @@ const createProduct = async (req, res) => {
     const country = await Country.findByPk(idCountry)
 
     if (!country) {
-      throw createCustomError(
+      throw new CustomError(
         404,
         'The request could not be completed, Country not found.'
       )
@@ -128,18 +135,23 @@ const createProduct = async (req, res) => {
     await productDb.addUser(user)
     await productDb.addCategories(categoriesDb)
 
-    await product.addCountry(Country)
+    await productDb.setCountry(country)
 
-    let categoriesSeach = await productDb.getCategories()
+    let categoriesSearch = await productDb.getCategories()
+    const countrySearch = (await productDb.getCountry()).toJSON()
 
-    categoriesSeach = categoriesSeach.map(({ idCategory, name }) => ({
+    categoriesSearch = categoriesSearch.map(({ idCategory, name }) => ({
       idCategory,
       name
     }))
 
+    delete countrySearch.createdAt
+    delete countrySearch.updatedAt
+
     res.status(200).json({
       ...productDb.toJSON(),
-      categories: categoriesSeach
+      categories: categoriesSearch,
+      country: countrySearch
     })
   } catch (error) {
     console.log(error)
@@ -152,7 +164,7 @@ const getProductById = async (req, res) => {
 
   try {
     if (!id) {
-      throw createCustomError(
+      throw new CustomError(
         404,
         'The request could not be completed, You need an ID to obtain a product.'
       )
@@ -165,7 +177,7 @@ const getProductById = async (req, res) => {
     })
 
     if (!product) {
-      throw createCustomError(
+      throw new CustomError(
         404,
         `The request could not be completed, Product id:${id} is not found`
       )
