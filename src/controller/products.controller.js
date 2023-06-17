@@ -47,8 +47,8 @@ const getProducts = async (req, res) => {
         {
           model: Country,
           as: 'country',
-          attributes: { exclude: ['createdAt', 'updatedAt'] }, // Excluye las propiedades createdAt y updatedAt
-          where: idCountry ? { idCountry: +idCountry } : {} // Filtra por idCountry si se proporciona
+          attributes: { exclude: ['createdAt', 'updatedAt'] },
+          where: idCountry ? { idCountry: +idCountry } : {}
         }
       ],
       offset: offset || 0,
@@ -73,6 +73,14 @@ const getProducts = async (req, res) => {
 
       if (orderType) {
         params.push(`orderType=${orderType}`)
+      }
+
+      if (idCategory) {
+        params.push(`idCategory=${idCategory}`)
+      }
+
+      if (idCategory) {
+        params.push(`idCategory=${idCategory}`)
       }
 
       queryExtend += params.length > 0 ? `&${params.join('&')}` : ''
