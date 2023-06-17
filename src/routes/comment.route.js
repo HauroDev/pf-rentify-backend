@@ -1,11 +1,11 @@
-const { Router } = require("express");
+const { Router } = require('express')
 const {
   newComment,
-  getCommentsByProductId,
-} = require("../controller/comment.controller.js");
+  getCommentsByProductId
+} = require('../controller/comment.controller.js')
 
-const router = Router();
-//schema Comment
+const router = Router()
+// schema Comment
 /**
  * @swagger
  * components:
@@ -58,9 +58,9 @@ const router = Router();
  *               $ref: '#/components/schemas/Comment'
  */
 
-router.post("/", newComment);
+router.post('/', newComment)
 
-//Get Commnets product
+// Get Comments product
 /**
  * @swagger
  * /comment/{idProduct}:
@@ -86,6 +86,6 @@ router.post("/", newComment);
  *               items:
  *                 $ref: '#/components/schemas/Comment'
  */
-router.get("/:idProduct", getCommentsByProductId);
+router.get('/:idProduct', getCommentsByProductId)
 
-module.exports = router;
+module.exports = router
