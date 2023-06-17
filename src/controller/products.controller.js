@@ -57,6 +57,7 @@ const getProducts = async (req, res) => {
       queryExtend += name ? `&name=${name}` : ''
       queryExtend += orderBy ? `&orderBy=${orderBy}` : ''
       queryExtend += orderType ? `&orderType=${orderType}` : ''
+      queryExtend += idCategory ? `&idCategory=${idCategory}` : ''
     }
 
     res.status(200).json({
