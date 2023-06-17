@@ -8,7 +8,6 @@ module.exports = (sequelize) => {
         type: DataTypes.INTEGER,
         autoIncrement: true,
         primaryKey: true,
-        allowNull: false,
         comment: 'Unique identifier for the product'
       },
       name: {

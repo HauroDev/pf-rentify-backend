@@ -1,38 +1,44 @@
 const { DataTypes } = require('sequelize')
 
-// cambiar nombre de list a HistoryRent o algo asi  ;D
-
-// const User = require('../db.js')
-// const Product
 module.exports = (sequelize) => {
   sequelize.define(
-    'List',
+    'Country',
     {
-      userId: {
-        type: DataTypes.UUID,
-        allowNull: false
-        // ! referencia a la id de usuario(revisar)
-        // references: {
-        //   model: User,
-        //   key: 'id'
-        // }
-      },
-      productId: {
+      idCountry: {
         type: DataTypes.INTEGER,
-        allowNull: false
-        // references: {
-        //   // model: Product,
-        //   key: 'id'
-        // }
+        primaryKey: true,
+        autoIncrement: true
       },
-      dateProduct: {
-        type: DataTypes.DATEONLY,
-        allowNull: false
+      name: {
+        type: DataTypes.ENUM([
+          'Argentina',
+          'Perú',
+          'México',
+          'Colombia',
+          'Brasil',
+          'Chile',
+          'Uruguay'
+        ]),
+        allowNull: false,
+        unique: true
+      },
+      currency: {
+        type: DataTypes.JSON,
+        allowNull: false,
+        validate: {
+          isRespectObject (value) {
+            if (!value.code || !value.name || !value.symbol) {
+              throw new Error(
+                'The object is missing "code", "name", or "symbol".'
+              )
+            }
+          }
+        }
       }
     },
     {
-      comment: 'Table containing information about lists',
-      tableName: 'lists'
+      comment: 'Table containing information about countries',
+      tableName: 'countries'
     }
   )
 }
