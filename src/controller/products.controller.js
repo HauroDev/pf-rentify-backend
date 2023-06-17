@@ -32,7 +32,20 @@ const getProducts = async (req, res) => {
   }
 
   try {
-    const count = await Product.count({ where: whereOptions })
+    const count = await Product.count({
+      where: whereOptions,
+      include: [
+        {
+          model: Category,
+          through: { attributes: [] },
+          as: 'categories', // si o si tiene que tener esto si la relacion en db.js tiene un "as" aun no se por que. att:victor
+          where: idCategory ? { idCategory: +idCategory } : {}
+        }
+      ],
+      offset: offset || 0,
+      limit: limit || 12,
+      order: orderOptions
+    })
 
     const products = await Product.findAll({
       where: whereOptions,
