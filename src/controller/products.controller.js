@@ -1,18 +1,45 @@
-const { Product, Category, User, Comment } = require('../db/db.js')
+const { Product, Category, User, Comment, Country } = require('../db/db.js')
 const { Op } = require('sequelize')
 const { obtenerNextPageProduct } = require('../utils/paginado.js')
-const { createCustomError } = require('../utils/customErrors')
+const { CustomError } = require('../utils/customErrors.js')
 
 const getProducts = async (req, res) => {
-  let { name, offset, limit, orderBy, orderType, idCategory } = req.query
+  // agregar price entre un rango a futuro
+  let {
+    name,
+    offset,
+    limit,
+    orderBy,
+    orderType,
+    idCategory,
+    idCountry,
+    location,
+    state
+  } = req.query
 
-  const whereOptions = name
-    ? {
-        name: {
-          [Op.iLike]: `%${name}%`
+  const whereOptions = {}
+
+  if (name) {
+    whereOptions.name = {
+      [Op.iLike]: `%${name}%`
+    }
+  }
+
+  if (idCountry) {
+    if (state) {
+      console.log(state)
+      whereOptions.state = {
+        [Op.iLike]: `%${state}%`
+      }
+
+      if (location) {
+        console.log(location)
+        whereOptions.location = {
+          [Op.iLike]: `%${location}%`
         }
       }
-    : {}
+    }
+  }
 
   const orderOptions = [['isFeatured', 'DESC']]
 
@@ -36,6 +63,7 @@ const getProducts = async (req, res) => {
 
     if (idCategory) {
       // Consulta para obtener los productos filtrados por una categoría específica
+
       products = await Product.findAll({
         where: whereOptions,
         include: [
@@ -43,6 +71,12 @@ const getProducts = async (req, res) => {
             model: Category,
             through: { attributes: [] },
             as: 'categories'
+          },
+          {
+            model: Country,
+            as: 'country',
+            attributes: { exclude: ['createdAt', 'updatedAt'] },
+            where: idCountry ? { idCountry: +idCountry } : {}
           }
         ],
         distinct: true,
@@ -53,7 +87,6 @@ const getProducts = async (req, res) => {
 
       // Filtrar los productos para que solo contengan la categoría buscada
       products = products.filter((product) => {
-        console.log(product.toJSON())
         product = product.toJSON()
 
         return product.categories.some(
@@ -71,6 +104,12 @@ const getProducts = async (req, res) => {
             model: Category,
             through: { attributes: [] },
             as: 'categories'
+          },
+          {
+            model: Country,
+            as: 'country',
+            attributes: { exclude: ['createdAt', 'updatedAt'] },
+            where: idCountry ? { idCountry: +idCountry } : {}
           }
         ],
         distinct: true,
@@ -87,10 +126,35 @@ const getProducts = async (req, res) => {
 
     let queryExtend = obtenerNextPageProduct(offset, limit, count)
     if (queryExtend) {
-      queryExtend += name ? `&name=${name}` : ''
-      queryExtend += orderBy ? `&orderBy=${orderBy}` : ''
-      queryExtend += orderType ? `&orderType=${orderType}` : ''
-      queryExtend += idCategory ? `&idCategory=${idCategory}` : ''
+      const params = []
+
+      if (name) {
+        params.push(`name=${name}`)
+      }
+
+      if (orderBy) {
+        params.push(`orderBy=${orderBy}`)
+      }
+
+      if (orderType) {
+        params.push(`orderType=${orderType}`)
+      }
+
+      if (idCategory) {
+        params.push(`idCategory=${idCategory}`)
+      }
+
+      if (idCountry) {
+        params.push(`idCountry=${idCountry}`)
+        if (state) {
+          params.push(`state=${state}`)
+          if (location) {
+            params.push(`location=${location}`)
+          }
+        }
+      }
+
+      queryExtend += params.length > 0 ? `&${params.join('&')}` : ''
     }
 
     res.status(200).json({
@@ -105,7 +169,7 @@ const getProducts = async (req, res) => {
 
 // faltan hacer verificaciones para que no cree productos si no se cumplen ciertas reglas
 const createProduct = async (req, res) => {
-  const { idUser, ...product } = req.body
+  const { idUser, idCountry, ...product } = req.body
 
   try {
     const categoriesDb = await Category.findAll({
@@ -113,15 +177,14 @@ const createProduct = async (req, res) => {
     })
     // Validaciones
     if (!categoriesDb.length) {
-      throw createCustomError(
+      throw new CustomError(
         404,
         'The request could not be completed, Categories not found'
       )
     }
-    // categoriesDb = await Category.bulkCreate(product?.categories)
 
     if (!idUser) {
-      throw createCustomError(
+      throw new CustomError(
         404,
         'The request could not be completed, idUser is required to create a product.'
       )
@@ -130,28 +193,48 @@ const createProduct = async (req, res) => {
     const user = await User.findByPk(idUser)
 
     if (!user) {
-      throw createCustomError(
+      throw new CustomError(
         404,
         'The request could not be completed, User is not found.'
       )
     }
+
+    const country = await Country.findByPk(idCountry)
+
+    if (!country) {
+      throw new CustomError(
+        404,
+        'The request could not be completed, Country not found.'
+      )
+    }
+
     // fin de Validaciones
 
     const productDb = await Product.create(product)
     await productDb.addUser(user)
-
     await productDb.addCategories(categoriesDb)
+    await productDb.setCountry(country)
 
-    let categoriesSeach = await productDb.getCategories()
+    let categoriesSearch = await productDb.getCategories()
+    const countrySearch = (await productDb.getCountry()).toJSON()
 
-    categoriesSeach = categoriesSeach.map(({ idCategory, name }) => ({
-      idCategory,
-      name
-    }))
+    categoriesSearch = categoriesSearch.map((cat) => {
+      cat = cat.toJSON()
+
+      delete cat.createdAt
+      delete cat.updatedAt
+      delete cat.CategoryProduct
+
+      return cat
+    })
+
+    delete countrySearch.createdAt
+    delete countrySearch.updatedAt
 
     res.status(200).json({
       ...productDb.toJSON(),
-      categories: categoriesSeach
+      categories: categoriesSearch,
+      country: countrySearch
     })
   } catch (error) {
     console.log(error)
@@ -164,7 +247,7 @@ const getProductById = async (req, res) => {
 
   try {
     if (!id) {
-      throw createCustomError(
+      throw new CustomError(
         404,
         'The request could not be completed, You need an ID to obtain a product.'
       )
@@ -177,7 +260,7 @@ const getProductById = async (req, res) => {
     })
 
     if (!product) {
-      throw createCustomError(
+      throw new CustomError(
         404,
         `The request could not be completed, Product id:${id} is not found`
       )

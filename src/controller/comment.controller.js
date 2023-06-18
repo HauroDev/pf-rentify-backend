@@ -1,82 +1,82 @@
-const { Comment, Product, User } = require("../db/db");
-const { createCustomError } = require("../utils/customErrors");
+const { Comment, Product, User } = require('../db/db')
+const { CustomError } = require('../utils/customErrors')
 
 const validarUUID = (uuid) => {
   const uuidRegex =
-    /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-  return uuidRegex.test(uuid);
-};
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+  return uuidRegex.test(uuid)
+}
 const newComment = async (req, res) => {
-  const { comment, puntuation, commentStatus, idProd, idUser } = req.body;
+  const { comment, puntuation, commentStatus, idProd, idUser } = req.body
   try {
     // Validations  //
     if (!idProd || !idUser) {
-      throw createCustomError(
+      throw new CustomError(
         409,
-        "The request could not be completed, User or Product is null"
-      );
+        'The request could not be completed, User or Product is null'
+      )
     }
-    const product = await Product.findByPk(idProd);
+    const product = await Product.findByPk(idProd)
     if (!product) {
-      throw createCustomError(
+      throw new CustomError(
         409,
-        "The request could not be completed, idProd does not exist"
-      );
+        'The request could not be completed, idProd does not exist'
+      )
     }
     if (!validarUUID(idUser)) {
-      throw createCustomError(
+      throw new CustomError(
         409,
-        "The request could not be completed, Username not format"
-      );
+        'The request could not be completed, Username not format'
+      )
     }
-    const userToComment = await User.findByPk(idUser);
+    const userToComment = await User.findByPk(idUser)
 
     if (!userToComment) {
-      throw createCustomError(
+      throw new CustomError(
         409,
-        "The request could not be completed, Username does not exist"
-      );
+        'The request could not be completed, Username does not exist'
+      )
     }
     // fin validaciones //
 
     const newComment = await Comment.create({
       comment,
       puntuation,
-      commentStatus,
-    });
+      commentStatus
+    })
 
-    await product.addComment(newComment);
-    await userToComment.addComment(newComment);
+    await product.addComment(newComment)
+    await userToComment.addComment(newComment)
     const recordComment = await Comment.findByPk(newComment.idComment, {
       include: [
         {
-          model: Product,
+          model: Product
         },
         {
-          model: User,
-        },
-      ],
-    });
+          model: User
+        }
+      ]
+    })
 
-    res.json(recordComment);
+    res.json(recordComment)
   } catch (error) {
-    res.status(error?.status || 500).json({ error: error?.message });
+    res.status(error?.status || 500).json({ error: error?.message })
   }
-};
+}
 
-async function getCommentsByProductId(req, res) {
-  const { idProduct } = req.params;
+const getCommentsByProductId = async (req, res) => {
+  const { idProduct } = req.params
 
   try {
     // Obtener comentarios del producto según el idProduct
     const comments = await Comment.findAll({
-      where: { idProd: idProduct },
-    });
-    console.log(comments);
-    res.status(200).json(comments);
+      where: { idProd: idProduct }
+    })
+    console.log(comments)
+    res.status(200).json(comments)
   } catch (error) {
-    console.error("Error al obtener comentarios:", error);
-    res.status(500).json({ error: "Error al obtener comentarios" });
+    console.error('Error al obtener comentarios:', error)
+    res.status(500).json({ error: 'Error al obtener comentarios' })
   }
 }
 
@@ -99,7 +99,7 @@ async function getCommentsByProductId(req, res) {
 //   });
 // };
 
-module.exports = { newComment, getCommentsByProductId };
+module.exports = { newComment, getCommentsByProductId }
 
 // Definición del modelo de Comentario
 // const Comentario = {
