@@ -257,7 +257,8 @@ const getProductById = async (req, res) => {
         { model: Category, as: 'categories', through: { attributes: [] } },
         {
           model: Country,
-          as: 'country'
+          as: 'country',
+          attributes: { exclude: ['createdAt', 'updatedAt'] }
         },
         { model: Comment, as: 'comments' }
       ]
