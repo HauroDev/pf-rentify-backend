@@ -28,6 +28,8 @@ const router = Router()
  *           format: float
  *         location:
  *           type: string
+ *         state:
+ *           type: string
  *         isFeatured:
  *           type: boolean
  *         categories:
@@ -45,6 +47,7 @@ const router = Router()
  *         - image
  *         - price
  *         - location
+ *         - state
  *         - isFeatured
  *         - categories
  *         - idUser
@@ -67,6 +70,64 @@ const router = Router()
  *   get:
  *     summary: Obtiene todos los productos
  *     description: Obtiene la lista de todos los productos disponibles
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - in: query
+ *         name: name
+ *         description: Filtrar por nombre de usuario
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: offset
+ *         description: Número de resultados a omitir
+ *         schema:
+ *           type: integer
+ *           minimum: 0
+ *       - in: query
+ *         name: limit
+ *         description: Número máximo de resultados a retornar
+ *         schema:
+ *           type: integer
+ *       - in: query
+ *         name: orderBy
+ *         description: Ordenar por campo específico
+ *         schema:
+ *           type: string
+ *           enum:
+ *             - price
+ *             - name
+ *             - date
+ *       - in: query
+ *         name: orderType
+ *         description: Tipo de orden (ascendente o descendente)
+ *         schema:
+ *           type: string
+ *           enum:
+ *             - ASC
+ *             - DESC
+ *           default: ASC
+ *       - in: query
+ *         name: idCategory
+ *         description: Filtrar por ID de categoría
+ *         schema:
+ *           type: integer
+ *       - in: query
+ *         name: idCountry
+ *         description: Filtrar por ID de país
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *       - in: query
+ *         name: location
+ *         description: Filtrar por Ciudad
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: state
+ *         description: Filtrar por Estado/Provincia
+ *         schema:
+ *           type: string
  *     tags:
  *       - Productos
  *     responses:
@@ -79,6 +140,7 @@ const router = Router()
  *               items:
  *                 $ref: '#/components/schemas/Product'
  */
+
 router.get('/', getProducts)
 // Post product
 /**
