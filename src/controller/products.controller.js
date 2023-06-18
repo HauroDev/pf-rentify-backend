@@ -33,28 +33,68 @@ const getProducts = async (req, res) => {
   }
 
   try {
-    const count = await Product.count({ where: whereOptions })
+    let products
+    let count
 
-    const products = await Product.findAll({
-      where: whereOptions,
-      include: [
-        {
-          model: Category,
-          through: { attributes: [] },
-          as: 'categories',
-          where: idCategory ? { idCategory: +idCategory } : {}
-        },
-        {
-          model: Country,
-          as: 'country',
-          attributes: { exclude: ['createdAt', 'updatedAt'] },
-          where: idCountry ? { idCountry: +idCountry } : {}
-        }
-      ],
-      offset: offset || 0,
-      limit: limit || 12,
-      order: orderOptions
-    })
+    if (idCategory) {
+      // Consulta para obtener los productos filtrados por una categoría específica
+      products = await Product.findAll({
+        where: whereOptions,
+        include: [
+          {
+            model: Category,
+            through: { attributes: [] },
+            as: 'categories'
+          },
+          {
+            model: Country,
+            as: 'country',
+            attributes: { exclude: ['createdAt', 'updatedAt'] },
+            where: idCountry ? { idCountry: +idCountry } : {}
+          }
+        ],
+        distinct: true,
+        offset: offset || 0,
+        limit: limit || 12,
+        order: orderOptions
+      })
+
+      // Filtrar los productos para que solo contengan la categoría buscada
+      products = products.filter((product) => {
+        console.log(product.toJSON())
+        product = product.toJSON()
+
+        return product.categories.some(
+          (category) => category.idCategory === +idCategory
+        )
+      })
+
+      count = products.length
+    } else {
+      // Consulta para obtener todos los productos con todas las categorías asociadas
+      const result = await Product.findAndCountAll({
+        where: whereOptions,
+        include: [
+          {
+            model: Category,
+            through: { attributes: [] },
+            as: 'categories'
+          },
+          {
+            model: Country,
+            as: 'country',
+            attributes: { exclude: ['createdAt', 'updatedAt'] },
+            where: idCountry ? { idCountry: +idCountry } : {}
+          }
+        ],
+        distinct: true,
+        offset: offset || 0,
+        limit: limit || 12,
+        order: orderOptions
+      })
+      products = result.rows
+      count = result.count
+    }
 
     offset = offset || offset > 0 ? +offset : 0
     limit = limit ? +limit : 12
@@ -142,16 +182,20 @@ const createProduct = async (req, res) => {
     const productDb = await Product.create(product)
     await productDb.addUser(user)
     await productDb.addCategories(categoriesDb)
-
     await productDb.setCountry(country)
 
     let categoriesSearch = await productDb.getCategories()
     const countrySearch = (await productDb.getCountry()).toJSON()
 
-    categoriesSearch = categoriesSearch.map(({ idCategory, name }) => ({
-      idCategory,
-      name
-    }))
+    categoriesSearch = categoriesSearch.map((cat) => {
+      cat = cat.toJSON()
+
+      delete cat.createdAt
+      delete cat.updatedAt
+      delete cat.CategoryProduct
+
+      return cat
+    })
 
     delete countrySearch.createdAt
     delete countrySearch.updatedAt
