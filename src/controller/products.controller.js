@@ -4,7 +4,6 @@ const { obtenerNextPageProduct } = require('../utils/paginado.js')
 const { createCustomError } = require('../utils/customErrors')
 
 const getProducts = async (req, res) => {
-  // agregar price entre un rango a futuro
   let { name, offset, limit, orderBy, orderType, idCategory } = req.query
 
   const whereOptions = name
@@ -32,21 +31,56 @@ const getProducts = async (req, res) => {
   }
 
   try {
-    const { count, rows: products } = await Product.findAndCountAll({
-      where: whereOptions,
-      include: [
-        {
-          model: Category,
-          through: { attributes: [] },
-          as: 'categories',
-          where: idCategory ? { idCategory: +idCategory } : {}
-        }
-      ],
-      distinct: true,
-      offset: offset || 0,
-      limit: limit || 12,
-      order: orderOptions
-    })
+    let products
+    let count
+
+    if (idCategory) {
+      // Consulta para obtener los productos filtrados por una categoría específica
+      products = await Product.findAll({
+        where: whereOptions,
+        include: [
+          {
+            model: Category,
+            through: { attributes: [] },
+            as: 'categories'
+          }
+        ],
+        distinct: true,
+        offset: offset || 0,
+        limit: limit || 12,
+        order: orderOptions
+      })
+
+      // Filtrar los productos para que solo contengan la categoría buscada
+      products = products.filter((product) => {
+        console.log(product.toJSON())
+        product = product.toJSON()
+
+        return product.categories.some(
+          (category) => category.idCategory === +idCategory
+        )
+      })
+
+      count = products.length
+    } else {
+      // Consulta para obtener todos los productos con todas las categorías asociadas
+      const result = await Product.findAndCountAll({
+        where: whereOptions,
+        include: [
+          {
+            model: Category,
+            through: { attributes: [] },
+            as: 'categories'
+          }
+        ],
+        distinct: true,
+        offset: offset || 0,
+        limit: limit || 12,
+        order: orderOptions
+      })
+      products = result.rows
+      count = result.count
+    }
 
     offset = offset || offset > 0 ? +offset : 0
     limit = limit ? +limit : 12
