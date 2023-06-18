@@ -16,7 +16,7 @@ const swaggerSpec = {
     openapi: '3.0.0',
     info: {
       title: 'Api-Rentify',
-      version: '1.0.0'
+      version: '1.1.0'
     },
     servers: [
       {
