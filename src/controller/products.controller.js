@@ -3,10 +3,21 @@ const { Op } = require('sequelize')
 const { obtenerNextPageProduct } = require('../utils/paginado.js')
 const { CustomError } = require('../utils/customErrors.js')
 
+/* reparar */
+
 const getProducts = async (req, res) => {
   // agregar price entre un rango a futuro
-  let { name, offset, limit, orderBy, orderType, idCategory, idCountry } =
-    req.query
+  let {
+    name,
+    offset,
+    limit,
+    orderBy,
+    orderType,
+    idCategory,
+    idCountry,
+    location,
+    state
+  } = req.query
 
   const whereOptions = {}
 
@@ -61,7 +72,6 @@ const getProducts = async (req, res) => {
 
       // Filtrar los productos para que solo contengan la categoría buscada
       products = products.filter((product) => {
-        console.log(product.toJSON())
         product = product.toJSON()
 
         return product.categories.some(
@@ -121,6 +131,7 @@ const getProducts = async (req, res) => {
 
       if (idCountry) {
         params.push(`idCountry=${idCountry}`)
+        // agregar state y adentro location
       }
 
       queryExtend += params.length > 0 ? `&${params.join('&')}` : ''
