@@ -255,6 +255,10 @@ const getProductById = async (req, res) => {
     const product = await Product.findByPk(id, {
       include: [
         { model: Category, as: 'categories', through: { attributes: [] } },
+        {
+          model: Country,
+          as: 'country'
+        },
         { model: Comment, as: 'comments' }
       ]
     })
