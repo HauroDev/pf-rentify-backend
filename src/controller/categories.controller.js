@@ -1,5 +1,5 @@
 const { Category } = require('../db/db.js')
-const { createCustomError } = require('../utils/customErrors')
+const { CustomError } = require('../utils/customErrors')
 
 const getCategories = async (_req, res) => {
   try {
@@ -39,7 +39,7 @@ const createCategories = async (req, res) => {
     ]
 
     if (!allowedCategories.includes(name)) {
-      throw createCustomError(
+      throw new CustomError(
         409,
         `The request could not be completed,Invalid category: ${name}`
       )
@@ -52,7 +52,7 @@ const createCategories = async (req, res) => {
     })
 
     if (existingCategory) {
-      throw createCustomError(
+      throw new CustomError(
         409,
         `The request could not be completed, Category ${name} already exists`
       )
@@ -63,7 +63,7 @@ const createCategories = async (req, res) => {
     })
 
     if (allCategories.length === allowedCategories.length) {
-      throw createCustomError(
+      throw new CustomError(
         409,
         'The request could not be completed, All categories have already been created'
       )

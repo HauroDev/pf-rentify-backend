@@ -1,11 +1,11 @@
-const { Router } = require("express");
+const { Router } = require('express')
 const {
   getCategories,
-  createCategories,
-} = require("../controller/categories.controller.js");
+  createCategories
+} = require('../controller/categories.controller.js')
 
-const categoriesRoutes = Router();
-//schema Categories
+const categoriesRoutes = Router()
+// schema Categories
 /**
  * @swagger
  * components:
@@ -19,7 +19,7 @@ const categoriesRoutes = Router();
  *         - name
  */
 
-//Get All Categories
+// Get All Categories
 /**
  * @swagger
  * /categories:
@@ -39,9 +39,9 @@ const categoriesRoutes = Router();
  *                 $ref: '#/components/schemas/Category'
  */
 
-categoriesRoutes.get("/", getCategories);
+categoriesRoutes.get('/', getCategories)
 
-//Post Category
+// Post Category
 /**
  * @swagger
  * /categories:
@@ -65,6 +65,6 @@ categoriesRoutes.get("/", getCategories);
  *               $ref: '#/components/schemas/Category'
  */
 
-categoriesRoutes.post("/", createCategories);
+categoriesRoutes.post('/', createCategories)
 
-module.exports = categoriesRoutes;
+module.exports = categoriesRoutes
