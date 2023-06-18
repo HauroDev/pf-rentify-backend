@@ -79,8 +79,8 @@ const getProducts = async (req, res) => {
         params.push(`idCategory=${idCategory}`)
       }
 
-      if (idCategory) {
-        params.push(`idCategory=${idCategory}`)
+      if (idCountry) {
+        params.push(`idCountry=${idCountry}`)
       }
 
       queryExtend += params.length > 0 ? `&${params.join('&')}` : ''
