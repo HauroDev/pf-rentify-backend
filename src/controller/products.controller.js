@@ -3,8 +3,6 @@ const { Op } = require('sequelize')
 const { obtenerNextPageProduct } = require('../utils/paginado.js')
 const { CustomError } = require('../utils/customErrors.js')
 
-/* reparar */
-
 const getProducts = async (req, res) => {
   // agregar price entre un rango a futuro
   let {
@@ -24,6 +22,22 @@ const getProducts = async (req, res) => {
   if (name) {
     whereOptions.name = {
       [Op.iLike]: `%${name}%`
+    }
+  }
+
+  if (idCountry) {
+    if (state) {
+      console.log(state)
+      whereOptions.state = {
+        [Op.iLike]: `%${state}%`
+      }
+
+      if (location) {
+        console.log(location)
+        whereOptions.location = {
+          [Op.iLike]: `%${location}%`
+        }
+      }
     }
   }
 
@@ -49,6 +63,7 @@ const getProducts = async (req, res) => {
 
     if (idCategory) {
       // Consulta para obtener los productos filtrados por una categoría específica
+
       products = await Product.findAll({
         where: whereOptions,
         include: [
@@ -131,7 +146,12 @@ const getProducts = async (req, res) => {
 
       if (idCountry) {
         params.push(`idCountry=${idCountry}`)
-        // agregar state y adentro location
+        if (state) {
+          params.push(`state=${state}`)
+          if (location) {
+            params.push(`location=${location}`)
+          }
+        }
       }
 
       queryExtend += params.length > 0 ? `&${params.join('&')}` : ''

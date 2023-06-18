@@ -71,6 +71,16 @@ module.exports = (sequelize) => {
         },
         comment: 'Location of the product'
       },
+      state: {
+        type: DataTypes.TEXT,
+        allowNull: false,
+        validate: {
+          notEmpty: {
+            args: true,
+            msg: 'State is required'
+          }
+        }
+      },
       statusPub: {
         type: DataTypes.ENUM('active', 'inactive', 'paused'),
         defaultValue: 'active',

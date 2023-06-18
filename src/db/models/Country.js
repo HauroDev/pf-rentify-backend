@@ -22,6 +22,13 @@ module.exports = (sequelize) => {
         allowNull: false,
         unique: true
       },
+      geonameId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        unique: true,
+        comment:
+          "This ID is used by a Geoname API at 'https://www.geonames.org/.'"
+      },
       currency: {
         type: DataTypes.JSON,
         allowNull: false,

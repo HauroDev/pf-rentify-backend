@@ -7,7 +7,8 @@ const { DB_NAME, DB_USER, DB_PASSWORD, HOST, MODE } = require('../../config')
 const sequelize = new Sequelize(DB_NAME, DB_USER, DB_PASSWORD, {
   host: HOST,
   dialect: 'postgres',
-  logging: MODE === 'PRODUCTION' ? false : console.log // mostrara cada ves que se levante el servidor la respuesta de la base de datos
+  // mostrara cada ves que se levante el servidor la respuesta de la base de datos mientras 'MODE' sea distinto de 'PRODUCTION'
+  logging: MODE === 'PRODUCTION' ? false : console.log
   // native: false, // lets Sequelize know we can use pg-native for ~30% more speed
   // dialectOptions: {
   //   ssl: {
