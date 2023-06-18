@@ -37,6 +37,8 @@ const router = Router()
  *         idUser:
  *           type: string
  *           format: uuid
+ *         idCountry:
+ *           type: number
  *       required:
  *         - name
  *         - description
@@ -46,6 +48,7 @@ const router = Router()
  *         - isFeatured
  *         - categories
  *         - idUser
+ *         - idCountry
  *     Category:
  *       type: object
  *       properties:
