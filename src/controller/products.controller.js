@@ -26,6 +26,7 @@ const getProducts = async (req, res) => {
   }
 
   if (idCountry) {
+    whereOptions.idCountry = +idCountry
     if (state) {
       whereOptions.state = {
         [Op.iLike]: `%${state}%`
