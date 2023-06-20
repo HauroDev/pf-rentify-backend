@@ -1,5 +1,5 @@
 const express = require('express')
-const { PORT, URL_DEPLOY, URL_PRUEBAS, MODE } = require('./config')
+const { PORT, URL_DEPLOY, URL_PRUEBAS, MODE, URL_CLIENTE } = require('./config')
 const { conn } = require('./src/db/db.js')
 const morgan = require('morgan')
 const routerManager = require('./src/routes/index.js')
@@ -39,7 +39,7 @@ app.use(bodyParser.json({ limit: '50mb' }))
 app.use(cookieParser())
 app.use(morgan('dev'))
 app.use((req, res, next) => {
-  const allowedOrigins = ['http://localhost:5173']
+  const allowedOrigins = [URL_CLIENTE, 'http://localhost:5173']
   const origin = req.headers.origin
   if (allowedOrigins.includes(origin)) {
     res.header('Access-Control-Allow-Origin', origin)
