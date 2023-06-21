@@ -12,10 +12,11 @@ const postUser = async (req, res) => {
   try {
     const regeexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     // Obtén los datos del cuerpo de la solicitud
-    const { name, email, phone, image, membership, status } = req.body
+    const { name, email, phone, image, uid } = req.body
     // Verifica si el email ya existe en la base de datos
     const existingUser = await User.findOne({ where: { email } })
-    const numbeUser = await User.findOne({ where: { phone } })
+    const existingUid = await User.findOne({ where: { uid } })
+    // const numbeUser = await User.findOne({ where: { phone } })
     // verificacion de formato de regeex para correo electronico
 
     if (!regeexEmail.test(email)) {
@@ -23,9 +24,13 @@ const postUser = async (req, res) => {
     } else if (existingUser) {
       // Si el email ya existe, devuelve una respuesta de error
       throw new CustomError(400, 'Error correo existente')
-    } else if (numbeUser) {
-      throw new CustomError(400, 'Error number phone')
+    } else if (existingUid) {
+      // Si el email ya existe, devuelve una respuesta de error
+      throw new CustomError(400, 'Error usuario registrado')
     }
+    // else if (numbeUser) {
+    //   throw new CustomError(400, 'Error number phone')
+    // }
 
     // Crea un nuevo usuario en la base de datos
     const newUser = await User.create({
@@ -33,8 +38,9 @@ const postUser = async (req, res) => {
       email,
       phone,
       image,
-      membership,
-      status
+      uid,
+      membership:'standard',
+      status:'active'
     })
 
     // Envía la respuesta con el usuario creado
