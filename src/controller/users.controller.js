@@ -38,7 +38,9 @@ const postUser = async (req, res) => {
       email,
       phone,
       image,
-      uid
+      uid,
+      membership:'standard',
+      status:'active'
     })
 
     // Envía la respuesta con el usuario creado
