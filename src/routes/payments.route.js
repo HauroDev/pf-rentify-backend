@@ -1,7 +1,12 @@
 /* eslint-disable camelcase */
 const { Router } = require('express')
 const mp = require('../mercadopago.js')
-const { urlApi } = require('../../config.js')
+const {
+  urlApi,
+  MODE,
+  URL_CLIENTE,
+  URL_CLIENTE_PRUEBAS
+} = require('../../config.js')
 
 const router = Router()
 
@@ -66,6 +71,8 @@ router.post('/order', async (req, res) => {
       auto_return: 'approved'
     })
 
+    console.log(info)
+
     res.json({ preferenceId: info.body.id })
   } catch (error) {
     res.status(500).json({ error: error.message })
@@ -114,7 +121,18 @@ router.get(
   },
   (req, res) => {
     console.log(req.query)
-    res.json(req.query)
+
+    const urlRedirect =
+      MODE === 'PRODUCTION' ? URL_CLIENTE : URL_CLIENTE_PRUEBAS
+
+    switch (req.query.status) {
+      case 'approved':
+        return res.redirect(`${urlRedirect}/successfull`)
+      case 'pending':
+        return res.redirect(`${urlRedirect}/pending`)
+      case 'rejected':
+        return res.redirect(`${urlRedirect}/error`)
+    }
   }
 )
 
