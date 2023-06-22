@@ -128,7 +128,7 @@ router.get(
       redirectUrl += 'successfull'
     } else if (status === 'pending') {
       redirectUrl += 'pending'
-    } else if (status === 'reject') {
+    } else if (status === 'rejected') {
       redirectUrl += 'error'
     }
 
