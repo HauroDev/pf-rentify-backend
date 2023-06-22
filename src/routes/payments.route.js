@@ -2,10 +2,10 @@
 const { Router } = require('express')
 const mp = require('../mercadopago.js')
 const {
-  urlApi,
-  MODE,
-  URL_CLIENTE,
-  URL_CLIENTE_PRUEBAS
+  urlApi
+  // MODE,
+  // URL_CLIENTE,
+  // URL_CLIENTE_PRUEBAS
 } = require('../../config.js')
 
 const router = Router()
@@ -120,19 +120,25 @@ router.get(
     }
   },
   (req, res) => {
-    console.log(req.query)
+    const { payment_id, status, merchant_order_id } = req.query
 
-    const urlRedirect =
-      MODE === 'PRODUCTION' ? URL_CLIENTE : URL_CLIENTE_PRUEBAS
+    let redirectUrl = 'http://localhost:5173/'
 
-    switch (req.query.status) {
-      case 'approved':
-        return res.redirect(`${urlRedirect}/successfull`)
-      case 'pending':
-        return res.redirect(`${urlRedirect}/pending`)
-      case 'rejected':
-        return res.redirect(`${urlRedirect}/error`)
+    if (status === 'approved') {
+      redirectUrl += 'successfull'
+    } else if (status === 'pending') {
+      redirectUrl += 'pending'
+    } else {
+      redirectUrl += 'error'
     }
+
+    const queryParams = new URLSearchParams({
+      payment_id,
+      status,
+      merchant_order_id
+    })
+
+    return res.redirect(redirectUrl + '?' + queryParams.toString())
   }
 )
 
