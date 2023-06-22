@@ -9,7 +9,8 @@ const {
   URL_PRUEBAS,
   URL_DEPLOY,
   URL_CLIENTE,
-  MP_ACCESS_TOKEN
+  MP_ACCESS_TOKEN,
+  URL_CLIENTE_PRUEBAS
 } = process.env
 
 const PORT = 3001
@@ -28,6 +29,7 @@ module.exports = {
   URL_DEPLOY,
   URL_CLIENTE,
   MP_ACCESS_TOKEN,
+  URL_CLIENTE_PRUEBAS,
   url,
   urlApi,
   urlDoc
