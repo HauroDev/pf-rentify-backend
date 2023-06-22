@@ -16,6 +16,6 @@ router.use("/countries", countriesRoutes);
 router.use("/user", usersRoutes);
 router.use("/products", productsRoutes);
 router.use("/comment", commentsRoutes);
-//router.use('/admin', adminRoutes);
+//router.use('/admin', adminRoutes); TIENE QUE TENER UN MIDDLEWARE PARA ASEGURAR ADMIN
 
 module.exports = router;
