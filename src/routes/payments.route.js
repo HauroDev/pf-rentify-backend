@@ -122,13 +122,13 @@ router.get(
   (req, res) => {
     const { payment_id, status, merchant_order_id } = req.query
 
-    let redirectUrl = 'http://localhost:5173/'
+    let redirectUrl = 'http://localhost:5173/' + 'checkout/'
 
     if (status === 'approved') {
       redirectUrl += 'successfull'
     } else if (status === 'pending') {
       redirectUrl += 'pending'
-    } else {
+    } else if (status === 'reject') {
       redirectUrl += 'error'
     }
 
