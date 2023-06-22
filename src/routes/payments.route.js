@@ -105,7 +105,7 @@ router.get(
     const { payment_id } = req.query
 
     try {
-      const payment = await mp.payment.findById(payment_id)
+      const payment = await mp.payment.findById(Number(payment_id))
       console.log(payment)
       next()
     } catch (error) {
