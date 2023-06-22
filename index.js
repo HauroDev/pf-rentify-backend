@@ -1,16 +1,14 @@
 const express = require('express')
-const { PORT, URL_DEPLOY, URL_PRUEBAS, MODE, URL_CLIENTE } = require('./config')
-const { conn } = require('./src/db/db.js')
 const morgan = require('morgan')
-const routerManager = require('./src/routes/index.js')
 const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
-// swagger
 const swaggerUI = require('swagger-ui-express')
 const swaggerJsDoc = require('swagger-jsdoc')
-const url = MODE === 'PRODUCTION' ? URL_DEPLOY : URL_PRUEBAS
-const urlApi = url + '/api-rentify'
-const urlDoc = url + '/api-doc'
+
+const { conn } = require('./src/db/db.js')
+const { PORT, urlApi, urlDoc, URL_CLIENTE } = require('./config')
+const routerManager = require('./src/routes/index.js')
+
 const swaggerSpec = {
   definition: {
     openapi: '3.0.0',
@@ -26,7 +24,7 @@ const swaggerSpec = {
   },
   apis: ['./src/routes/*.js']
 }
-//
+
 const app = express()
 
 app.use(express.json())
@@ -53,21 +51,16 @@ app.use((req, res, next) => {
   next()
 })
 
-/*
-  Agregen sus rutas
-*/
-
 app.use('/api-rentify', routerManager)
-
-// swagger
 app.use('/api-doc', swaggerUI.serve, swaggerUI.setup(swaggerJsDoc(swaggerSpec)))
 console.log(urlDoc + '---> documentacion')
-//
 
 conn
   .sync({ force: false })
   .then(() => {
-    app.listen(PORT, () => console.log(PORT, urlApi))
+    app.listen(PORT, () =>
+      console.log('Api funcionando en el puerto', PORT, urlApi)
+    )
   })
   .catch((error) => {
     console.error(error)
