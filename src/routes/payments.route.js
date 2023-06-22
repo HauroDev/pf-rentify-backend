@@ -66,7 +66,7 @@ router.post('/order', async (req, res) => {
       auto_return: 'approved'
     })
 
-    res.json(info)
+    res.json({ preferenceId: info.body.id })
   } catch (error) {
     res.status(500).json({ error: error.message })
   }
