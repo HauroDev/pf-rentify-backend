@@ -1,4 +1,4 @@
-const User = require('../models/User');
+const User = require('./db/models/User.js');
 const Product = require('../models/Product');
 
 // Cambiar estado de un usuario por ID
