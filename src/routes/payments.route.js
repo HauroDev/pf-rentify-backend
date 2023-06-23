@@ -1,16 +1,11 @@
-/* eslint-disable camelcase */
 const { Router } = require('express')
-const mp = require('../mercadopago.js')
+
 const {
-  urlApi
-  // MODE,
-  // URL_CLIENTE,
-  // URL_CLIENTE_PRUEBAS
-} = require('../../config.js')
+  createOrder,
+  redirectToWebSite
+} = require('../controller/payments.controller.js')
 
 const router = Router()
-
-const urlWebHook = urlApi + '/payments/feedback'
 
 /**
  * @swagger
@@ -57,27 +52,7 @@ const urlWebHook = urlApi + '/payments/feedback'
  *         description: Error en la solicitud. Por favor, revise los parámetros enviados.
  */
 
-router.post('/order', async (req, res) => {
-  const { items } = req.body
-
-  try {
-    const info = await mp.preferences.create({
-      items,
-      back_urls: {
-        pending: urlWebHook,
-        failure: urlWebHook,
-        success: urlWebHook
-      },
-      auto_return: 'approved'
-    })
-
-    console.log(info)
-
-    res.json({ preferenceId: info.body.id })
-  } catch (error) {
-    res.status(500).json({ error: error.message })
-  }
-})
+router.post('/order', createOrder)
 /**
  * @swagger
  * /payments/feedback:
@@ -89,10 +64,20 @@ router.post('/order', async (req, res) => {
  *     parameters:
  *       - in: query
  *         name: payment_id
- *         description: ID del pago relacionado con el feedback.
+ *         description: ID del pago de MercadoPago.
  *         required: true
  *         schema:
  *           type: string
+ *       - in: query
+ *         name: status
+ *         description: estado del pago de MercadoPago.
+ *         required: true
+ *         schema:
+ *           enum:
+ *            - approved
+ *            - pending
+ *            - rejected
+ *            - null
  *     responses:
  *       200:
  *         description: Información de feedback recibida correctamente.
@@ -103,29 +88,13 @@ router.post('/order', async (req, res) => {
  *               properties:
  *                 payment_id:
  *                   type: string
- *                   description: ID del pago relacionado con el feedback.
+ *                   description: ID del pago de mercadopago.
  *                   example: "1234567890"
+ *                 status:
+ *                   type: string
+ *                   description: estado del pago.
+ *                   example: "pending"
  */
-router.get('/feedback', (req, res) => {
-  const { payment_id, status, merchant_order_id } = req.query
-
-  let redirectUrl = 'http://localhost:5173/' + 'checkout/'
-
-  if (status === 'approved') {
-    redirectUrl += 'successfull'
-  } else if (status === 'pending') {
-    redirectUrl += 'pending'
-  } else if (status === 'rejected') {
-    redirectUrl += 'error'
-  }
-
-  const queryParams = new URLSearchParams({
-    payment_id,
-    status,
-    merchant_order_id
-  })
-
-  return res.redirect(redirectUrl + '?' + queryParams.toString())
-})
+router.get('/feedback', redirectToWebSite)
 
 module.exports = router
