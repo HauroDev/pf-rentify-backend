@@ -17,14 +17,14 @@ module.exports = (sequelize) => {
       },
       puntuation: {
         type: DataTypes.FLOAT,
-        allowNull: false
+        allowNull: false,
         //  seria bueno cambiarlo a entero y añadir una validacion para limitar de 1 a 5 verificar el codigo de abajo :D
         // type: DataTypes.INTEGER,
         // allowNull: false,
-        // validate: {
-        //   min: 1,
-        //   max: 5
-        // }
+        validate: {
+          min: 1,
+          max: 5
+        }
       },
       commentStatus: {
         type: DataTypes.BOOLEAN,

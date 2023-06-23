@@ -7,7 +7,8 @@ const { DB_NAME, DB_USER, DB_PASSWORD, HOST, MODE } = require('../../config')
 const sequelize = new Sequelize(DB_NAME, DB_USER, DB_PASSWORD, {
   host: HOST,
   dialect: 'postgres',
-  logging: MODE === 'PRODUCTION' ? false : console.log, // mostrara cada ves que se levante el servidor la respuesta de la base de datos
+  // mostrara cada ves que se levante el servidor la respuesta de la base de datos mientras 'MODE' sea distinto de 'PRODUCTION'
+  logging: MODE === 'PRODUCTION' ? false : console.log,
   native: false, // lets Sequelize know we can use pg-native for ~30% more speed
   dialectOptions: {
     ssl: {
@@ -41,9 +42,8 @@ const capsEntries = entries.map((entry) => [
 ])
 sequelize.models = Object.fromEntries(capsEntries)
 
-const { User, Product, Comment, Category } = sequelize.models
+const { User, Product, Comment, Category, Country } = sequelize.models
 
-// un usuario crea muchos productos (vendedor)
 User.belongsToMany(Product, {
   through: 'UserProduct',
   as: 'products',
@@ -56,27 +56,26 @@ Product.belongsToMany(User, {
   foreignKey: 'idProd'
 })
 
-// un producto tiene muchos comentarios
-Product.hasMany(Comment, { as: 'comments', foreignKey: 'idComment' })
+Product.hasMany(Comment, { as: 'comments', foreignKey: 'idProd' })
 Comment.belongsTo(Product, { foreignKey: 'idProd' })
-
-// una categoria tiene muchos productos
 
 Category.belongsToMany(Product, {
   through: 'CategoryProduct',
   as: 'products',
-  foreignKey: 'idProd'
-})
-Product.belongsToMany(Category, {
-  through: 'CategoryProduct',
-  as: 'categories',
   foreignKey: 'idCategory'
 })
 
-// un usuario tiene muchos comentarios
+Product.belongsToMany(Category, {
+  through: 'CategoryProduct',
+  as: 'categories',
+  foreignKey: 'idProd'
+})
 
 User.hasMany(Comment, { as: 'comments', foreignKey: 'idUser' })
 Comment.belongsTo(User, { foreignKey: 'idUser' })
+
+Country.hasMany(Product, { as: 'products', foreignKey: 'idCountry' })
+Product.belongsTo(Country, { as: 'country', foreignKey: 'idCountry' })
 
 module.exports = {
   conn: sequelize,
