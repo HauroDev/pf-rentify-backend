@@ -106,40 +106,26 @@ router.post('/order', async (req, res) => {
  *                   description: ID del pago relacionado con el feedback.
  *                   example: "1234567890"
  */
-router.get(
-  '/feedback',
-  async (req, res, next) => {
-    const { payment_id } = req.query
+router.get('/feedback', (req, res) => {
+  const { payment_id, status, merchant_order_id } = req.query
 
-    try {
-      const payment = await mp.payment.findById(Number(payment_id))
-      console.log(payment)
-      next()
-    } catch (error) {
-      res.sendStatus(400)
-    }
-  },
-  (req, res) => {
-    const { payment_id, status, merchant_order_id } = req.query
+  let redirectUrl = 'http://localhost:5173/' + 'checkout/'
 
-    let redirectUrl = 'http://localhost:5173/' + 'checkout/'
-
-    if (status === 'approved') {
-      redirectUrl += 'successfull'
-    } else if (status === 'pending') {
-      redirectUrl += 'pending'
-    } else if (status === 'rejected') {
-      redirectUrl += 'error'
-    }
-
-    const queryParams = new URLSearchParams({
-      payment_id,
-      status,
-      merchant_order_id
-    })
-
-    return res.redirect(redirectUrl + '?' + queryParams.toString())
+  if (status === 'approved') {
+    redirectUrl += 'successfull'
+  } else if (status === 'pending') {
+    redirectUrl += 'pending'
+  } else if (status === 'rejected') {
+    redirectUrl += 'error'
   }
-)
+
+  const queryParams = new URLSearchParams({
+    payment_id,
+    status,
+    merchant_order_id
+  })
+
+  return res.redirect(redirectUrl + '?' + queryParams.toString())
+})
 
 module.exports = router
