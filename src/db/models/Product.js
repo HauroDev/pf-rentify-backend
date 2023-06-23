@@ -1,14 +1,14 @@
-const { DataTypes } = require('sequelize')
+const { DataTypes } = require("sequelize");
 
 module.exports = (sequelize) => {
   sequelize.define(
-    'Product',
+    "Product",
     {
       idProd: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
         primaryKey: true,
-        comment: 'Unique identifier for the product'
+        comment: "Unique identifier for the product",
       },
       name: {
         type: DataTypes.STRING(40),
@@ -16,14 +16,14 @@ module.exports = (sequelize) => {
         validate: {
           notEmpty: {
             args: true,
-            msg: 'Name is required'
+            msg: "Name is required",
           },
           len: {
             args: [3, 40],
-            msg: 'Name must be between 3 and 40 characters'
-          }
+            msg: "Name must be between 3 and 40 characters",
+          },
         },
-        comment: 'Name of the product'
+        comment: "Name of the product",
       },
       description: {
         type: DataTypes.TEXT,
@@ -31,10 +31,10 @@ module.exports = (sequelize) => {
         validate: {
           notEmpty: {
             args: true,
-            msg: 'Description is required'
-          }
+            msg: "Description is required",
+          },
         },
-        comment: 'Description of the product'
+        comment: "Description of the product",
       },
       image: {
         type: DataTypes.TEXT,
@@ -42,23 +42,23 @@ module.exports = (sequelize) => {
         validate: {
           notEmpty: {
             args: true,
-            msg: 'Image is required'
+            msg: "Image is required",
           },
           isUrl: {
             args: true,
-            msg: 'Image must be a valid URL'
-          }
+            msg: "Image must be a valid URL",
+          },
         },
-        comment: 'Image of the product'
+        comment: "Image of the product",
       },
       price: {
         type: DataTypes.FLOAT,
         allowNull: false,
         defaultValue: 0,
         validate: {
-          min: 0
+          min: 0,
         },
-        comment: 'Price of the product'
+        comment: "Price of the product",
       },
       location: {
         type: DataTypes.STRING,
@@ -66,10 +66,10 @@ module.exports = (sequelize) => {
         validate: {
           notEmpty: {
             args: true,
-            msg: 'Location is required'
-          }
+            msg: "Location is required",
+          },
         },
-        comment: 'Location of the product'
+        comment: "Location of the product",
       },
       state: {
         type: DataTypes.TEXT,
@@ -77,26 +77,26 @@ module.exports = (sequelize) => {
         validate: {
           notEmpty: {
             args: true,
-            msg: 'State is required'
-          }
-        }
+            msg: "State is required",
+          },
+        },
       },
       statusPub: {
-        type: DataTypes.ENUM('active', 'inactive', 'paused'),
-        defaultValue: 'active',
-        comment: 'Status of the publication'
+        type: DataTypes.ENUM("active", "inactive", "paused"),
+        defaultValue: "active",
+        comment: "Status of the publication",
       },
       statusProd: {
-        type: DataTypes.ENUM('available', 'rented'),
-        defaultValue: 'available',
-        comment: 'Status of the product'
+        type: DataTypes.ENUM("available", "rented"),
+        defaultValue: "available",
+        comment: "Status of the product",
       },
       isFeatured: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
         defaultValue: false,
-        comment: 'Is the product featured?'
-      }
+        comment: "Is the product featured?",
+      },
       // stock: {
       //     type:DataTypes.INTEGER,
       //     allowNull:false,
@@ -104,8 +104,8 @@ module.exports = (sequelize) => {
       // }
     },
     {
-      comment: 'Table containing information about product',
-      tableName: 'products'
+      comment: "Table containing information about product",
+      tableName: "products",
     }
-  )
-}
+  );
+};
