@@ -2,7 +2,8 @@ const { Router } = require('express')
 
 const {
   createOrder,
-  redirectToWebSite
+  redirectToWebSite,
+  verificationCountryMercadoPago
 } = require('../controller/payments.controller.js')
 
 const router = Router()
@@ -18,6 +19,7 @@ const router = Router()
  *          type: array
  *          items:
  *            $ref: '#/components/schemas/Item'
+ *        idCountry: number
  *      required:
  *        - items
  *    Item:
@@ -52,7 +54,7 @@ const router = Router()
  *         description: Error en la solicitud. Por favor, revise los parámetros enviados.
  */
 
-router.post('/order', createOrder)
+router.post('/order', verificationCountryMercadoPago, createOrder)
 /**
  * @swagger
  * /payments/feedback:

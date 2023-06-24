@@ -1,13 +1,13 @@
-const { Router } = require("express");
+const { Router } = require('express')
 
 const {
   getProducts,
   createProduct,
   getProductById,
-  getUserProducts,
-} = require("../controller/products.controller.js");
+  getUserProducts
+} = require('../controller/products.controller.js')
 
-const router = Router();
+const router = Router()
 
 // Schema Product
 /**
@@ -142,7 +142,7 @@ const router = Router();
  *                 $ref: '#/components/schemas/Product'
  */
 
-router.get("/", getProducts);
+router.get('/', getProducts)
 // Post product
 /**
  * @swagger
@@ -164,7 +164,7 @@ router.get("/", getProducts);
  *       400:
  *         description: Error en los parámetros de entrada
  */
-router.post("/", createProduct);
+router.post('/', createProduct)
 // Get IdProduct
 /**
  * @swagger
@@ -191,7 +191,7 @@ router.post("/", createProduct);
  *       404:
  *         description: Producto no encontrado
  */
-router.get("/:id", getProductById);
-router.get("/user/:id", getUserProducts);
+router.get('/:id', getProductById)
+router.get('/user/:id', getUserProducts)
 
-module.exports = router;
+module.exports = router
