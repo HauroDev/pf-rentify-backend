@@ -8,16 +8,13 @@ module.exports = (sequelize) => {
       autoIncrement: true
     },
     payment_id: {
-      type: DataTypes.INTEGER,
-      allowNull: false
+      type: DataTypes.INTEGER
     },
     status: {
-      type: DataTypes.ENUM('approved', 'pending', 'rejected', 'null'),
-      
+      type: DataTypes.ENUM('approved', 'pending', 'rejected', null)
     },
     merchant_order_id: {
-      type: DataTypes.INTEGER,
-      allowNull: false
+      type: DataTypes.INTEGER
     }
-  })
+  }) /// falta completar cosas
 }
