@@ -1,13 +1,21 @@
 /* eslint-disable camelcase */
-const mp = require('../mercadopago.js')
+const { mercadopago: mp, configMercadoPago } = require('../mercadopago.js')
 const {
-  urlApi
+  urlApi,
   // MODE,
   // URL_CLIENTE,
-  // URL_CLIENTE_PRUEBAS
+  URL_CLIENTE_PRUEBAS
 } = require('../../config.js')
 
 const urlWebHook = urlApi + '/payments/feedback'
+
+const verificationCountryMercadoPago = (req, res, next) => {
+  // const { idCountry } = req.body // por defecto el idCountry es 1 en configMercadoPago
+
+  configMercadoPago() // cuando este habilitado en el front la seleccion de paises, entonces se podra hacer esto
+    .then(() => next())
+    .catch((e) => res.status(e?.status || 500).json({ error: e.message }))
+}
 
 const createOrder = async (req, res) => {
   const { items } = req.body
@@ -34,14 +42,16 @@ const createOrder = async (req, res) => {
 const redirectToWebSite = (req, res) => {
   const { payment_id, status, merchant_order_id } = req.query
 
-  let redirectUrl = 'http://localhost:5173/' + 'checkout/'
+  // let redirectUrl = MODE === 'PRODUCTION' ? URL_CLIENTE : URL_CLIENTE_PRUEBAS
+  let redirectUrl = URL_CLIENTE_PRUEBAS
+  redirectUrl += '/checkout'
 
   if (status === 'approved') {
-    redirectUrl += 'successfull'
+    redirectUrl += '/successfull'
   } else if (status === 'pending') {
-    redirectUrl += 'pending'
+    redirectUrl += '/pending'
   } else if (status === 'rejected') {
-    redirectUrl += 'error'
+    redirectUrl += '/error'
   }
 
   const queryParams = new URLSearchParams({
@@ -53,4 +63,8 @@ const redirectToWebSite = (req, res) => {
   return res.redirect(redirectUrl + '?' + queryParams.toString())
 }
 
-module.exports = { createOrder, redirectToWebSite }
+module.exports = {
+  verificationCountryMercadoPago,
+  createOrder,
+  redirectToWebSite
+}
