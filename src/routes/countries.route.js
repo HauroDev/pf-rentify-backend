@@ -1,7 +1,8 @@
 const { Router } = require('express')
 const {
   createCountry,
-  getCountries
+  getCountries,
+  getChildrenGeoname
 } = require('../controller/countries.controler')
 
 const router = Router()
@@ -22,5 +23,7 @@ const router = Router()
 router.get('/', getCountries)
 
 router.post('/', createCountry)
+
+router.get('/childrens/:id', getChildrenGeoname)
 
 module.exports = router

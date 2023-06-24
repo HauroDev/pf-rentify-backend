@@ -22,8 +22,8 @@ module.exports = (sequelize) => {
         allowNull: true
       },
       image: {
-        type: DataTypes.TEXT, // !cambie
-        allowNull: true // consultar
+        type: DataTypes.TEXT,
+        allowNull: true
       },
       membership: {
         type: DataTypes.ENUM(['standard', 'premium']), //

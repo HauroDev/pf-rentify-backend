@@ -1,5 +1,6 @@
 const { CustomError } = require('../utils/customErrors.js')
 const { Country } = require('../db/db.js')
+const { default: axios } = require('axios')
 
 const getCountries = async (_req, res) => {
   try {
@@ -61,5 +62,16 @@ const createCountry = async (req, res) => {
     res.status(error?.status || 500).json({ error: error.message })
   }
 }
+const API = (id) =>
+  `http://api.geonames.org/childrenJSON?geonameId=${id}&username=gabriel`
 
-module.exports = { getCountries, createCountry }
+const getChildrenGeoname = async (req, res) => {
+  const { id } = req.params
+  try {
+    const { data } = await axios(API(id))
+    res.json(data)
+  } catch (error) {
+    res.status(500).json({ error: 'Api geonames no responde' })
+  }
+}
+module.exports = { getCountries, createCountry, getChildrenGeoname }
