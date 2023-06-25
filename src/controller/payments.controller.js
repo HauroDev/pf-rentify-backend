@@ -2,8 +2,8 @@
 const { mercadopago: mp, configMercadoPago } = require('../mercadopago.js')
 const {
   urlApi,
-  // MODE,
-  // URL_CLIENTE,
+  MODE,
+  URL_CLIENTE,
   URL_CLIENTE_PRUEBAS
 } = require('../../config.js')
 
@@ -42,8 +42,8 @@ const createOrder = async (req, res) => {
 const redirectToWebSite = (req, res) => {
   const { payment_id, status, merchant_order_id } = req.query
 
-  // let redirectUrl = MODE === 'PRODUCTION' ? URL_CLIENTE : URL_CLIENTE_PRUEBAS
-  let redirectUrl = URL_CLIENTE_PRUEBAS
+  let redirectUrl = MODE === 'PRODUCTION' ? URL_CLIENTE : URL_CLIENTE_PRUEBAS
+  // let redirectUrl = URL_CLIENTE_PRUEBAS
   redirectUrl += '/checkout'
 
   if (status === 'approved') {
