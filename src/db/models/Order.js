@@ -11,7 +11,7 @@ module.exports = (sequelize) => {
       type: DataTypes.INTEGER
     },
     status: {
-      type: DataTypes.ENUM('approved', 'pending', 'rejected', null)
+      type: DataTypes.ENUM('approved', 'pending', 'rejected')
     },
     merchant_order_id: {
       type: DataTypes.INTEGER
