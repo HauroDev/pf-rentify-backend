@@ -255,12 +255,12 @@ const getUserProducts = async (req, res) => {
       throw new Error(404, "User not valid");
     }
 
-   //const products = await user.getProducts();
-   // const categories = ...completar
-   const products = await user.getProducts({
-    include: [{ model: Category, as: "categories" }],
-    through:{attributes:[]}
-  });
+    //const products = await user.getProducts();
+    // const categories = ...completar
+    const products = await user.getProducts({
+      include: [{ model: Category, as: "categories" }],
+      through: { attributes: [] },
+    });
     res.status(200).json(products);
   } catch (error) {
     // Manejar errores de consulta
@@ -268,9 +268,36 @@ const getUserProducts = async (req, res) => {
     throw error;
   }
 };
+//PRUEBA GONZALO<------
+// Controlador para actualizar el statusProd de un producto
+const updateProductStatus = async (req, res) => {
+  const { idProd } = req.body; // Suponiendo que recibes el ID del producto como parámetro en la URL
+  const newStatus = "rented";
+  console.log(idProd);
+  try {
+    // Buscar el producto por su ID
+    const product = await Product.findByPk(idProd);
+    console.log(product);
+    if (!product) {
+      return res.status(404).json({ error: "Product not found ??" });
+    }
+
+    // Actualizar el statusProd del producto
+    product.statusProd = newStatus;
+    await product.save();
+
+    return res
+      .status(200)
+      .json({ message: "Product status updated successfully" });
+  } catch (error) {
+    console.error("Error updating product status:", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+};
 module.exports = {
   getProducts,
   createProduct,
   getProductById,
   getUserProducts,
+  updateProductStatus,
 };
