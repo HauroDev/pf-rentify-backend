@@ -3,7 +3,8 @@ const { Router } = require('express')
 const {
   getProducts,
   createProduct,
-  getProductById
+  getProductById,
+  getUserProducts
 } = require('../controller/products.controller.js')
 
 const router = Router()
@@ -191,5 +192,6 @@ router.post('/', createProduct)
  *         description: Producto no encontrado
  */
 router.get('/:id', getProductById)
+router.get('/user/:id', getUserProducts)
 
 module.exports = router
