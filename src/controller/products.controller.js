@@ -270,9 +270,8 @@ const getUserProducts = async (req, res) => {
 };
 //PRUEBA GONZALO<------
 // Controlador para actualizar el statusProd de un producto
-const updateProductStatus = async (req, res) => {
-  const { idProd } = req.body; // Suponiendo que recibes el ID del producto como parámetro en la URL
-  const newStatus = "rented";
+const updateProductstatusPub = async (req, res) => {
+  const { idProd , statusPub } = req.body; // Suponiendo que recibes el ID del producto como parámetro en la URL
   console.log(idProd);
   try {
     // Buscar el producto por su ID
@@ -283,7 +282,7 @@ const updateProductStatus = async (req, res) => {
     }
 
     // Actualizar el statusProd del producto
-    product.statusProd = newStatus;
+    product.statusPub = statusPub;
     await product.save();
 
     return res
@@ -299,5 +298,5 @@ module.exports = {
   createProduct,
   getProductById,
   getUserProducts,
-  updateProductStatus,
+  updateProductstatusPub,
 };
