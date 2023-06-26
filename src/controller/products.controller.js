@@ -172,10 +172,13 @@ const createProduct = async (req, res) => {
     const productDb = await Product.create(product)
     await productDb.addUser(user)
     await productDb.addCategories(categoriesDb)
+    console.log(country)
     await productDb.setCountry(country)
 
     let categoriesSearch = await productDb.getCategories()
     const countrySearch = (await productDb.getCountry()).toJSON()
+
+    console.log(countrySearch)
 
     categoriesSearch = categoriesSearch.map((cat) => {
       cat = cat.toJSON()
