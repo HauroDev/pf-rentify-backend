@@ -5,7 +5,7 @@ const {
   createProduct,
   getProductById,
   getUserProducts,
-  updateProductStatus,
+  updateProductstatusPub,
 } = require("../controller/products.controller.js");
 
 const router = Router();
@@ -196,5 +196,5 @@ router.get("/:id", getProductById);
 router.get("/user/:id", getUserProducts);
 
 //PRUEBA GONZALO
-router.put("/update-status", updateProductStatus);
+router.put("/update-status", updateProductstatusPub);
 module.exports = router;
