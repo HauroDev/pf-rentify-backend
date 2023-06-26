@@ -82,7 +82,7 @@ module.exports = (sequelize) => {
         }
       },
       statusPub: {
-        type: DataTypes.ENUM('active', 'inactive', 'paused'),
+        type: DataTypes.ENUM('active', 'inactive', 'deleted'),
         defaultValue: 'active',
         comment: 'Status of the publication'
       },
