@@ -259,6 +259,7 @@ const getUserProducts = async (req, res) => {
    // const categories = ...completar
    const products = await user.getProducts({
     include: [{ model: Category, as: "categories" }],
+    through:{attributes:[]}
   });
     res.status(200).json(products);
   } catch (error) {
