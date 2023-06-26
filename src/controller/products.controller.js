@@ -255,7 +255,11 @@ const getUserProducts = async (req, res) => {
       throw new Error(404, "User not valid");
     }
 
-    const products = await user.getProducts();
+   //const products = await user.getProducts();
+   // const categories = ...completar
+   const products = await user.getProducts({
+    include: [{ model: Category, as: "categories" }],
+  });
     res.status(200).json(products);
   } catch (error) {
     // Manejar errores de consulta
