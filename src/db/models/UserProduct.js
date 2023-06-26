@@ -8,7 +8,8 @@ module.exports = (sequelize) => {
     {
       type: {
         type: DataTypes.ENUM('renter', 'owner'),
-        allowNull: false
+        allowNull: false,
+        defaultValue: 'owner'
       },
       idUser: {
         type: DataTypes.UUID,
