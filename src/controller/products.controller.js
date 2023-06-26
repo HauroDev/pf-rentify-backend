@@ -1,7 +1,7 @@
-const { Product, Category, User, Comment, Country } = require('../db/db.js')
-const { Op } = require('sequelize')
-const { obtenerNextPageProduct } = require('../utils/paginado.js')
-const { CustomError } = require('../utils/customErrors.js')
+const { Product, Category, User, Comment, Country } = require("../db/db");
+const { Op } = require("sequelize");
+const { obtenerNextPageProduct } = require("../utils/paginado.js");
+const { CustomError } = require("../utils/customErrors.js");
 
 const getProducts = async (req, res) => {
   // agregar price entre un rango a futuro
@@ -14,46 +14,46 @@ const getProducts = async (req, res) => {
     idCategory,
     idCountry,
     location,
-    state
-  } = req.query
+    state,
+  } = req.query;
 
-  const whereOptions = {}
+  const whereOptions = {};
 
   if (name) {
     whereOptions.name = {
-      [Op.iLike]: `%${name}%`
-    }
+      [Op.iLike]: `%${name}%`,
+    };
   }
 
   if (idCountry) {
-    whereOptions.idCountry = +idCountry
+    whereOptions.idCountry = +idCountry;
     if (state) {
       whereOptions.state = {
-        [Op.iLike]: `%${state}%`
-      }
+        [Op.iLike]: `%${state}%`,
+      };
 
       if (location) {
         whereOptions.location = {
-          [Op.iLike]: `%${location}%`
-        }
+          [Op.iLike]: `%${location}%`,
+        };
       }
     }
   }
 
-  const orderOptions = [['isFeatured', 'DESC']]
+  const orderOptions = [["isFeatured", "DESC"]];
 
-  orderType = orderType || 'ASC'
+  orderType = orderType || "ASC";
 
   switch (orderBy) {
-    case 'price':
-      orderOptions.push(['price', orderType])
-      break
-    case 'name':
-      orderOptions.push(['name', orderType])
-      break
-    case 'date':
+    case "price":
+      orderOptions.push(["price", orderType]);
+      break;
+    case "name":
+      orderOptions.push(["name", orderType]);
+      break;
+    case "date":
     default:
-      orderOptions.push(['updatedAt', orderType])
+      orderOptions.push(["updatedAt", orderType]);
   }
 
   try {
@@ -63,191 +63,209 @@ const getProducts = async (req, res) => {
         {
           model: Category,
           through: { attributes: [] },
-          as: 'categories',
-          where: idCategory ? { idCategory: +idCategory } : {}
+          as: "categories",
+          where: idCategory ? { idCategory: +idCategory } : {},
         },
         {
           model: Country,
-          as: 'country',
-          attributes: { exclude: ['createdAt', 'updatedAt'] }
-        }
+          as: "country",
+          attributes: { exclude: ["createdAt", "updatedAt"] },
+        },
       ],
       distinct: true,
       offset: offset || 0,
       limit: limit || 12,
-      order: orderOptions
-    })
+      order: orderOptions,
+    });
 
-    const { rows: products, count } = result
+    const { rows: products, count } = result;
 
-    offset = offset || offset > 0 ? +offset : 0
-    limit = limit ? +limit : 12
+    offset = offset || offset > 0 ? +offset : 0;
+    limit = limit ? +limit : 12;
 
-    let queryExtend = obtenerNextPageProduct(offset, limit, count)
+    let queryExtend = obtenerNextPageProduct(offset, limit, count);
     if (queryExtend) {
-      const params = []
+      const params = [];
 
       if (name) {
-        params.push(`name=${name}`)
+        params.push(`name=${name}`);
       }
 
       if (orderBy) {
-        params.push(`orderBy=${orderBy}`)
+        params.push(`orderBy=${orderBy}`);
       }
 
       if (orderType) {
-        params.push(`orderType=${orderType}`)
+        params.push(`orderType=${orderType}`);
       }
 
       if (idCategory) {
-        params.push(`idCategory=${idCategory}`)
+        params.push(`idCategory=${idCategory}`);
       }
 
       if (idCountry) {
-        params.push(`idCountry=${idCountry}`)
+        params.push(`idCountry=${idCountry}`);
         if (state) {
-          params.push(`state=${state}`)
+          params.push(`state=${state}`);
           if (location) {
-            params.push(`location=${location}`)
+            params.push(`location=${location}`);
           }
         }
       }
 
-      queryExtend += params.length > 0 ? `&${params.join('&')}` : ''
+      queryExtend += params.length > 0 ? `&${params.join("&")}` : "";
     }
 
     res.status(200).json({
       count,
       next: queryExtend,
-      results: products
-    })
+      results: products,
+    });
   } catch (error) {
-    res.status(500).json({ message: error.message })
+    res.status(500).json({ message: error.message });
   }
-}
+};
 
 // faltan hacer verificaciones para que no cree productos si no se cumplen ciertas reglas
 const createProduct = async (req, res) => {
-  const { idUser, idCountry, ...product } = req.body
+  const { idUser, idCountry, ...product } = req.body;
 
   try {
     const categoriesDb = await Category.findAll({
-      where: { name: product.categories?.map((cat) => cat.name) }
-    })
+      where: { name: product.categories?.map((cat) => cat.name) },
+    });
     // Validaciones
     if (!categoriesDb.length) {
       throw new CustomError(
         404,
-        'The request could not be completed, Categories not found'
-      )
+        "The request could not be completed, Categories not found"
+      );
     }
 
     if (!idUser) {
       throw new CustomError(
         404,
-        'The request could not be completed, idUser is required to create a product.'
-      )
+        "The request could not be completed, idUser is required to create a product."
+      );
     }
 
-    const user = await User.findByPk(idUser)
+    const user = await User.findByPk(idUser);
 
     if (!user) {
       throw new CustomError(
         404,
-        'The request could not be completed, User is not found.'
-      )
+        "The request could not be completed, User is not found."
+      );
     }
 
-    const country = await Country.findByPk(idCountry)
+    const country = await Country.findByPk(idCountry);
 
     if (!country) {
       throw new CustomError(
         404,
-        'The request could not be completed, Country not found.'
-      )
+        "The request could not be completed, Country not found."
+      );
     }
 
     // fin de Validaciones
 
-    const productDb = await Product.create(product)
-    await productDb.addUser(user)
-    await productDb.addCategories(categoriesDb)
-    await productDb.setCountry(country)
+    const productDb = await Product.create(product);
+    await productDb.addUser(user);
+    await productDb.addCategories(categoriesDb);
+    await productDb.setCountry(country);
 
-    let categoriesSearch = await productDb.getCategories()
-    const countrySearch = (await productDb.getCountry()).toJSON()
+    let categoriesSearch = await productDb.getCategories();
+    const countrySearch = (await productDb.getCountry()).toJSON();
 
     categoriesSearch = categoriesSearch.map((cat) => {
-      cat = cat.toJSON()
+      cat = cat.toJSON();
 
-      delete cat.createdAt
-      delete cat.updatedAt
-      delete cat.CategoryProduct
+      delete cat.createdAt;
+      delete cat.updatedAt;
+      delete cat.CategoryProduct;
 
-      return cat
-    })
+      return cat;
+    });
 
-    delete countrySearch.createdAt
-    delete countrySearch.updatedAt
+    delete countrySearch.createdAt;
+    delete countrySearch.updatedAt;
 
     res.status(200).json({
       ...productDb.toJSON(),
       categories: categoriesSearch,
-      country: countrySearch
-    })
+      country: countrySearch,
+    });
   } catch (error) {
-    console.log(error)
-    res.status(500).json({ message: error.message })
+    console.log(error);
+    res.status(500).json({ message: error.message });
   }
-}
+};
 
 const getProductById = async (req, res) => {
-  const { id } = req.params
+  const { id } = req.params;
 
   try {
     if (!id) {
       throw new CustomError(
         404,
-        'The request could not be completed, You need an ID to obtain a product.'
-      )
+        "The request could not be completed, You need an ID to obtain a product."
+      );
     }
     const product = await Product.findByPk(id, {
       include: [
-        { model: Category, as: 'categories', through: { attributes: [] } },
+        { model: Category, as: "categories", through: { attributes: [] } },
         {
           model: Country,
-          as: 'country',
-          attributes: { exclude: ['createdAt', 'updatedAt'] }
+          as: "country",
+          attributes: { exclude: ["createdAt", "updatedAt"] },
         },
-        { model: Comment, as: 'comments' }
-      ]
-    })
+        { model: Comment, as: "comments" },
+      ],
+    });
 
     if (!product) {
       throw new CustomError(
         404,
         `The request could not be completed, Product id:${id} is not found`
-      )
+      );
     }
 
     const userCreator = await product.getUsers({
-      order: [['createdAt', 'DESC']],
-      limit: 1
-    })
+      order: [["createdAt", "DESC"]],
+      limit: 1,
+    });
 
     // no me dejo de otra sequelize que mutar los objetos del array
-    userCreator[0] = userCreator[0].toJSON()
+    userCreator[0] = userCreator[0].toJSON();
 
-    delete userCreator[0]?.UserProduct
+    delete userCreator[0]?.UserProduct;
 
-    res.status(200).json({ ...product.toJSON(), users: userCreator })
+    res.status(200).json({ ...product.toJSON(), users: userCreator });
   } catch (error) {
-    res.status(500).json({ message: error.message })
+    res.status(500).json({ message: error.message });
   }
-}
+};
 
+const getUserProducts = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const user = await User.findByPk(id);
+    console.log(user);
+    if (!user) {
+      throw new Error(404, "User not valid");
+    }
+
+    const products = await user.getProducts();
+    res.status(200).json(products);
+  } catch (error) {
+    // Manejar errores de consulta
+    console.error("Error al obtener los productos del usuario:", error);
+    throw error;
+  }
+};
 module.exports = {
   getProducts,
   createProduct,
-  getProductById
-}
+  getProductById,
+  getUserProducts,
+};
