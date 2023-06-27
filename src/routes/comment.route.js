@@ -29,7 +29,6 @@ const router = Router()
  *       required:
  *         - comment
  *         - puntuation
- *         - commentStatus
  *         - idProd
  *         - idUser
  */
