@@ -6,6 +6,9 @@ const {
   getProductById,
   getUserProducts,
   updateProductstatusPub,
+  updateProductName,
+  updateProductPrice,
+  updateProductIsFeatured,
 } = require("../controller/products.controller.js");
 
 const router = Router();
@@ -197,4 +200,8 @@ router.get("/user/:id", getUserProducts);
 
 //PRUEBA GONZALO
 router.put("/update-status", updateProductstatusPub);
+router.put("/update-name", updateProductName);
+router.put("/update-price", updateProductPrice);
+router.put("/update-featured", updateProductIsFeatured);
+
 module.exports = router;

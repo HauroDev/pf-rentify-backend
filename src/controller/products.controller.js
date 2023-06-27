@@ -58,7 +58,13 @@ const getProducts = async (req, res) => {
 
   try {
     const result = await Product.findAndCountAll({
-      where: whereOptions,
+      where: {
+        statusPub: {
+          [Op.ne]: "delete",
+        },
+      },
+      whereOptions,
+
       include: [
         {
           model: Category,
@@ -271,7 +277,7 @@ const getUserProducts = async (req, res) => {
     throw error;
   }
 };
-//PRUEBA GONZALO<------
+
 // Controlador para actualizar el statusProd de un producto
 const updateProductstatusPub = async (req, res) => {
   const { idProd, statusPub } = req.body; // Suponiendo que recibes el ID del producto como parámetro en la URL
@@ -282,6 +288,21 @@ const updateProductstatusPub = async (req, res) => {
     console.log(product);
     if (!product) {
       return res.status(404).json({ error: "Product not found ??" });
+    }
+
+    // Validar que statusPub sea uno de los valores permitidos
+    const allowedStatus = ["active", "inactive", "delete"];
+    if (!allowedStatus.includes(statusPub)) {
+      return res.status(400).json({
+        error:
+          "Invalid value for statusPub. It must be one of: active, inactive, delete",
+      });
+    }
+    // Validar que el estado no sea igual al valor actual en la base de datos
+    if (statusPub === product.statusPub) {
+      return res
+        .status(400)
+        .json({ error: "Status is already set to the provided value" });
     }
 
     // Actualizar el statusProd del producto
@@ -297,10 +318,90 @@ const updateProductstatusPub = async (req, res) => {
   }
 };
 
+const updateProductName = async (req, res) => {
+  const { idProd, name } = req.body;
+
+  try {
+    // Buscar el producto por su ID
+    const product = await Product.findByPk(idProd);
+
+    if (!product) {
+      return res.status(404).json({ error: "Product not found" });
+    }
+
+    // Actualizar el nombre del producto
+    product.name = name;
+    await product.save();
+
+    return res
+      .status(200)
+      .json({ message: "Product name updated successfully" });
+  } catch (error) {
+    console.error("Error updating product name:", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+const updateProductPrice = async (req, res) => {
+  const { idProd, price } = req.body;
+  if (isNaN(price)) {
+    return res.status(400).json({ error: "Price must be a number" });
+  }
+
+  try {
+    // Buscar el producto por su ID
+    const product = await Product.findByPk(idProd);
+
+    if (!product) {
+      return res.status(404).json({ error: "Product not found" });
+    }
+
+    // Actualizar el precio del producto
+    product.price = price;
+    await product.save();
+
+    return res
+      .status(200)
+      .json({ message: "Product price updated successfully" });
+  } catch (error) {
+    console.error("Error updating product price:", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+const updateProductIsFeatured = async (req, res) => {
+  const { idProd, isFeatured } = req.body;
+
+  try {
+    const product = await Product.findByPk(idProd);
+    if (!product) {
+      return res.status(404).json({ error: "Product not found" });
+    }
+    if (typeof isFeatured !== "boolean") {
+      return res
+        .status(400)
+        .json({ error: "Invalid value for isFeatured. It must be a boolean." });
+    }
+    // Actualizar el campo isFeatured del producto
+    product.isFeatured = isFeatured;
+    await product.save();
+
+    return res
+      .status(200)
+      .json({ message: "Product isFeatured updated successfully" });
+  } catch (error) {
+    console.error("Error updating product isFeatured:", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+};
+
 module.exports = {
   getProducts,
   createProduct,
   getProductById,
   getUserProducts,
   updateProductstatusPub,
+  updateProductName,
+  updateProductPrice,
+  updateProductIsFeatured,
 };
