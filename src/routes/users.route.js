@@ -1,13 +1,19 @@
-const { Router } = require('express')
+const { Router } = require("express");
 
 const {
   postUser,
   getUser,
-  getUsersByStatus
-  //   putUser, deleteUser, getUserMember
-} = require('../controller/users.controller.js')
+  getUsersByStatus,
+  updateUserName,
+  updateUserPhone,
+  updateUserEmail,
+  updateUserStatus,
+  updateUserMembership,
+  getUsersByMembership,
+  // deleteUser, getUserMember
+} = require("../controller/users.controller.js");
 
-const router = Router()
+const router = Router();
 
 // Swagger Schema
 /**
@@ -72,8 +78,9 @@ const router = Router()
  *         description: Usuario no encontrado
  */
 
-router.get('/:id', getUser)
-router.get('/', getUsersByStatus)
+router.get("/:id", getUser);
+//router.get("/", getUsersByStatus);
+router.get("/", getUsersByMembership);
 // router.get('/ aca iria  qry  de esta manera en testeo /users?membership=standard'  ,getUserMember);
 
 // metodos post
@@ -98,11 +105,15 @@ router.get('/', getUsersByStatus)
  *       400:
  *         description: Error en los parámetros de entrada
  */
-router.post('/', postUser)
+router.post("/", postUser);
 
 // metodos put
-// router.put('/:id',putUser);
+router.put("/update-name", updateUserName);
+router.put("/update-phone", updateUserPhone);
+router.put("/update-email", updateUserEmail);
+router.put("/update-status", updateUserStatus);
+router.put("/update-membership", updateUserMembership);
 
 // metodos delete
 // router.delete('/:id', deleteUser);
-module.exports = router
+module.exports = router;
