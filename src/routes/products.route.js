@@ -150,7 +150,7 @@ const router = Router();
 router.get("/", getProducts);
 /**
  * @swagger
- * /product/isFeatured/:
+ * /products/isFeatured/:
  *   get:
  *     summary: Obtén productos por característica
  *     description: Obtén una lista de productos filtrados por característica
@@ -202,7 +202,7 @@ router.post("/", createProduct);
 //PRUEBA GONZALO
 /**
  * @swagger
- * /product/update-status:
+ * /products/update-status:
  *   put:
  *     summary: Actualiza el estado de publicación de un producto
  *     description: Puedes cambiar el estado de publicación de un producto
@@ -217,7 +217,7 @@ router.post("/", createProduct);
  *             properties:
  *               idProd:
  *                 type: string
- *                 format: uuid
+ *                 format: string
  *               statusPub:
  *                 type: string
  *                 enum:
@@ -237,7 +237,7 @@ router.post("/", createProduct);
 router.put("/update-status", updateProductstatusPub);
 /**
  * @swagger
- * /product/update-name:
+ * /products/update-name:
  *   put:
  *     summary: Actualiza el nombre de un producto
  *     description: Puedes cambiar el nombre de un producto
@@ -252,7 +252,7 @@ router.put("/update-status", updateProductstatusPub);
  *             properties:
  *               idProd:
  *                 type: string
- *                 format: uuid
+ *                 format: number
  *               name:
  *                 type: string
  *     responses:
@@ -268,7 +268,7 @@ router.put("/update-status", updateProductstatusPub);
 router.put("/update-name", updateProductName);
 /**
  * @swagger
- * /product/update-price:
+ * /products/update-price:
  *   put:
  *     summary: Actualiza el precio de un producto
  *     description: Puedes cambiar el precio de un producto
@@ -283,7 +283,7 @@ router.put("/update-name", updateProductName);
  *             properties:
  *               idProd:
  *                 type: string
- *                 format: uuid
+ *                 format: number
  *               price:
  *                 type: number
  *     responses:
@@ -299,7 +299,7 @@ router.put("/update-name", updateProductName);
 router.put("/update-price", updateProductPrice);
 /**
  * @swagger
- * /product/update-isFeatured:
+ * /products/update-featured:
  *   put:
  *     summary: Actualiza la propiedad "isFeatured" de un producto
  *     description: Puedes cambiar la propiedad "isFeatured" de un producto
@@ -314,7 +314,7 @@ router.put("/update-price", updateProductPrice);
  *             properties:
  *               idProd:
  *                 type: string
- *                 format: uuid
+ *                 format: number
  *               isFeatured:
  *                 type: boolean
  *     responses:
