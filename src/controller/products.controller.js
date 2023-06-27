@@ -1,4 +1,11 @@
-const { Product, Category, User, Comment, Country } = require('../db/db')
+const {
+  Product,
+  Category,
+  User,
+  Comment,
+  Country,
+  // UserProduct
+} = require('../db/db')
 const { Op } = require('sequelize')
 const { obtenerNextPageProduct } = require('../utils/paginado.js')
 const { CustomError } = require('../utils/customErrors.js')

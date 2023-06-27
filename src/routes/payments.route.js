@@ -3,9 +3,9 @@ const { Router } = require('express')
 const {
   createOrder,
   redirectToWebSite,
-  verificationCountryMercadoPago
+  verificationCountryMercadoPago,
+  createSuscription
 } = require('../controller/payments.controller.js')
-const mercadopago = require('mercadopago')
 
 const router = Router()
 
@@ -34,33 +34,7 @@ const router = Router()
  *          type: number
  */
 
-router.post(
-  '/suscription',
-  verificationCountryMercadoPago,
-  async (req, res) => {
-    const { email, price, backUrl, reason } = req.body
-
-    const payload = {
-      reason,
-      auto_recurring: {
-        frequency: 1,
-        frequency_type: 'months',
-        currency_id: 'ARS',
-        transaction_amount: price
-      },
-      payer_email: email,
-      back_url: backUrl,
-      status: 'pending'
-    }
-
-    try {
-      const suscription = await mercadopago.preapproval.create(payload)
-      res.json({ url: suscription.body.init_point })
-    } catch (error) {
-      res.status(500).json({ error: error.message })
-    }
-  }
-)
+router.post('/suscription', verificationCountryMercadoPago, createSuscription)
 
 /**
  * @swagger

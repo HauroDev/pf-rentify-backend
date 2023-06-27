@@ -26,11 +26,11 @@ module.exports = (sequelize) => {
         allowNull: true
       },
       membership: {
-        type: DataTypes.ENUM(['standard', 'premium']), //
-        defaultValue: 'standard'
+        type: DataTypes.ENUM(['basic', 'standard', 'premium']),
+        defaultValue: 'basic'
       },
       status: {
-        type: DataTypes.ENUM('active', 'inactive', 'paused', 'banned'), // !cambie
+        type: DataTypes.ENUM('active', 'inactive', 'banned'),
         defaultValue: 'active'
       },
       uid: {
