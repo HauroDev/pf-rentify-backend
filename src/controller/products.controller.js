@@ -1,4 +1,11 @@
-const { Product, Category, User, Comment, Country } = require('../db/db')
+const {
+  Product,
+  Category,
+  User,
+  Comment,
+  Country,
+  UserProduct
+} = require('../db/db')
 const { Op } = require('sequelize')
 const { obtenerNextPageProduct } = require('../utils/paginado.js')
 const { CustomError } = require('../utils/customErrors.js')
@@ -132,7 +139,6 @@ const getProducts = async (req, res) => {
   }
 }
 
-// faltan hacer verificaciones para que no cree productos si no se cumplen ciertas reglas
 const createProduct = async (req, res) => {
   const { idUser, idCountry, ...product } = req.body
 
@@ -176,17 +182,18 @@ const createProduct = async (req, res) => {
     // fin de Validaciones
 
     const productDb = await Product.create(product)
+
     await productDb.addUser(user)
     await productDb.addCategories(categoriesDb)
-    console.log(country)
     await productDb.setCountry(country)
 
     let categoriesSearch = await productDb.getCategories()
     const countrySearch = (await productDb.getCountry()).toJSON()
 
-    console.log(countrySearch)
-
     categoriesSearch = categoriesSearch.map((cat) => {
+      // cada categoria encontrada en la asociacion
+      // es un objeto JSON por lo que es necesario
+      // para editarlo correctamente hacer esto
       cat = cat.toJSON()
 
       delete cat.createdAt
@@ -227,8 +234,7 @@ const getProductById = async (req, res) => {
           model: Country,
           as: 'country',
           attributes: { exclude: ['createdAt', 'updatedAt'] }
-        },
-        { model: Comment, as: 'comments' }
+        }
       ]
     })
 
@@ -241,17 +247,23 @@ const getProductById = async (req, res) => {
 
     // cambiarlo usando la tabla UserProduct y el type 'owner'
 
-    const userCreator = await product.getUsers({
-      order: [['createdAt', 'DESC']],
-      limit: 1
+    const userOwner = await UserProduct.findOne({
+      where: { [Op.and]: [{ idProd: id }, { type: 'owner' }] }
     })
 
-    // no me dejo de otra sequelize que mutar los objetos del array
-    userCreator[0] = userCreator[0].toJSON()
+    const infoUser = await User.findByPk(userOwner.idUser)
 
-    delete userCreator[0]?.UserProduct
+    // agregar comentarios
 
-    res.status(200).json({ ...product.toJSON(), users: userCreator })
+    const { count: total, rows: comments } = await Comment.findAndCountAll({
+      where: { idProd: id }
+    })
+
+    res.status(200).json({
+      ...product.toJSON(),
+      users: [infoUser],
+      reviews: { total, comments }
+    })
   } catch (error) {
     res.status(500).json({ message: error.message })
   }
@@ -266,8 +278,6 @@ const getUserProducts = async (req, res) => {
       throw new Error(404, 'User not valid')
     }
 
-    // const products = await user.getProducts();
-    // const categories = ...completar
     const products = await user.getProducts({
       include: [{ model: Category, as: 'categories' }],
       through: { attributes: [] }
