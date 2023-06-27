@@ -9,12 +9,12 @@ const sequelize = new Sequelize(DB_NAME, DB_USER, DB_PASSWORD, {
   dialect: 'postgres',
   // mostrara cada ves que se levante el servidor la respuesta de la base de datos mientras 'MODE' sea distinto de 'PRODUCTION'
   logging: MODE === 'PRODUCTION' ? false : console.log,
-  native: false, // lets Sequelize know we can use pg-native for ~30% more speed
-  dialectOptions: {
-    ssl: {
-      require: true
-    }
-  }
+  // native: false, // lets Sequelize know we can use pg-native for ~30% more speed
+  // dialectOptions: {
+  //   ssl: {
+  //     require: true
+  //   }
+  // }
 })
 
 const basename = path.basename(__filename)
@@ -42,8 +42,18 @@ const capsEntries = entries.map((entry) => [
 ])
 sequelize.models = Object.fromEntries(capsEntries)
 
-const { User, Product, Comment, Category, Country, UserProduct } =
-  sequelize.models
+const {
+  User,
+  Product,
+  Comment,
+  // Order,
+  // Suscription,
+  Category,
+  Country,
+  UserProduct
+} = sequelize.models
+
+// Order.hasOne(User)
 
 User.belongsToMany(Product, {
   through: UserProduct,

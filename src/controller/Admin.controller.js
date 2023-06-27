@@ -1,51 +1,46 @@
-// const User = require('./db/models/User.js');
-// const Product = require('../models/Product');
+const { User, Product } = require('../db/db.js')
 
-// // Cambiar estado de un usuario por ID
-// async function changeUserStatusById(req, res) {
-//   const { userId, newStatus } = req.params;
+const getStatisticsUsers = async () => {
+  const total = await User.count()
+  const active = await User.count({
+    where: {
+      status: 'active'
+    }
+  })
+  const inactive = await User.count({
+    where: {
+      status: 'inactive'
+    }
+  })
+  const banned = await User.count({
+    where: {
+      status: 'banned'
+    }
+  })
 
-//   try {
-//     // Buscar el usuario por su ID
-//     const user = await User.findByPk(userId);
-//     if (!user) {
-//       return res.status(404).json({ error: 'Usuario no encontrado' });
-//     }
+  return { total, active, inactive, banned }
+}
 
-//     // Actualizar el estado del usuario
-//     user.status = newStatus;
-//     await user.save();
+const getStatisticsProducts = async () => {
+  const total = await Product.count()
+  const active = await Product.count({ where: { statusPub: 'active' } })
+  const inactive = await Product.count({ where: { statusPub: 'inactive' } })
+  const deleted = await Product.count({ where: { statusPub: 'deleted' } })
 
-//     return res.json({ message: 'Estado de usuario actualizado correctamente' });
-//   } catch (error) {
-//     console.error(error);
-//     return res.status(500).json({ error: 'Error al cambiar el estado del usuario' });
-//   }
-// }
+  return { total, active, inactive, deleted }
+}
 
-// // Cambiar estado de un producto por ID
-// async function changeProductStatusById(req, res) {
-//   const { productId, newStatus } = req.params;
+const getStatistics = async (_req, res) => {
+  try {
+    const [users, products, comments] = await Promise.all([
+      getStatisticsUsers(),
+      getStatisticsProducts()
+    ])
 
-//   try {
-//     // Buscar el producto por su ID
-//     const product = await Product.findByPk(productId);
-//     if (!product) {
-//       return res.status(404).json({ error: 'Producto no encontrado' });
-//     }
+    res.json({ users, products, comments })
+  } catch (error) {
+    res.status(500).json({ error: error.message })
+  }
+}
 
-//     // Actualizar el estado del producto
-//     product.status = newStatus;
-//     await product.save();
-
-//     return res.json({ message: 'Estado del producto actualizado correctamente' });
-//   } catch (error) {
-//     console.error(error);
-//     return res.status(500).json({ error: 'Error al cambiar el estado del producto' });
-//   }
-// }
-
-// module.exports = {
-//   changeUserStatusById,
-//   changeProductStatusById,
-// };
+module.exports = { getStatistics }

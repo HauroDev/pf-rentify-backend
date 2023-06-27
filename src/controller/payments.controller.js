@@ -17,6 +17,30 @@ const verificationCountryMercadoPago = (req, res, next) => {
     .catch((e) => res.status(e?.status || 500).json({ error: e.message }))
 }
 
+const createSuscription = async (req, res) => {
+  const { email, price, backUrl, reason } = req.body
+
+  const payload = {
+    reason,
+    auto_recurring: {
+      frequency: 1,
+      frequency_type: 'months',
+      currency_id: 'ARS',
+      transaction_amount: price
+    },
+    payer_email: email,
+    back_url: backUrl,
+    status: 'pending'
+  }
+
+  try {
+    const suscription = await mp.preapproval.create(payload)
+    res.json({ url: suscription.body.init_point })
+  } catch (error) {
+    res.status(500).json({ error: error.message })
+  }
+}
+
 const createOrder = async (req, res) => {
   const { items } = req.body
 
@@ -65,6 +89,7 @@ const redirectToWebSite = (req, res) => {
 
 module.exports = {
   verificationCountryMercadoPago,
+  createSuscription,
   createOrder,
   redirectToWebSite
 }

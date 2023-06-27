@@ -56,7 +56,7 @@ app.use('/api-doc', swaggerUI.serve, swaggerUI.setup(swaggerJsDoc(swaggerSpec)))
 console.log(urlDoc + '---> documentacion')
 
 conn
-  .sync({ force: false })
+  .sync({ force: true })
   .then(() => {
     app.listen(PORT, () =>
       console.log('Api funcionando en el puerto', PORT, urlApi)

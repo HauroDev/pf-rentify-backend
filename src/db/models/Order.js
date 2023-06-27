@@ -1,27 +1,36 @@
 const { DataTypes } = require('sequelize')
 
 module.exports = (sequelize) => {
+  // const User = sequelize.models.User
+
   sequelize.define(
-    'Orders',
+    'Order',
     {
-      idOrder: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true
+      preferenceId: {
+        type: DataTypes.STRING,
+        allowNull: false
       },
-      payment_id: {
-        type: DataTypes.INTEGER
+      paymentId: {
+        type: DataTypes.STRING
       },
       status: {
         type: DataTypes.ENUM('approved', 'pending', 'rejected')
       },
-      merchant_order_id: {
-        type: DataTypes.INTEGER
+      merchantOrderId: {
+        type: DataTypes.STRING
       }
+      // idUser: {
+      //   type: DataTypes.UUID,
+      //   allowNull: false,
+      //   references: {
+      //     model: User,
+      //     key: 'idUser'
+      //   }
+      // }
     },
     {
       comment: 'Table containing information about orders',
       tableName: 'orders'
     }
-  ) /// falta completar cosas
+  )
 }
