@@ -25,7 +25,7 @@ module.exports = (sequelize) => {
       },
       commentStatus: {
         type: DataTypes.BOOLEAN,
-        allowNull: false
+        defaultValue: true
       }
     },
     {
