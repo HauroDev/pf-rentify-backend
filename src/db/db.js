@@ -42,16 +42,17 @@ const capsEntries = entries.map((entry) => [
 ])
 sequelize.models = Object.fromEntries(capsEntries)
 
-const { User, Product, Comment, Category, Country } = sequelize.models
+const { User, Product, Comment, Category, Country, UserProduct } =
+  sequelize.models
 
 User.belongsToMany(Product, {
-  through: 'UserProduct',
+  through: UserProduct,
   as: 'products',
   foreignKey: 'idUser'
 })
 
 Product.belongsToMany(User, {
-  through: 'UserProduct',
+  through: UserProduct,
   as: 'users',
   foreignKey: 'idProd'
 })

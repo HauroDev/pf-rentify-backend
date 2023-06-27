@@ -172,10 +172,13 @@ const createProduct = async (req, res) => {
     const productDb = await Product.create(product);
     await productDb.addUser(user);
     await productDb.addCategories(categoriesDb);
+    console.log(country);
     await productDb.setCountry(country);
 
     let categoriesSearch = await productDb.getCategories();
     const countrySearch = (await productDb.getCountry()).toJSON();
+
+    console.log(countrySearch);
 
     categoriesSearch = categoriesSearch.map((cat) => {
       cat = cat.toJSON();
@@ -271,7 +274,7 @@ const getUserProducts = async (req, res) => {
 //PRUEBA GONZALO<------
 // Controlador para actualizar el statusProd de un producto
 const updateProductstatusPub = async (req, res) => {
-  const { idProd , statusPub } = req.body; // Suponiendo que recibes el ID del producto como parámetro en la URL
+  const { idProd, statusPub } = req.body; // Suponiendo que recibes el ID del producto como parámetro en la URL
   console.log(idProd);
   try {
     // Buscar el producto por su ID
@@ -293,6 +296,7 @@ const updateProductstatusPub = async (req, res) => {
     return res.status(500).json({ error: "Internal server error" });
   }
 };
+
 module.exports = {
   getProducts,
   createProduct,
