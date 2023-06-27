@@ -1,13 +1,18 @@
-const { Router } = require('express')
+const { Router } = require("express");
 
 const {
   getProducts,
   createProduct,
   getProductById,
-  getUserProducts
-} = require('../controller/products.controller.js')
+  getUserProducts,
+  updateProductstatusPub,
+  updateProductName,
+  updateProductPrice,
+  updateProductIsFeatured,
+  getProductByFeature,
+} = require("../controller/products.controller.js");
 
-const router = Router()
+const router = Router();
 
 // Schema Product
 /**
@@ -142,7 +147,35 @@ const router = Router()
  *                 $ref: '#/components/schemas/Product'
  */
 
-router.get('/', getProducts)
+router.get("/", getProducts);
+/**
+ * @swagger
+ * /products/isFeatured/:
+ *   get:
+ *     summary: Obtén productos por característica
+ *     description: Obtén una lista de productos filtrados por característica
+ *     tags:
+ *       - Productos
+ *     parameters:
+ *       - in: query
+ *         name: isFeatured
+ *         schema:
+ *           type: boolean
+ *         description: Filtro opcional por característica (true, false)
+ *     responses:
+ *       200:
+ *         description: Lista de productos obtenida exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Product'
+ *       500:
+ *         description: Error interno del servidor
+ */
+
+router.get("/isFeatured/", getProductByFeature);
 // Post product
 /**
  * @swagger
@@ -164,7 +197,138 @@ router.get('/', getProducts)
  *       400:
  *         description: Error en los parámetros de entrada
  */
-router.post('/', createProduct)
+router.post("/", createProduct);
+
+//PRUEBA GONZALO
+/**
+ * @swagger
+ * /products/update-status:
+ *   put:
+ *     summary: Actualiza el estado de publicación de un producto
+ *     description: Puedes cambiar el estado de publicación de un producto
+ *     tags:
+ *       - Productos
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               idProd:
+ *                 type: string
+ *                 format: string
+ *               statusPub:
+ *                 type: string
+ *                 enum:
+ *                   - active
+ *                   - inactive
+ *                   - delete
+ *     responses:
+ *       200:
+ *         description: Estado de publicación de producto actualizado exitosamente
+ *       400:
+ *         description: Error de validación o valor de estado de publicación inválido
+ *       404:
+ *         description: Producto no encontrado
+ *       500:
+ *         description: Error interno del servidor
+ */
+router.put("/update-status", updateProductstatusPub);
+/**
+ * @swagger
+ * /products/update-name:
+ *   put:
+ *     summary: Actualiza el nombre de un producto
+ *     description: Puedes cambiar el nombre de un producto
+ *     tags:
+ *       - Productos
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               idProd:
+ *                 type: string
+ *                 format: number
+ *               name:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Nombre de producto actualizado exitosamente
+ *       400:
+ *         description: Error de validación o valor de nombre inválido
+ *       404:
+ *         description: Producto no encontrado
+ *       500:
+ *         description: Error interno del servidor
+ */
+router.put("/update-name", updateProductName);
+/**
+ * @swagger
+ * /products/update-price:
+ *   put:
+ *     summary: Actualiza el precio de un producto
+ *     description: Puedes cambiar el precio de un producto
+ *     tags:
+ *       - Productos
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               idProd:
+ *                 type: string
+ *                 format: number
+ *               price:
+ *                 type: number
+ *     responses:
+ *       200:
+ *         description: Precio de producto actualizado exitosamente
+ *       400:
+ *         description: Error de validación o valor de precio inválido
+ *       404:
+ *         description: Producto no encontrado
+ *       500:
+ *         description: Error interno del servidor
+ */
+router.put("/update-price", updateProductPrice);
+/**
+ * @swagger
+ * /products/update-featured:
+ *   put:
+ *     summary: Actualiza la propiedad "isFeatured" de un producto
+ *     description: Puedes cambiar la propiedad "isFeatured" de un producto
+ *     tags:
+ *       - Productos
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               idProd:
+ *                 type: string
+ *                 format: number
+ *               isFeatured:
+ *                 type: boolean
+ *     responses:
+ *       200:
+ *         description: Propiedad "isFeatured" de producto actualizada exitosamente
+ *       400:
+ *         description: Error de validación o valor de propiedad "isFeatured" inválido
+ *       404:
+ *         description: Producto no encontrado
+ *       500:
+ *         description: Error interno del servidor
+ */
+router.put("/update-featured", updateProductIsFeatured);
+
 // Get IdProduct
 /**
  * @swagger
@@ -191,7 +355,36 @@ router.post('/', createProduct)
  *       404:
  *         description: Producto no encontrado
  */
-router.get('/:id', getProductById)
-router.get('/user/:id', getUserProducts)
+router.get("/:id", getProductById);
+/**
+ * @swagger
+ * /products/user/{id}:
+ *   get:
+ *     summary: Obtén los productos de un usuario
+ *     description: Obtén una lista de productos asociados a un usuario
+ *     tags:
+ *       - Productos
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         description: ID del usuario
+ *     responses:
+ *       200:
+ *         description: Lista de productos obtenida exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Product'
+ *       404:
+ *         description: Usuario no válido
+ *       500:
+ *         description: Error interno del servidor
+ */
 
-module.exports = router
+router.get("/user/:id", getUserProducts);
+module.exports = router;

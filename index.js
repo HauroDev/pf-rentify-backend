@@ -18,7 +18,7 @@ const swaggerSpec = {
     },
     servers: [
       {
-        url: urlApi
+        url: 'http://localhost:3001/api-rentify'
       }
     ]
   },
