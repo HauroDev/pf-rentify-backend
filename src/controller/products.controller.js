@@ -243,6 +243,19 @@ const getProductById = async (req, res) => {
 
     delete userCreator[0]?.UserProduct
 
+    // agregar comentarios
+    /* {
+      total: number
+      reviewForStarts:{
+        1: cants
+        2:
+        3:
+        4:
+        5:
+      },
+      comments:[...]
+    } */
+
     res.status(200).json({ ...product.toJSON(), users: userCreator })
   } catch (error) {
     res.status(500).json({ message: error.message })
