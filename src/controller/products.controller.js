@@ -395,6 +395,27 @@ const updateProductIsFeatured = async (req, res) => {
   }
 };
 
+const getProductByFeature = async (req, res) => {
+  try {
+    const { isFeatured } = req.query; // Obtén el parámetro de consulta 'feature'
+    console.log(isFeatured);
+
+    // Realizar la búsqueda de productos por característica
+    const products = await Product.findAll({
+      where: {
+        isFeatured: isFeatured, // Filtrar por la característica proporcionada
+      },
+    });
+
+    return res.status(200).json(products);
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .json({ error: "Error en la búsqueda de productos por característica" });
+  }
+};
+
 module.exports = {
   getProducts,
   createProduct,
@@ -404,4 +425,5 @@ module.exports = {
   updateProductName,
   updateProductPrice,
   updateProductIsFeatured,
+  getProductByFeature,
 };

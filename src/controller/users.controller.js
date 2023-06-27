@@ -259,38 +259,31 @@ const updateUserMembership = async (req, res) => {
     return res.status(500).json({ error: "Internal server error" });
   }
 };
+const updateUserImage = async (req, res) => {
+  const { idUser, image } = req.body;
 
-// const getUsersByMembership = async (req, res) => {
-//   try {
-//     const { membership } = req.query; // Obtén el parámetro de consulta 'status'
-//     const users = await User.findAll({
-//       where: {
-//         membership, // Filtrar por el estado proporcionado
-//       },
-//     });
+  try {
+    const user = await User.findByPk(idUser);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
 
-//     return res.status(200).json(users);
-//     // try {
-//     //   const { membership } = req.query;
-//     //   const allowedMemberships = ["standard", "premium"];
+    // Validar que la imagen sea una URL válida
+    const urlRegex = /^(ftp|http|https):\/\/[^ "]+$/;
+    if (!urlRegex.test(image)) {
+      return res.status(400).json({ error: "Invalid image URL" });
+    }
 
-//     //   // Verificar si se especificó una membresía válida
-//     //   if (membership && !allowedMemberships.includes(membership)) {
-//     //     return res.status(400).json({ error: "Invalid membership value" });
-//     //   }
+    // Actualizar la imagen del usuario
+    user.image = image;
+    await user.save();
 
-//     // Construir la consulta para obtener los usuarios por membresía
-//     //const whereClause = membership ? { membership } : {};
-
-//     // Obtener los usuarios que cumplen con la condición
-//     // const users = await User.findAll({ where: membership });
-
-//     //return res.status(200).json(users);
-//   } catch (error) {
-//     console.error("Error getting users:", error);
-//     return res.status(500).json({ error: "Internal server error" });
-//   }
-// };
+    return res.status(200).json({ message: "User image updated successfully" });
+  } catch (error) {
+    console.error("Error updating user image:", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+};
 
 const getUsersByMembership = async (req, res) => {
   try {
@@ -374,5 +367,6 @@ module.exports = {
   updateUserStatus,
   updateUserMembership,
   getUsersByMembership,
+  updateUserImage,
   //   putUser, deleteUser, getUserMember
 };
