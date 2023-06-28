@@ -112,15 +112,12 @@ router.get("/all", getAllUsers);
  *     description: Obtén una lista de usuarios filtrados por nombre
  *     tags:
  *       - User
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               name:
- *                 type: string
+ *     parameters:
+ *       - in: query
+ *         name: name
+ *         schema:
+ *           type: string
+ *         description: Filtro por nombre de usuario
  *     responses:
  *       '200':
  *         description: Lista de usuarios obtenida exitosamente
@@ -133,6 +130,7 @@ router.get("/all", getAllUsers);
  *       '500':
  *         description: Error interno del servidor
  */
+
 router.get("/name", getUsersByName);
 
 /**

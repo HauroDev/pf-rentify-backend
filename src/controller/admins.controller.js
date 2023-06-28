@@ -167,4 +167,33 @@ const getStatistics = async (_req, res) => {
   }
 }
 
-module.exports = { getStatistics }
+const getAdminsSudo = async (req, res) => {
+  const { name, role } = req.query;
+  try {
+    let whereClause = {};
+    
+    if (name) {
+      whereClause.name = { [Op.iLike]: `%${name}%` };
+    }
+    
+    if (role === 'admin' || role === 'sudo') {
+      whereClause.role = role;
+    } else if (role) {
+      whereClause.role = ['admin', 'sudo'];
+    }
+    
+    const users = await User.findAll({
+      where: whereClause
+    });
+
+    // Hacer algo con los usuarios obtenidos
+    console.log(users);
+
+    // Retornar los usuarios si necesitas utilizarlos fuera de esta función
+    return res.status(200).json(users);
+  } catch (error) {
+    console.error("Error al obtener los usuarios:", error);
+    throw error;
+  }
+};
+module.exports = { getStatistics,getAdminsSudo }
