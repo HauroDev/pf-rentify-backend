@@ -74,7 +74,11 @@ const getUser = async (req, res) => {
 
 const getAllUsers = async (req, res) => {
   try {
-    const users = await User.findAll(); // Consulta para obtener todos los usuarios
+    const users = await User.findAll({
+      where:{       
+         role: {
+      [Op.notIn]: ['sudo', 'admin']
+    }}}); // Consulta para obtener todos los usuarios
     // Hacer algo con los usuarios obtenidos
     console.log(users);
     // Retornar los usuarios si necesitas utilizarlos fuera de esta función
@@ -92,7 +96,10 @@ const getUsersByName = async (req, res) => {
     const users = await User.findAll({
       where: {
         name: { [Op.iLike]: `%${name}%` },
-      },
+        role: {
+          [Op.notIn]: ['sudo', 'admin']
+        }
+      }
     });
 
     // Hacer algo con los usuarios obtenidos por nombre
