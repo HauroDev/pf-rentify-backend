@@ -35,8 +35,7 @@ module.exports = (sequelize) => {
         defaultValue: 'standard'
 
         type: DataTypes.ENUM(['standard', 'premium']), //
-        defaultValue: 'standard'
-
+        allowNull: false
       },
       status: {
         type: DataTypes.ENUM('active', 'inactive', 'paused', 'banned'), // !cambie

@@ -71,20 +71,22 @@ const getUser = async (req, res) => {
 }
 
 const getUsersByStatus = async (req, res) => {
-    try {
-      const { status } = req.query; // Obtén el parámetro de consulta 'status'
-      const users = await User.findAll({
-        where: {
-          status: status // Filtrar por el estado proporcionado
-        }
-      });
-  
-      return res.status(200).json(users);
-    } catch (error) {
-      console.log(error);
-      return res.status(500).json({ error: 'Error en la búsqueda de usuarios por estado' });
-    }
-  };
+  try {
+    const { status } = req.query // Obtén el parámetro de consulta 'status'
+    const users = await User.findAll({
+      where: {
+        status // Filtrar por el estado proporcionado
+      }
+    })
+
+    return res.status(200).json(users)
+  } catch (error) {
+    console.log(error)
+    return res
+      .status(500)
+      .json({ error: 'Error en la búsqueda de usuarios por estado' })
+  }
+}
 
 
 // // Eliminar usuario (DELETE)
@@ -107,7 +109,9 @@ const getUsersByStatus = async (req, res) => {
 
 <<<<<<< HEAD
 
-
-module.exports = { postUser, getUser,getUsersByStatus
-//   putUser, deleteUser, getUserMember
-     };
+module.exports = {
+  postUser,
+  getUser,
+  getUsersByStatus
+  //   putUser, deleteUser, getUserMember
+}
