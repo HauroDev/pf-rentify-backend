@@ -4,7 +4,23 @@ const {google}=require('googleapis')
 const router = express.Router();
 
 router.post('/send-email', (req,res)=>{
+    console.log(req.body)
 const {name,emailUs,phone,message} =req.body
+const contentHtml =`
+<h1>Formulario de nodemailer</h1>
+<ul>
+<li>name:${name}</li>
+<li>email:${emailUs}</li>
+<li>celular:${phone}</li>
+</ul>
+<p>${message}</p>
+`;
+
+console.log('Datos recibidos:');
+  console.log('Name:', name);
+  console.log('Email:', emailUs);
+  console.log('Phone:', phone);
+  console.log('Message:', message);
 
 
 const CLIENT_ID = process.env.CLIENT_ID
