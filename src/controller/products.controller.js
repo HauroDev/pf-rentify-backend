@@ -67,7 +67,7 @@ const getProducts = async (req, res) => {
     const result = await Product.findAndCountAll({
       where: {
         statusPub: {
-          [Op.ne]: 'delete'
+          [Op.ne]: 'deleted'
         }
       },
       whereOptions,
