@@ -1,4 +1,4 @@
-const { Router } = require("express");
+const { Router } = require('express')
 
 const {
   getProducts,
@@ -9,10 +9,10 @@ const {
   updateProductName,
   updateProductPrice,
   updateProductIsFeatured,
-  getProductByFeature,
-} = require("../controller/products.controller.js");
+  getProductByFeature
+} = require('../controller/products.controller.js')
 
-const router = Router();
+const router = Router()
 
 // Schema Product
 /**
@@ -147,7 +147,7 @@ const router = Router();
  *                 $ref: '#/components/schemas/Product'
  */
 
-router.get("/", getProducts);
+router.get('/', getProducts)
 /**
  * @swagger
  * /products/isFeatured/:
@@ -175,7 +175,7 @@ router.get("/", getProducts);
  *         description: Error interno del servidor
  */
 
-router.get("/isFeatured/", getProductByFeature);
+router.get('/isFeatured/', getProductByFeature)
 // Post product
 /**
  * @swagger
@@ -197,9 +197,9 @@ router.get("/isFeatured/", getProductByFeature);
  *       400:
  *         description: Error en los parámetros de entrada
  */
-router.post("/", createProduct);
+router.post('/', createProduct)
 
-//PRUEBA GONZALO
+// PRUEBA GONZALO
 /**
  * @swagger
  * /products/update-status:
@@ -234,7 +234,7 @@ router.post("/", createProduct);
  *       500:
  *         description: Error interno del servidor
  */
-router.put("/update-status", updateProductstatusPub);
+router.put('/update-status', updateProductstatusPub)
 /**
  * @swagger
  * /products/update-name:
@@ -265,7 +265,7 @@ router.put("/update-status", updateProductstatusPub);
  *       500:
  *         description: Error interno del servidor
  */
-router.put("/update-name", updateProductName);
+router.put('/update-name', updateProductName)
 /**
  * @swagger
  * /products/update-price:
@@ -296,7 +296,7 @@ router.put("/update-name", updateProductName);
  *       500:
  *         description: Error interno del servidor
  */
-router.put("/update-price", updateProductPrice);
+router.put('/update-price', updateProductPrice)
 /**
  * @swagger
  * /products/update-featured:
@@ -327,7 +327,7 @@ router.put("/update-price", updateProductPrice);
  *       500:
  *         description: Error interno del servidor
  */
-router.put("/update-featured", updateProductIsFeatured);
+router.put('/update-featured', updateProductIsFeatured)
 
 // Get IdProduct
 /**
@@ -355,7 +355,7 @@ router.put("/update-featured", updateProductIsFeatured);
  *       404:
  *         description: Producto no encontrado
  */
-router.get("/:id", getProductById);
+router.get('/:id', getProductById)
 /**
  * @swagger
  * /products/user/{id}:
@@ -386,5 +386,5 @@ router.get("/:id", getProductById);
  *         description: Error interno del servidor
  */
 
-router.get("/user/:id", getUserProducts);
-module.exports = router;
+router.get('/user/:id', getUserProducts)
+module.exports = router

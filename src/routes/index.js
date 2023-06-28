@@ -5,7 +5,7 @@ const commentsRoutes = require('./comment.route.js')
 const categoriesRoutes = require('./categories.route.js')
 const countriesRoutes = require('./countries.route.js')
 const paymentsRoutes = require('./payments.route.js')
-const adminRoutes = require('./admin.routes.js')
+const adminRoutes = require('./admin.route.js')
 const login = require('./login.route.js')
 
 const router = Router()
