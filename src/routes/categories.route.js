@@ -1,10 +1,10 @@
-const { Router } = require("express");
+const { Router } = require('express')
 const {
   getCategories,
-  createCategories,
-} = require("../controller/categories.controller.js");
+  createCategories
+} = require('../controller/categories.controller.js')
 
-const categoriesRoutes = Router();
+const categoriesRoutes = Router()
 // schema Categories
 /**
  * @swagger
@@ -39,7 +39,7 @@ const categoriesRoutes = Router();
  *                 $ref: '#/components/schemas/Category'
  */
 
-categoriesRoutes.get("/", getCategories);
+categoriesRoutes.get('/', getCategories)
 
 // Post Category
 /**
@@ -65,6 +65,6 @@ categoriesRoutes.get("/", getCategories);
  *               $ref: '#/components/schemas/Category'
  */
 
-categoriesRoutes.post("/", createCategories);
+categoriesRoutes.post('/', createCategories)
 
-module.exports = categoriesRoutes;
+module.exports = categoriesRoutes
