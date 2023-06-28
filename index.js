@@ -18,7 +18,7 @@ const swaggerSpec = {
     },
     servers: [
       {
-        url: 'http://localhost:3001/api-rentify'
+        url: urlApi
       }
     ]
   },
@@ -56,7 +56,7 @@ app.use('/api-doc', swaggerUI.serve, swaggerUI.setup(swaggerJsDoc(swaggerSpec)))
 console.log(urlDoc + '---> documentacion')
 
 conn
-  .sync({ force: true })
+  .sync({ force: false })
   .then(() => {
     app.listen(PORT, () =>
       console.log('Api funcionando en el puerto', PORT, urlApi)

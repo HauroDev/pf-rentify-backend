@@ -17,6 +17,8 @@ const verificationCountryMercadoPago = (req, res, next) => {
     .catch((e) => res.status(e?.status || 500).json({ error: e.message }))
 }
 
+// agregar propiedad type, para identificar y guardad en la db el tipo de suscription del usuario
+
 const createSuscription = async (req, res) => {
   const { email, price, backUrl, reason } = req.body
 

@@ -4,6 +4,11 @@ module.exports = (sequelize) => {
   sequelize.define(
     'Suscription',
     {
+      idSuscription: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
+      },
       preApprovalId: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -11,6 +16,10 @@ module.exports = (sequelize) => {
       },
       status: {
         type: DataTypes.STRING,
+        allowNull: false
+      },
+      type: {
+        type: DataTypes.ENUM(['basic', 'standard', 'premium']),
         allowNull: false
       }
     },

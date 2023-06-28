@@ -1,43 +1,167 @@
+const { Op } = require('sequelize')
 const { User, Product } = require('../db/db.js')
 
 const getStatisticsUsers = async () => {
-  const total = await User.count()
-  const active = await User.count({
-    where: {
-      status: 'active'
-    }
-  })
-  const inactive = await User.count({
-    where: {
-      status: 'inactive'
-    }
-  })
-  const banned = await User.count({
-    where: {
-      status: 'banned'
-    }
-  })
+  const promises = [
+    User.count(),
+    User.count({
+      where: {
+        status: 'active'
+      }
+    }),
+    User.count({
+      where: {
+        status: 'inactive'
+      }
+    }),
+    User.count({
+      where: {
+        status: 'banned'
+      }
+    })
+  ]
 
-  return { total, active, inactive, banned }
+  const [total, active, inactive, banned] = await Promise.all(promises)
+
+  return [
+    {
+      name: 'total',
+      total
+    },
+    {
+      name: 'active',
+      total: active
+    },
+    {
+      name: 'inactive',
+      total: inactive
+    },
+    {
+      name: 'banned',
+      total: banned
+    }
+  ]
 }
 
 const getStatisticsProducts = async () => {
-  const total = await Product.count()
-  const active = await Product.count({ where: { statusPub: 'active' } })
-  const inactive = await Product.count({ where: { statusPub: 'inactive' } })
-  const deleted = await Product.count({ where: { statusPub: 'deleted' } })
+  const promises = [
+    Product.count(),
+    Product.count({ where: { statusPub: 'active' } }),
+    Product.count({ where: { statusPub: 'inactive' } }),
+    Product.count({ where: { statusPub: 'deleted' } })
+  ]
 
-  return { total, active, inactive, deleted }
+  const [total, active, inactive, deleted] = await Promise.all(promises)
+
+  return [
+    {
+      name: 'total',
+      total
+    },
+    {
+      name: 'active',
+      total: active
+    },
+    {
+      name: 'inactive',
+      total: inactive
+    },
+    {
+      name: 'deleted',
+      total: deleted
+    }
+  ]
+}
+
+const getStatisticsUsersMembership = async () => {
+  const promises = [
+    User.count(),
+    User.count({ where: { membership: 'basic' } }),
+    User.count({
+      where: { [Op.and]: [{ membership: 'basic' }, { status: 'active' }] }
+    }),
+    User.count({
+      where: { [Op.and]: [{ membership: 'basic' }, { status: 'inactive' }] }
+    }),
+    User.count({
+      where: { [Op.and]: [{ membership: 'basic' }, { status: 'banned' }] }
+    }),
+    User.count({ where: { membership: 'standard' } }),
+    User.count({
+      where: { [Op.and]: [{ membership: 'standard' }, { status: 'active' }] }
+    }),
+    User.count({
+      where: { [Op.and]: [{ membership: 'standard' }, { status: 'inactive' }] }
+    }),
+    User.count({
+      where: { [Op.and]: [{ membership: 'standard' }, { status: 'banned' }] }
+    }),
+    User.count({ where: { membership: 'premium' } }),
+    User.count({
+      where: { [Op.and]: [{ membership: 'premium' }, { status: 'active' }] }
+    }),
+    User.count({
+      where: { [Op.and]: [{ membership: 'premium' }, { status: 'inactive' }] }
+    }),
+    User.count({
+      where: { [Op.and]: [{ membership: 'premium' }, { status: 'banned' }] }
+    })
+  ]
+
+  const [
+    total,
+    basic,
+    basicActive,
+    basicInactive,
+    basicBanned,
+    standard,
+    standardActive,
+    standardInactive,
+    standardBanned,
+    premium,
+    premiumActive,
+    premiumInactive,
+    premiumBanned
+  ] = await Promise.all(promises)
+
+  return [
+    {
+      name: 'total',
+      total
+    },
+    {
+      name: 'basic',
+      total: basic,
+      active: basicActive,
+      inactive: basicInactive,
+      banned: basicBanned
+    },
+    {
+      name: 'standard',
+      total: standard,
+      active: standardActive,
+      inactive: standardInactive,
+      banned: standardBanned
+    },
+    {
+      name: 'premium',
+      total: premium,
+      active: premiumActive,
+      inactive: premiumInactive,
+      banned: premiumBanned
+    }
+  ]
 }
 
 const getStatistics = async (_req, res) => {
   try {
-    const [users, products, comments] = await Promise.all([
+    const [users, products, usersMembership] = await Promise.all([
       getStatisticsUsers(),
-      getStatisticsProducts()
+      getStatisticsProducts(),
+      getStatisticsUsersMembership()
     ])
 
-    res.json({ users, products, comments })
+    res.json({ users, products, usersMembership })
   } catch (error) {
     res.status(500).json({ error: error.message })
   }
