@@ -6,6 +6,11 @@ module.exports = (sequelize) => {
   sequelize.define(
     'Order',
     {
+      idOrder: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
+      },
       preferenceId: {
         type: DataTypes.STRING,
         allowNull: false
@@ -19,14 +24,6 @@ module.exports = (sequelize) => {
       merchantOrderId: {
         type: DataTypes.STRING
       }
-      // idUser: {
-      //   type: DataTypes.UUID,
-      //   allowNull: false,
-      //   references: {
-      //     model: User,
-      //     key: 'idUser'
-      //   }
-      // }
     },
     {
       comment: 'Table containing information about orders',
