@@ -161,7 +161,7 @@ const getStatistics = async (_req, res) => {
       getStatisticsUsersMembership()
     ])
 
-    res.json({ users, products, usersMembership })
+    res.json({ users, products, 'user-membership': usersMembership })
   } catch (error) {
     res.status(500).json({ error: error.message })
   }
