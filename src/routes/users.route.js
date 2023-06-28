@@ -49,8 +49,33 @@ const router = Router()
  */
 
 // metodos get
+/**
+ * @swagger
+ * /user/{id}:
+ *   get:
+ *     summary: Obtiene un usuario por ID
+ *     description: Obtiene los detalles de un usuario por su ID
+ *     tags: [User]
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         description: ID del usuario a obtener
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Datos del usuario obtenidos exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
+ *       404:
+ *         description: Usuario no encontrado
+ */
+
 router.get('/:id', getUser)
-router.get ('/',getUsersByStatus)
+router.get('/', getUsersByStatus)
 // router.get('/ aca iria  qry  de esta manera en testeo /users?membership=standard'  ,getUserMember);
 
 // metodos post
