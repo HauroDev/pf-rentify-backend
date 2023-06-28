@@ -91,17 +91,14 @@ const getAllUsers = async (req, res) => {
 };
 
 const getUsersByName = async (req, res) => {
-  const { name } = req.body;
+  const { name } = req.query;
   try {
     const users = await User.findAll({
       where: {
         name: { [Op.iLike]: `%${name}%` },
-        role: {
-          [Op.notIn]: ['sudo', 'admin']
-        }
+        role: 'user'
       }
     });
-
     // Hacer algo con los usuarios obtenidos por nombre
     console.log(users);
 
