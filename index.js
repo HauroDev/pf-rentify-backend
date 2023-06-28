@@ -39,6 +39,7 @@ app.name = 'api-rentify'
 //Para probar NODEMAILER
 // app.use (require('./src/config/nodemailer.js'))
 app.use(express.static(path.join(__dirname, "public")));
+
 //----------------------------//
 
 
