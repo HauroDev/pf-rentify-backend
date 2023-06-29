@@ -3,7 +3,6 @@ const { User, Product, Order, Suscription } = require('../db/db.js')
 
 const getStatisticsUsers = async () => {
   const promises = [
-    User.count(),
     User.count({
       where: {
         status: 'active'
@@ -21,13 +20,9 @@ const getStatisticsUsers = async () => {
     })
   ]
 
-  const [total, active, inactive, banned] = await Promise.all(promises)
+  const [active, inactive, banned] = await Promise.all(promises)
 
   return [
-    {
-      name: 'total',
-      total
-    },
     {
       name: 'active',
       total: active
@@ -45,19 +40,14 @@ const getStatisticsUsers = async () => {
 
 const getStatisticsProducts = async () => {
   const promises = [
-    Product.count(),
     Product.count({ where: { statusPub: 'active' } }),
     Product.count({ where: { statusPub: 'inactive' } }),
     Product.count({ where: { statusPub: 'deleted' } })
   ]
 
-  const [total, active, inactive, deleted] = await Promise.all(promises)
+  const [active, inactive, deleted] = await Promise.all(promises)
 
   return [
-    {
-      name: 'total',
-      total
-    },
     {
       name: 'active',
       total: active
@@ -75,7 +65,6 @@ const getStatisticsProducts = async () => {
 
 const getStatisticsUsersMembership = async () => {
   const promises = [
-    User.count(),
     User.count({ where: { membership: 'basic' } }),
     User.count({
       where: { [Op.and]: [{ membership: 'basic' }, { status: 'active' }] }
@@ -109,7 +98,6 @@ const getStatisticsUsersMembership = async () => {
   ]
 
   const [
-    total,
     basic,
     basicActive,
     basicInactive,
@@ -125,10 +113,6 @@ const getStatisticsUsersMembership = async () => {
   ] = await Promise.all(promises)
 
   return [
-    {
-      name: 'total',
-      total
-    },
     {
       name: 'basic',
       total: basic,
@@ -169,16 +153,14 @@ const getStatisticsFeaturedProducts = async () => {
 
 const getStatisticsOrders = async () => {
   const promises = [
-    Order.count(),
     Order.count({ where: { status: 'approved' } }),
     Order.count({ where: { status: 'pending' } }),
     Order.count({ where: { status: 'rejected' } })
   ]
 
-  const [total, approved, pending, rejected] = await Promise.all(promises)
+  const [approved, pending, rejected] = await Promise.all(promises)
 
   return [
-    { name: 'total', total },
     { name: 'approved', total: approved },
     { name: 'pending', total: pending },
     { name: 'rejected', total: rejected }
@@ -187,15 +169,13 @@ const getStatisticsOrders = async () => {
 
 const getStatisticsSuscriptions = async () => {
   const promises = [
-    Suscription.count(),
     Suscription.count({ where: { status: 'pending' } }),
     Suscription.count({ where: { status: 'authorized' } })
   ]
 
-  const [total, pending, authorized] = await Promise.all(promises)
+  const [pending, authorized] = await Promise.all(promises)
 
   return [
-    { name: 'total', total },
     { name: 'pending', total: pending },
     { name: 'authorized', total: authorized }
   ]
