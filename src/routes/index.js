@@ -19,6 +19,6 @@ router.use('/products', productsRoutes)
 router.use('/comment', commentsRoutes)
 router.use('/payments', paymentsRoutes)
 router.use('/admin', adminRoutes)
-router.use('/', login)
+router.use('/login-google', login)
 
 module.exports = router

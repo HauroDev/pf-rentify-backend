@@ -15,4 +15,15 @@ const obtenerNextPageProduct = (
     : null
 }
 
-module.exports = { obtenerNextPageProduct }
+const getNextPage = (path, index, limitForPage, countTotal) => {
+  const offset = index + limitForPage
+  const limit = limitForPage
+
+  return offset < countTotal
+    ? `${
+        MODE === 'PRODUCTION' ? URL_DEPLOY : URL_PRUEBAS
+      }/api-rentify/${path}?offset=${offset}&limit=${limit}`
+    : null
+}
+
+module.exports = { obtenerNextPageProduct, getNextPage }
