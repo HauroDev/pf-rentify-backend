@@ -73,7 +73,7 @@ const router = Router();
 // Get All Products
 /**
  * @swagger
- * /products/all/:
+ * /products/all:
  *   get:
  *     summary: Obtén todos los productos con paginación
  *     description: Obtiene una lista de todos los productos con paginación
@@ -111,7 +111,7 @@ const router = Router();
  *       '500':
  *         description: Error interno del servidor
  */
-router.get("/all/", getAllProducts);
+router.get('/all', getAllProducts)
 /**
  * @swagger
  * /products:
@@ -192,7 +192,7 @@ router.get("/all/", getAllProducts);
 router.get("/", verifyAuthToken, getFilterProducts);
 /**
  * @swagger
- * /products/isFeatured/:
+ * /products/isFeatured:
  *   get:
  *     summary: Obtén productos por característica
  *     description: Obtén una lista de productos filtrados por característica
