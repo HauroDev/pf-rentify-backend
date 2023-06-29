@@ -91,7 +91,7 @@ Product.belongsToMany(Category, {
 
 // un Usuario tiene muchos Comentarios, y un Comentario tiene un Usuario
 User.hasMany(Comment, { as: 'comments', foreignKey: 'idUser' })
-Comment.belongsTo(User, { foreignKey: 'idUser' })
+Comment.belongsTo(User, { as: 'user', foreignKey: 'idUser' })
 
 // un Pais tiene muchos Productos, y un Producto tiene un Pais
 Country.hasMany(Product, { as: 'products', foreignKey: 'idCountry' })

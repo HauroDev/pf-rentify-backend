@@ -5,6 +5,10 @@ const cookieParser = require('cookie-parser')
 const swaggerUI = require('swagger-ui-express')
 const swaggerJsDoc = require('swagger-jsdoc')
 
+//Lo agregue para probar NODEMAILER
+const path = require('path');
+//-----------------------------
+
 const { conn } = require('./src/db/db.js')
 const { PORT, urlApi, urlDoc, URL_CLIENTE } = require('./config')
 const routerManager = require('./src/routes/index.js')
@@ -31,6 +35,12 @@ app.use(express.json())
 app.use(morgan('dev'))
 
 app.name = 'api-rentify'
+
+//Para probar NODEMAILER
+// app.use (require('./src/config/nodemailer.js'))
+app.use(express.static(path.join(__dirname, "public")));
+//----------------------------//
+
 
 app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }))
 app.use(bodyParser.json({ limit: '50mb' }))
