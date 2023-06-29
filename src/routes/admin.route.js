@@ -340,7 +340,7 @@ router.patch('/update-status', updateStatusAdmin)
 
 /**
  * @swagger
- * /admin/update-phone:
+ * /admin/update-role:
  *   patch:
  *     summary: Actualiza el Rol de un administrador
  *     description: Puedes cambiar el Rol de un administrador
