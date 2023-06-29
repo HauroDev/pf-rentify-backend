@@ -125,7 +125,9 @@ const redirectToWebSiteHome = (req, res) => {
   const { preapproval_id } = req.query
 
   const redirectUrl = MODE === 'PRODUCTION' ? URL_CLIENTE : URL_CLIENTE_PRUEBAS
-  res.redirect(redirectUrl + '?' + new URLSearchParams({ preapproval_id }))
+  res.redirect(
+    redirectUrl + '?' + new URLSearchParams({ preapproval_id }).toString()
+  )
 }
 
 const confirmOrder = async (req, res, next) => {
