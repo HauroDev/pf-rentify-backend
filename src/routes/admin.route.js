@@ -2,7 +2,14 @@ const { Router } = require('express')
 const {
   getStatistics,
   getAdminsSudo,
-  createAdmin
+  createAdmin,
+  updateNameAdmin,
+  updatePhoneAdmin,
+  updateEmailAdmin,
+  updateStatusAdmin,
+  updateRoleAdmin,
+  updateMembershipAdmin,
+  updateImageAdmin
 } = require('../controller/admins.controller.js')
 
 const router = Router()
@@ -147,7 +154,7 @@ router.get('/admins-sudo', getAdminsSudo)
  *     summary: Crea un usuario administrador
  *     description: Este endpoint crea un nuevo usuario administrador. Los campos "image" y "phone" son opcionales.
  *     tags:
- *       - Admin
+ *       - Admins
  *     requestBody:
  *       required: true
  *       content:
@@ -218,5 +225,205 @@ router.get('/admins-sudo', getAdminsSudo)
  */
 
 router.post('/create-admin', createAdmin)
+
+/**
+ * @swagger
+ * /admin/update-name:
+ *   patch:
+ *     summary: Actualiza el nombre del perfil de un administrador
+ *     description: Puedes cambiar el nombre del perfil de un administrador
+ *     tags:
+ *       - Admins
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               idUser:
+ *                 type: string
+ *                 format: uuid
+ *               name:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: nombre de perfil actualizado exitosamente
+ */
+
+router.patch('/update-name', updateNameAdmin)
+
+/**
+ * @swagger
+ * /admin/update-phone:
+ *   patch:
+ *     summary: Actualiza el número de teléfono de un administrador
+ *     description: Puedes cambiar el número de teléfono de un administrador
+ *     tags:
+ *       - Admins
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               idUser:
+ *                 type: string
+ *                 format: uuid
+ *               phone:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Número de teléfono actualizado exitosamente
+ */
+
+router.patch('/update-phone', updatePhoneAdmin)
+
+/**
+ * @swagger
+ * /admin/update-email:
+ *   patch:
+ *     summary: Actualiza el email de un administrador
+ *     description: Puedes cambiar el email de un administrador
+ *     tags:
+ *       - Admins
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               idUser:
+ *                 type: string
+ *                 format: uuid
+ *               email:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: email actualizado exitosamente
+ */
+
+router.patch('/update-email', updateEmailAdmin)
+
+/**
+ * @swagger
+ * /admin/update-status:
+ *   patch:
+ *     summary: Actualiza el estado de un administrador
+ *     description: Puedes cambiar el estado de un administrador
+ *     tags:
+ *       - Admins
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               idUser:
+ *                 type: string
+ *                 format: uuid
+ *               status:
+ *                 type: string
+ *                 enum:
+ *                   - active
+ *                   - inactive
+ *                   - banned
+ *     responses:
+ *       200:
+ *         description: estado actualizado exitosamente
+ */
+
+router.patch('/update-status', updateStatusAdmin)
+
+/**
+ * @swagger
+ * /admin/update-phone:
+ *   patch:
+ *     summary: Actualiza el Rol de un administrador
+ *     description: Puedes cambiar el Rol de un administrador
+ *     tags:
+ *       - Admins
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               idUser:
+ *                 type: string
+ *                 format: uuid
+ *               role:
+ *                 type: string
+ *                 enum:
+ *                   - admin
+ *                   - sudo
+ *     responses:
+ *       200:
+ *         description: Rol actualizado exitosamente
+ */
+
+router.patch('/update-role', updateRoleAdmin)
+
+/**
+ * @swagger
+ * /admin/update-membership:
+ *   patch:
+ *     summary: Actualiza la suscripcion de un administrador
+ *     description: Puedes cambiar la suscripcion de un administrador
+ *     tags:
+ *       - Admins
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               idUser:
+ *                 type: string
+ *                 format: uuid
+ *               membership:
+ *                 type: string
+ *                 enum:
+ *                   - basic
+ *                   - standard
+ *                   - premium
+ *     responses:
+ *       200:
+ *         description: suscripcion actualizado exitosamente
+ */
+
+router.patch('/update-membership', updateMembershipAdmin)
+
+/**
+ * @swagger
+ * /admin/update-image:
+ *   patch:
+ *     summary: Actualiza el número de teléfono de un administrador
+ *     description: Puedes cambiar el número de teléfono de un administrador
+ *     tags:
+ *       - Admins
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               idUser:
+ *                 type: string
+ *                 format: uuid
+ *               image:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Número de teléfono de usuario actualizado exitosamente
+ */
+
+router.patch('/update-image', updateImageAdmin)
 
 module.exports = router
