@@ -183,7 +183,6 @@ router.get('/name', getUsersByName)
  *         description: Error interno del servidor
  */
 router.get('/membership/', getUsersByMembership)
-// router.get('/ aca iria  qry  de esta manera en testeo /users?membership=standard'  ,getUserMember);
 
 // metodos post
 
@@ -208,6 +207,7 @@ router.get('/membership/', getUsersByMembership)
  *         description: Error en los parámetros de entrada
  */
 router.post('/', postUser)
+
 // metodos put
 /**
  * @swagger
