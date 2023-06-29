@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 const { Router } = require('express')
 
 const {
@@ -6,6 +7,10 @@ const {
   verificationCountryMercadoPago,
   createSuscription
 } = require('../controller/payments.controller.js')
+
+const mercadopago = require('mercadopago')
+const { Order } = require('../db/db.js')
+const { CustomError } = require('../utils/customErrors.js')
 
 const router = Router()
 
@@ -100,6 +105,42 @@ router.post('/order', verificationCountryMercadoPago, createOrder)
  *                   description: estado del pago.
  *                   example: "pending"
  */
-router.get('/feedback', redirectToWebSite)
+router.get(
+  '/feedback',
+  async (req, res, next) => {
+    const { payment_id, preference_id, merchant_order_id } = req.query
+
+    const wherePayment = {
+      where: {
+        preferenceId: preference_id,
+        paymentId: payment_id,
+        merchantOrderId: merchant_order_id
+      }
+    }
+    try {
+      if (!preference_id) {
+        throw new CustomError(404, 'preference_id is required')
+      }
+
+      // mercado pago envia su error propio
+      const { response: payment } = await mercadopago.payment.findById(
+        payment_id
+      )
+
+      const hasFound = await Order.findOne(wherePayment)
+
+      if (hasFound) {
+        await Order.update({ status: payment.status }, wherePayment)
+      } else {
+        throw new CustomError(400, 'order not exist in the database')
+      }
+
+      next()
+    } catch (error) {
+      res.status(error.status || 500).json({ error: error.message })
+    }
+  },
+  redirectToWebSite
+)
 
 module.exports = router
