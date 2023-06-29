@@ -75,22 +75,43 @@ const router = Router();
  * @swagger
  * /products/all/:
  *   get:
- *     summary: Obtén todos los productos
- *     description: Obtiene una lista de todos los productos
+ *     summary: Obtén todos los productos con paginación
+ *     description: Obtiene una lista de todos los productos con paginación
  *     tags:
  *       - Productos
+ *     parameters:
+ *       - in: query
+ *         name: offset
+ *         schema:
+ *           type: integer
+ *         description: Número de registros a omitir (desplazamiento)
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *         description: Número máximo de registros a devolver
  *     responses:
  *       '200':
  *         description: Lista de productos obtenida exitosamente
  *         content:
  *           application/json:
  *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Product'
+ *               type: object
+ *               properties:
+ *                 count:
+ *                   type: integer
+ *                   description: Número total de productos
+ *                 next:
+ *                   type: string
+ *                   description: Enlace para obtener la siguiente página de resultados (opcional)
+ *                 results:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Product'
  *       '500':
  *         description: Error interno del servidor
  */
+
 router.get("/all/", getAllProducts);
 /**
  * @swagger
