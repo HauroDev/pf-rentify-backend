@@ -8,6 +8,7 @@ const {
   getStatisticsOrders,
   getStatisticsSuscriptions
 } = require('../utils/adminStatistics')
+const { CustomError } = require('../utils/customErrors.js')
 
 const getStatistics = async (_req, res) => {
   try {
@@ -31,6 +32,36 @@ const getStatistics = async (_req, res) => {
     })
   } catch (error) {
     res.status(500).json({ error: error.message })
+  }
+}
+
+const createAdmin = async (req, res) => {
+  try {
+    const { name, email, phone, image, uid } = req.body
+
+    const existingUser = await User.findOne({ where: { email } })
+    const existingUid = await User.findOne({ where: { uid } })
+
+    if (existingUser) {
+      throw new CustomError(400, 'Error correo existente')
+    }
+    if (existingUid) {
+      throw new CustomError(400, 'Error usuario registrado')
+    }
+
+    const newUser = await User.create({
+      name,
+      email,
+      phone,
+      image,
+      uid,
+      membership: 'premium',
+      role: 'admin'
+    })
+
+    res.status(201).json(newUser)
+  } catch (error) {
+    res.status(error?.status || 500).json({ error: error?.message })
   }
 }
 
@@ -63,4 +94,5 @@ const getAdminsSudo = async (req, res) => {
     throw error
   }
 }
-module.exports = { getStatistics, getAdminsSudo }
+
+module.exports = { getStatistics, createAdmin, getAdminsSudo }

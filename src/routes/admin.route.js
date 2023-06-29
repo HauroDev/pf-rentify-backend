@@ -1,7 +1,8 @@
 const { Router } = require('express')
 const {
   getStatistics,
-  getAdminsSudo
+  getAdminsSudo,
+  createAdmin
 } = require('../controller/admins.controller.js')
 
 const router = Router()
@@ -138,5 +139,84 @@ router.get('/statistics', getStatistics)
  */
 
 router.get('/admins-sudo', getAdminsSudo)
+
+/**
+ * @swagger
+ * /admin/create-admin:
+ *   post:
+ *     summary: Crea un usuario administrador
+ *     description: Este endpoint crea un nuevo usuario administrador. Los campos "image" y "phone" son opcionales.
+ *     tags:
+ *       - Admin
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 description: Nombre del usuario administrador.
+ *               email:
+ *                 type: string
+ *                 description: Correo electrónico del usuario administrador.
+ *                 required: true
+ *               uid:
+ *                 type: string
+ *                 description: Identificador único del usuario administrador.
+ *                 required: true
+ *               image:
+ *                 type: string
+ *                 description: (Opcional) URL de la imagen del usuario administrador.
+ *               phone:
+ *                 type: string
+ *                 description: (Opcional) Número de teléfono del usuario administrador.
+ *     responses:
+ *       201:
+ *         description: Usuario administrador creado exitosamente.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 idUser:
+ *                   type: string
+ *                   description: ID del usuario administrador creado.
+ *                 status:
+ *                   type: string
+ *                   description: Estado del usuario administrador.
+ *                 name:
+ *                   type: string
+ *                   description: Nombre del usuario administrador.
+ *                 email:
+ *                   type: string
+ *                   description: Correo electrónico del usuario administrador.
+ *                 phone:
+ *                   type: string
+ *                   description: (Opcional) Número de teléfono del usuario administrador.
+ *                 image:
+ *                   type: string
+ *                   description: (Opcional) URL de la imagen del usuario administrador.
+ *                 uid:
+ *                   type: string
+ *                   description: Identificador único del usuario administrador.
+ *                 membership:
+ *                   type: string
+ *                   description: Membresía del usuario administrador.
+ *                 role:
+ *                   type: string
+ *                   description: Rol del usuario administrador.
+ *                 updatedAt:
+ *                   type: string
+ *                   format: date-time
+ *                   description: Fecha y hora de la última actualización del usuario administrador.
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                   description: Fecha y hora de creación del usuario administrador.
+ */
+
+router.post('/create-admin', createAdmin)
 
 module.exports = router

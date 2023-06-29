@@ -1,4 +1,4 @@
-const { Router } = require("express");
+const { Router } = require('express')
 
 const {
   postUser,
@@ -12,11 +12,11 @@ const {
   updateUserStatus,
   updateUserMembership,
   getUsersByMembership,
-  updateUserImage,
+  updateUserImage
   // deleteUser, getUserMember
-} = require("../controller/users.controller.js");
+} = require('../controller/users.controller.js')
 
-const router = Router();
+const router = Router()
 
 // Swagger Schema
 /**
@@ -82,10 +82,10 @@ const router = Router();
  *       500:
  *         description: Error interno del servidor
  */
-router.get("/", getUsersByStatus);
+router.get('/', getUsersByStatus)
 /**
  * @swagger
- * /user/all/:
+ * /user/all:
  *   get:
  *     summary: Obtén todos los usuarios
  *     description: Obtiene una lista de todos los usuarios, excluyendo los roles de superusuario y administrador
@@ -124,7 +124,7 @@ router.get("/", getUsersByStatus);
  *         description: Error interno del servidor
  */
 
-router.get("/all/", getAllUsers);
+router.get('/all/', getAllUsers)
 /**
  * @swagger
  * /user/name:
@@ -152,7 +152,7 @@ router.get("/all/", getAllUsers);
  *         description: Error interno del servidor
  */
 
-router.get("/name", getUsersByName);
+router.get('/name', getUsersByName)
 
 /**
  * @swagger
@@ -182,7 +182,7 @@ router.get("/name", getUsersByName);
  *       500:
  *         description: Error interno del servidor
  */
-router.get("/membership/", getUsersByMembership);
+router.get('/membership/', getUsersByMembership)
 // router.get('/ aca iria  qry  de esta manera en testeo /users?membership=standard'  ,getUserMember);
 
 // metodos post
@@ -207,7 +207,7 @@ router.get("/membership/", getUsersByMembership);
  *       400:
  *         description: Error en los parámetros de entrada
  */
-router.post("/", postUser);
+router.post('/', postUser)
 // metodos put
 /**
  * @swagger
@@ -239,7 +239,7 @@ router.post("/", postUser);
  *       500:
  *         description: Error interno del servidor
  */
-router.put("/update-name", updateUserName);
+router.put('/update-name', updateUserName)
 /**
  * @swagger
  * /user/update-phone:
@@ -270,7 +270,7 @@ router.put("/update-name", updateUserName);
  *       500:
  *         description: Error interno del servidor
  */
-router.put("/update-phone", updateUserPhone);
+router.put('/update-phone', updateUserPhone)
 /**
  * @swagger
  * /user/update-email:
@@ -302,7 +302,7 @@ router.put("/update-phone", updateUserPhone);
  *       500:
  *         description: Error interno del servidor
  */
-router.put("/update-email", updateUserEmail);
+router.put('/update-email', updateUserEmail)
 /**
  * @swagger
  * /user/update-status:
@@ -338,7 +338,7 @@ router.put("/update-email", updateUserEmail);
  *       500:
  *         description: Error interno del servidor
  */
-router.put("/update-status", updateUserStatus);
+router.put('/update-status', updateUserStatus)
 /**
  * @swagger
  * /user/update-membership:
@@ -372,7 +372,7 @@ router.put("/update-status", updateUserStatus);
  *       500:
  *         description: Error interno del servidor
  */
-router.put("/update-membership", updateUserMembership);
+router.put('/update-membership', updateUserMembership)
 /**
  * @swagger
  * /user/update-image:
@@ -404,7 +404,7 @@ router.put("/update-membership", updateUserMembership);
  *       500:
  *         description: Error interno del servidor
  */
-router.put("/update-image", updateUserImage);
+router.put('/update-image', updateUserImage)
 
 // metodos delete
 // router.delete('/:id', deleteUser);
@@ -434,5 +434,5 @@ router.put("/update-image", updateUserImage);
  *         description: Usuario no encontrado
  */
 
-router.get("/:id", getUser);
-module.exports = router;
+router.get('/:id', getUser)
+module.exports = router
