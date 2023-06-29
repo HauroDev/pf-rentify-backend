@@ -1,11 +1,13 @@
 /* eslint-disable camelcase */
 const { mercadopago: mp, configMercadoPago } = require('../mercadopago.js')
+const { User, Order } = require('../db/db.js')
 const {
   urlApi,
   MODE,
   URL_CLIENTE,
   URL_CLIENTE_PRUEBAS
 } = require('../../config.js')
+const { CustomError } = require('../utils/customErrors.js')
 
 const urlWebHook = urlApi + '/payments/feedback'
 
@@ -14,7 +16,10 @@ const verificationCountryMercadoPago = (req, res, next) => {
 
   configMercadoPago() // cuando este habilitado en el front la seleccion de paises, entonces se podra hacer esto
     .then(() => next())
-    .catch((e) => res.status(e?.status || 500).json({ error: e.message }))
+    .catch((e) => {
+      console.log(e)
+      res.status(e?.status || 500).json({ error: e.message })
+    })
 }
 
 // agregar propiedad type, para identificar y guardad en la db el tipo de suscription del usuario
@@ -44,10 +49,18 @@ const createSuscription = async (req, res) => {
 }
 
 const createOrder = async (req, res) => {
-  const { items } = req.body
+  const { items, idUser } = req.body
 
   try {
-    const info = await mp.preferences.create({
+    const user = await User.findByPk(idUser)
+
+    console.log(idUser)
+
+    console.log(user)
+
+    if (!user) throw new CustomError(404, 'user not exist')
+
+    const { response: info } = await mp.preferences.create({
       items,
       back_urls: {
         pending: urlWebHook,
@@ -57,11 +70,14 @@ const createOrder = async (req, res) => {
       auto_return: 'approved'
     })
 
-    console.log(info)
+    console.log(idUser)
 
-    res.json({ preferenceId: info.body.id })
+    const newOrder = await Order.create({ preferenceId: info.id })
+    await newOrder.setUser(user)
+
+    res.json({ preferenceId: info.id })
   } catch (error) {
-    res.status(500).json({ error: error.message })
+    res.status(error.status || 500).json({ error: error.message })
   }
 }
 
