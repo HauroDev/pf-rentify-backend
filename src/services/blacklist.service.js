@@ -3,6 +3,7 @@ const { Blacklist } = require("../db/db");
 const getBlackList = async (token) => {
   const tokens = await Blacklist.findAll();
   const blacklist = new Set(tokens.map((t) => t.token));
+  console.log(blacklist);
   return blacklist;
 };
 
