@@ -8,13 +8,13 @@ const sequelize = new Sequelize(DB_NAME, DB_USER, DB_PASSWORD, {
   host: HOST,
   dialect: 'postgres',
   // mostrara cada ves que se levante el servidor la respuesta de la base de datos mientras 'MODE' sea distinto de 'PRODUCTION'
-  logging: MODE === 'PRODUCTION' ? false : console.log,
-  native: false, // lets Sequelize know we can use pg-native for ~30% more speed
-  dialectOptions: {
-    ssl: {
-      require: true
-    }
-  }
+  logging: MODE === 'PRODUCTION' ? false : console.log
+  // native: false, // lets Sequelize know we can use pg-native for ~30% more speed
+  // dialectOptions: {
+  //   ssl: {
+  //     require: true
+  //   }
+  // }
 })
 
 const basename = path.basename(__filename)
@@ -58,8 +58,8 @@ User.hasMany(Order, { as: 'orders', foreignKey: 'idUser' })
 Order.belongsTo(User, { foreignKey: 'idUser' })
 
 // un Usuario tiene una Suscripcion,y una Suscripcion tiene un solo Usuario
-User.hasOne(Suscription, { foreignKey: 'idUser' })
-Suscription.belongsTo(User)
+User.hasOne(Suscription, { as: 'suscription', foreignKey: 'idUser' })
+Suscription.belongsTo(User, { foreignKey: 'idUser' })
 
 // un Usuario tiene muchos Productos (dueño o "comprador"), y un Producto tiene muchos Usuario
 User.belongsToMany(Product, {
