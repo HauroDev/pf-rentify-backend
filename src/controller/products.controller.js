@@ -66,9 +66,7 @@ const getProducts = async (req, res) => {
   try {
     const result = await Product.findAndCountAll({
       where: {
-        statusPub: {
-          [Op.ne]: 'deleted'
-        }
+        statusPub: 'active'
       },
       whereOptions,
 
@@ -214,6 +212,18 @@ const createProduct = async (req, res) => {
   } catch (error) {
     console.log(error)
     res.status(500).json({ message: error.message })
+  }
+}
+
+const getAllProducts = async (req, res) => {
+  try {
+    // Realiza la consulta para obtener todos los productos
+    const products = await Product.findAll()
+
+    // Devuelve los productos encontrados como respuesta
+    return res.json(products)
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' })
   }
 }
 
@@ -451,6 +461,7 @@ const getProductByFeature = async (req, res) => {
 
 module.exports = {
   getProducts,
+  getAllProducts,
   createProduct,
   getProductById,
   getUserProducts,
