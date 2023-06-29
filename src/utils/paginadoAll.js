@@ -1,6 +1,6 @@
 const { MODE, URL_PRUEBAS, URL_DEPLOY } = require("../../config.js");
 
-const obtenerNextPageProduct = (
+const obtenerNextPageProductAll = (
   rutaBase,
   posicionPorPagina,
   limitePorPagina,
@@ -12,8 +12,8 @@ const obtenerNextPageProduct = (
   return offset < limiteCantidad
     ? `${
         MODE === "PRODUCTION" ? URL_DEPLOY : URL_PRUEBAS
-      }/api-rentify/${rutaBase}?offset=${offset}&limit=${limit}`
+      }/api-rentify/${rutaBase}/all/?offset=${offset}&limit=${limit}`
     : null;
 };
 
-module.exports = { obtenerNextPageProduct };
+module.exports = { obtenerNextPageProductAll };

@@ -8,6 +8,7 @@ const {
 } = require("../db/db");
 const { Op } = require("sequelize");
 const { obtenerNextPageProduct } = require("../utils/paginado.js");
+const { obtenerNextPageProductAll } = require("../utils/paginadoAll.js");
 const { CustomError } = require("../utils/customErrors.js");
 
 const getProducts = async (req, res) => {
@@ -66,7 +67,7 @@ const getProducts = async (req, res) => {
   try {
     const result = await Product.findAndCountAll({
       where: {
-        statusPub:  "active"
+        statusPub: "active",
       },
       whereOptions,
 
@@ -215,13 +216,47 @@ const createProduct = async (req, res) => {
   }
 };
 
+// const getAllProducts = async (req, res) => {
+//   try {
+//     // Realiza la consulta para obtener todos los productos
+//     const products = await Product.findAll();
+
+//     // Devuelve los productos encontrados como respuesta
+//     return res.json(products);
+//   } catch (error) {
+//     res.status(500).json({ error: "Internal server error" });
+//   }
+// };
+
 const getAllProducts = async (req, res) => {
   try {
-    // Realiza la consulta para obtener todos los productos
-    const products = await Product.findAll();
+    let { offset, limit } = req.query;
 
-    // Devuelve los productos encontrados como respuesta
-    return res.json(products);
+    offset = offset ? +offset : 0;
+    limit = limit ? +limit : 12;
+
+    // Realiza la consulta para obtener todos los productos con paginación
+    const products = await Product.findAndCountAll({
+      offset,
+      limit,
+    });
+
+    const { rows, count } = products;
+
+    // Construir la URL de la siguiente página
+    const nextPage = obtenerNextPageProductAll(
+      "products",
+      offset,
+      limit,
+      count
+    );
+
+    // Devuelve los productos encontrados y la URL de la siguiente página como respuesta
+    return res.json({
+      count,
+      next: nextPage,
+      results: rows,
+    });
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });
   }
