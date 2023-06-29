@@ -266,10 +266,24 @@ const getProductById = async (req, res) => {
       ]
     })
 
+    const promises = [1, 2, 3, 4, 5].map((puntuation) =>
+      Comment.count({
+        where: { idProd: id, commentStatus: true, puntuation }
+      })
+    )
+
+    const [s1, s2, s3, s4, s5] = await Promise.all(promises)
+
+    const totalPuntuation = await Comment.sum('puntuation', {
+      where: { idProd: id, commentStatus: true }
+    })
+
+    const average = totalPuntuation / total
+
     res.status(200).json({
       ...product.toJSON(),
       users: [infoUser],
-      reviews: { total, comments }
+      reviews: { total, average, stars: { s1, s2, s3, s4, s5 }, comments }
     })
   } catch (error) {
     res.status(500).json({ message: error.message })
