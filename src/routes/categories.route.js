@@ -4,7 +4,7 @@ const {
   createCategories
 } = require('../controller/categories.controller.js')
 
-const categoriesRoutes = Router()
+const router = Router()
 // schema Categories
 /**
  * @swagger
@@ -39,7 +39,7 @@ const categoriesRoutes = Router()
  *                 $ref: '#/components/schemas/Category'
  */
 
-categoriesRoutes.get('/', getCategories)
+router.get('/', getCategories)
 
 // Post Category
 /**
@@ -65,6 +65,6 @@ categoriesRoutes.get('/', getCategories)
  *               $ref: '#/components/schemas/Category'
  */
 
-categoriesRoutes.post('/', createCategories)
+router.post('/', createCategories)
 
-module.exports = categoriesRoutes
+module.exports = router

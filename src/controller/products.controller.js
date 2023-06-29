@@ -7,11 +7,10 @@ const {
   UserProduct
 } = require('../db/db')
 const { Op } = require('sequelize')
-const { obtenerNextPageProduct } = require('../utils/paginado.js')
+const { getNextPage } = require('../utils/paginado.js')
 const { CustomError } = require('../utils/customErrors.js')
 
-const getProducts = async (req, res) => {
-  // agregar price entre un rango a futuro
+const getFilterProducts = async (req, res) => {
   let {
     name,
     offset,
@@ -94,7 +93,7 @@ const getProducts = async (req, res) => {
     offset = offset || offset > 0 ? +offset : 0
     limit = limit ? +limit : 12
 
-    let queryExtend = obtenerNextPageProduct(offset, limit, count)
+    let queryExtend = getNextPage('/products', offset, limit, count)
     if (queryExtend) {
       const params = []
 
@@ -460,7 +459,7 @@ const getProductByFeature = async (req, res) => {
 }
 
 module.exports = {
-  getProducts,
+  getFilterProducts,
   getAllProducts,
   createProduct,
   getProductById,

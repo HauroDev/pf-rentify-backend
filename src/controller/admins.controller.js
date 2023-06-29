@@ -1,3 +1,5 @@
+const { Op } = require('sequelize')
+const { User } = require('../db/db.js')
 const {
   getStatisticsUsers,
   getStatisticsProducts,
