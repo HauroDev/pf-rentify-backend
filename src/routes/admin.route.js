@@ -147,7 +147,7 @@ router.get('/admins-sudo', getAdminsSudo)
  *     summary: Crea un usuario administrador
  *     description: Este endpoint crea un nuevo usuario administrador. Los campos "image" y "phone" son opcionales.
  *     tags:
- *       - Admin
+ *       - Admins
  *     requestBody:
  *       required: true
  *       content:
