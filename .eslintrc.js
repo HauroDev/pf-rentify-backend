@@ -1,13 +1,13 @@
 module.exports = {
   env: {
-    browser: true,
-    es2021: true
+    commonjs: true,
+    es2021: true,
+    node: true
   },
-  extends: ['./node_modules/standard/eslintrc.json', 'eslint:recommended'],
+  extends: 'standard',
   overrides: [],
   parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module'
+    ecmaVersion: 'latest'
   },
   rules: {}
 }
