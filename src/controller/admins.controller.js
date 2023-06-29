@@ -168,32 +168,32 @@ const getStatistics = async (_req, res) => {
 }
 
 const getAdminsSudo = async (req, res) => {
-  const { name, role } = req.query;
+  const { name, role } = req.query
   try {
-    let whereClause = {};
-    
+    const whereClause = {}
+
     if (name) {
-      whereClause.name = { [Op.iLike]: `%${name}%` };
+      whereClause.name = { [Op.iLike]: `%${name}%` }
     }
-    
+
     if (role === 'admin' || role === 'sudo') {
-      whereClause.role = role;
-    } else if (role) {
-      whereClause.role = ['admin', 'sudo'];
+      whereClause.role = role
+    } else {
+      whereClause.role = ['admin', 'sudo']
     }
-    
+
     const users = await User.findAll({
       where: whereClause
-    });
+    })
 
     // Hacer algo con los usuarios obtenidos
-    console.log(users);
+    console.log(users)
 
     // Retornar los usuarios si necesitas utilizarlos fuera de esta función
-    return res.status(200).json(users);
+    return res.status(200).json(users)
   } catch (error) {
-    console.error("Error al obtener los usuarios:", error);
-    throw error;
+    console.error('Error al obtener los usuarios:', error)
+    throw error
   }
-};
-module.exports = { getStatistics,getAdminsSudo }
+}
+module.exports = { getStatistics, getAdminsSudo }

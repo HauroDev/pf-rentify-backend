@@ -1,10 +1,14 @@
+/* eslint-disable camelcase */
 const { Router } = require('express')
 
 const {
   createOrder,
-  redirectToWebSite,
+  redirectToWebSiteCheckOut,
   verificationCountryMercadoPago,
-  createSuscription
+  createSuscription,
+  confirmOrder,
+  confirmSuscription,
+  redirectToWebSiteHome
 } = require('../controller/payments.controller.js')
 
 const router = Router()
@@ -100,6 +104,18 @@ router.post('/order', verificationCountryMercadoPago, createOrder)
  *                   description: estado del pago.
  *                   example: "pending"
  */
-router.get('/feedback', redirectToWebSite)
+router.get(
+  '/feedback',
+  verificationCountryMercadoPago,
+  confirmOrder,
+  redirectToWebSiteCheckOut
+)
+
+router.get(
+  '/confirm-suscription',
+  verificationCountryMercadoPago,
+  confirmSuscription,
+  redirectToWebSiteHome
+)
 
 module.exports = router
