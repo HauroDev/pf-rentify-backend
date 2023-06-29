@@ -1,4 +1,4 @@
-require('dotenv').config()
+require("dotenv").config();
 
 const {
   DB_NAME,
@@ -6,6 +6,7 @@ const {
   DB_PASSWORD,
   HOST,
   MODE,
+  JWT_SECRET,
   URL_PRUEBAS,
   URL_DEPLOY,
   URL_CLIENTE,
@@ -16,13 +17,13 @@ const {
   MP_ACCESS_TOKEN_MX,
   MP_ACCESS_TOKEN_BR,
   MP_ACCESS_TOKEN_UY,
-  URL_CLIENTE_PRUEBAS
-} = process.env
+  URL_CLIENTE_PRUEBAS,
+} = process.env;
 
-const PORT = 3001
-const url = MODE === 'PRODUCTION' ? URL_DEPLOY : URL_PRUEBAS
-const urlApi = url + '/api-rentify'
-const urlDoc = url + '/api-doc'
+const PORT = 3001;
+const url = MODE === "PRODUCTION" ? URL_DEPLOY : URL_PRUEBAS;
+const urlApi = url + "/api-rentify";
+const urlDoc = url + "/api-doc";
 
 module.exports = {
   DB_NAME,
@@ -30,6 +31,7 @@ module.exports = {
   DB_PASSWORD,
   HOST,
   MODE,
+  JWT_SECRET,
   PORT,
   URL_PRUEBAS,
   URL_DEPLOY,
@@ -44,5 +46,5 @@ module.exports = {
   URL_CLIENTE_PRUEBAS,
   url,
   urlApi,
-  urlDoc
-}
+  urlDoc,
+};
