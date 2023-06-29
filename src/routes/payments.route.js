@@ -15,27 +15,52 @@ const router = Router()
 
 /**
  * @swagger
- * components:
- *   schemas:
- *    Order:
- *      type: object
- *      properties:
- *        items:
- *          type: array
- *          items:
- *            $ref: '#/components/schemas/Item'
- *        idCountry: number
- *      required:
- *        - items
- *    Item:
- *      type: object
- *      properties:
- *        title:
- *          type: string
- *        unit_price:
- *          type: number
- *        quantity:
- *          type: number
+ * /payments/subscription:
+ *   post:
+ *     summary: Crea una suscripción de pago
+ *     description: Este endpoint crea una suscripción de pago y devuelve un enlace de pago.
+ *     tags:
+ *       - Payments
+ *     requestBody:
+ *       description: Datos de la suscripción
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               price:
+ *                 type: number
+ *                 description: Precio de la suscripción.
+ *               reason:
+ *                 type: string
+ *                 description: Razón de la suscripción.
+ *               type:
+ *                 type: string
+ *                 description: Tipo de suscripción.
+ *                 enum:
+ *                   - standard
+ *                   - premium
+ *               idUser:
+ *                 type: string
+ *                 description: ID del usuario obtenido de la base de datos.
+ *             example:
+ *               price: 9.99
+ *               reason: Suscripción mensual
+ *               type: premium
+ *               idUser: 1234567890
+ *     responses:
+ *       200:
+ *         description: Suscripción creada correctamente.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 url:
+ *                   type: string
+ *                   description: Enlace de pago de la suscripción.
+ *                   example: "https://www.mercadopago.com.ar/subscriptions/checkout?preapproval_id=2c93808488fc9b7701890526a7bd036c"
  */
 
 router.post('/suscription', verificationCountryMercadoPago, createSuscription)

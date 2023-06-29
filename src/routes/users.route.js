@@ -85,25 +85,46 @@ const router = Router();
 router.get("/", getUsersByStatus);
 /**
  * @swagger
- * /user/all:
+ * /user/all/:
  *   get:
  *     summary: Obtén todos los usuarios
- *     description: Obtiene una lista de todos los usuarios
+ *     description: Obtiene una lista de todos los usuarios, excluyendo los roles de superusuario y administrador
  *     tags:
  *       - User
+ *     parameters:
+ *       - in: query
+ *         name: offset
+ *         schema:
+ *           type: integer
+ *         description: Número de registros a omitir (desplazamiento)
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *         description: Número máximo de registros a devolver
  *     responses:
- *       200:
+ *       '200':
  *         description: Lista de usuarios obtenida exitosamente
  *         content:
  *           application/json:
  *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/User'
- *       500:
+ *               type: object
+ *               properties:
+ *                 count:
+ *                   type: integer
+ *                   description: Número total de usuarios
+ *                 next:
+ *                   type: string
+ *                   description: Enlace para obtener la siguiente página de resultados (opcional)
+ *                 results:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/User'
+ *       '500':
  *         description: Error interno del servidor
  */
-router.get("/all", getAllUsers);
+
+router.get("/all/", getAllUsers);
 /**
  * @swagger
  * /user/name:
@@ -146,7 +167,7 @@ router.get("/name", getUsersByName);
  *         name: membership
  *         schema:
  *           type: string
- *         description: Filtro opcional por membresía (standard, premium)
+ *         description: Filtro opcional por membresía (basic, standard, premium)
  *     responses:
  *       200:
  *         description: Lista de usuarios obtenida exitosamente

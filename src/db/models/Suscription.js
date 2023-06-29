@@ -12,10 +12,11 @@ module.exports = (sequelize) => {
       preApprovalId: {
         type: DataTypes.STRING,
         allowNull: false,
+        unique: true,
         comment: 'Subscription state information identifier'
       },
       status: {
-        type: DataTypes.STRING,
+        type: DataTypes.ENUM('authorized', 'pending'),
         allowNull: false
       },
       type: {
