@@ -1,6 +1,7 @@
 const { User } = require("../db/db");
 const { CustomError } = require("../utils/customErrors");
 const { Op } = require("sequelize");
+const { obtenerNextPageProductAll } = require("../utils/paginadoAll.js");
 // -- Obtener ususario por id (get userById)
 // -- Crear nuevo usuario (post user)
 // -- Actuliazar datos de usuario (put)
@@ -72,32 +73,77 @@ const getUser = async (req, res) => {
 
 // Llama todos los usuarios
 
+// const getAllUsers = async (req, res) => {
+//   try {
+//     const users = await User.findAll({
+//       where:{
+//          role: {
+//       [Op.notIn]: ['sudo', 'admin']
+//     }}}); // Consulta para obtener todos los usuarios
+//     // Hacer algo con los usuarios obtenidos
+//     console.log(users);
+//     // Retornar los usuarios si necesitas utilizarlos fuera de esta función
+
+//     return res.status(200).json(users);
+//   } catch (error) {
+//     console.error("Error updating user email:", error);
+//     return res.status(500).json({ error: "Internal server error" });
+//   }
+// };
+/////////////////////////////////////
 const getAllUsers = async (req, res) => {
   try {
-    const users = await User.findAll({
-      where:{       
-         role: {
-      [Op.notIn]: ['sudo', 'admin']
-    }}}); // Consulta para obtener todos los usuarios
-    // Hacer algo con los usuarios obtenidos
-    console.log(users);
-    // Retornar los usuarios si necesitas utilizarlos fuera de esta función
+    let { offset, limit } = req.query;
 
-    return res.status(200).json(users);
+    offset = offset ? +offset : 0;
+    limit = limit ? +limit : 12;
+
+    const users = await User.findAndCountAll({
+      where: {
+        role: {
+          [Op.notIn]: ["sudo", "admin"],
+        },
+      },
+      offset,
+      limit,
+    });
+
+    const { rows, count } = users;
+
+    let queryExtend = obtenerNextPageProductAll("user", offset, limit, count);
+    if (offset + limit < count) {
+      const params = [];
+
+      if (offset) {
+        params.push(`offset=${offset}`);
+      }
+
+      if (limit) {
+        params.push(`limit=${limit}`);
+      }
+
+      queryExtend += params.length > 0 ? `?${params.join("&")}` : "";
+    }
+
+    return res.status(200).json({
+      count,
+      next: queryExtend,
+      results: rows,
+    });
   } catch (error) {
     console.error("Error updating user email:", error);
     return res.status(500).json({ error: "Internal server error" });
   }
 };
-
+////////////////////////////////////////
 const getUsersByName = async (req, res) => {
   const { name } = req.query;
   try {
     const users = await User.findAll({
       where: {
         name: { [Op.iLike]: `%${name}%` },
-        role: 'user'
-      }
+        role: "user",
+      },
     });
     // Hacer algo con los usuarios obtenidos por nombre
     console.log(users);
@@ -277,7 +323,7 @@ const updateUserMembership = async (req, res) => {
     }
 
     // Validar que el estado sea un valor válido
-    const allowedMembership = ["standard", "premium"];
+    const allowedMembership = ["basic", "standard", "premium"];
     if (!membership || !allowedMembership.includes(membership)) {
       return res.status(400).json({ error: "Invalid membership value" });
     }
@@ -329,7 +375,7 @@ const getUsersByMembership = async (req, res) => {
   try {
     const { membership } = req.query; // Obtén el parámetro de consulta 'membership'
     // Verificar si se especificó una membresía válida
-    const allowedMemberships = ["standard", "premium"];
+    const allowedMemberships = ["basic", "standard", "premium"];
     if (membership && !allowedMemberships.includes(membership)) {
       return res.status(400).json({ error: "Invalid membership value" });
     }
