@@ -58,8 +58,8 @@ User.hasMany(Order, { as: 'orders', foreignKey: 'idUser' })
 Order.belongsTo(User, { foreignKey: 'idUser' })
 
 // un Usuario tiene una Suscripcion,y una Suscripcion tiene un solo Usuario
-User.hasOne(Suscription, { foreignKey: 'idUser' })
-Suscription.belongsTo(User)
+User.hasOne(Suscription, { as: 'suscription', foreignKey: 'idUser' })
+Suscription.belongsTo(User, { foreignKey: 'idUser' })
 
 // un Usuario tiene muchos Productos (dueño o "comprador"), y un Producto tiene muchos Usuario
 User.belongsToMany(Product, {
