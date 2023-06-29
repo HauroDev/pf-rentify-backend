@@ -25,9 +25,16 @@ const verificationCountryMercadoPago = (req, res, next) => {
 // agregar propiedad type, para identificar y guardad en la db el tipo de suscription del usuario
 
 const createSuscription = async (req, res) => {
-  const { email, price, reason, type, idUser } = req.body
+  const { price, reason, type, idUser } = req.body
 
-  const back_url = urlApi + '/payments/confirm-suscription'
+  // solo funciona si esta en una url con https,
+  // ngrok con usuario autenticado permite hacer pruebas
+  // podes remplazar urlApi con la url que te proporcione el mismo
+  // recorda que las url son temporales, asi que cambialas cuando termines de trabajar
+  // const back_url = urlApi + '/payments/confirm-suscription'
+  const back_url =
+    'https://c521-2800-810-4fc-84a8-78aa-4ee-3d2f-76fd.ngrok-free.app/api-rentify' +
+    '/payments/confirm-suscription'
 
   const payload = {
     reason,
@@ -37,7 +44,7 @@ const createSuscription = async (req, res) => {
       currency_id: 'ARS',
       transaction_amount: price
     },
-    payer_email: email,
+    payer_email: 'test_user_533353129@testuser.com',
     back_url,
     status: 'pending'
   }
