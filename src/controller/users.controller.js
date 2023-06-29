@@ -1,6 +1,6 @@
 const { User } = require("../db/db");
 const { CustomError } = require("../utils/customErrors");
-
+const { Op } = require("sequelize");
 // -- Obtener ususario por id (get userById)
 // -- Crear nuevo usuario (post user)
 // -- Actuliazar datos de usuario (put)
@@ -67,6 +67,46 @@ const getUser = async (req, res) => {
     res
       .status(error?.status || 500)
       .json({ error: error?.message || "Error en la busqueda de users" });
+  }
+};
+
+// Llama todos los usuarios
+
+const getAllUsers = async (req, res) => {
+  try {
+    const users = await User.findAll({
+      where:{       
+         role: {
+      [Op.notIn]: ['sudo', 'admin']
+    }}}); // Consulta para obtener todos los usuarios
+    // Hacer algo con los usuarios obtenidos
+    console.log(users);
+    // Retornar los usuarios si necesitas utilizarlos fuera de esta función
+
+    return res.status(200).json(users);
+  } catch (error) {
+    console.error("Error updating user email:", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+const getUsersByName = async (req, res) => {
+  const { name } = req.query;
+  try {
+    const users = await User.findAll({
+      where: {
+        name: { [Op.iLike]: `%${name}%` },
+        role: 'user'
+      }
+    });
+    // Hacer algo con los usuarios obtenidos por nombre
+    console.log(users);
+
+    // Retornar los usuarios si necesitas utilizarlos fuera de esta función
+    return res.status(200).json(users);
+  } catch (error) {
+    console.error("Error al obtener los usuarios por nombre:", error);
+    throw error;
   }
 };
 
@@ -359,7 +399,9 @@ const getUsersByMembership = async (req, res) => {
 
 module.exports = {
   postUser,
+  getAllUsers,
   getUser,
+  getUsersByName,
   getUsersByStatus,
   updateUserName,
   updateUserPhone,
