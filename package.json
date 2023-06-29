@@ -17,6 +17,7 @@
     "dotenv": "^16.1.4",
     "express": "^4.18.2",
     "firebase-admin": "^11.9.0",
+    "jsonwebtoken": "^9.0.0",
     "googleapis": "^118.0.0",
     "mercadopago": "^1.5.16",
     "morgan": "^1.10.0",
@@ -28,13 +29,12 @@
     "swagger-ui-express": "^4.6.3"
   },
   "devDependencies": {
-    "eslint": "^8.42.0",
+    "eslint": "^8.43.0",
     "eslint-config-standard": "^17.1.0",
-    "eslint-plugin-import": "^2.27.5",
-    "eslint-plugin-n": "^16.0.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-n": "^16.0.1",
     "eslint-plugin-promise": "^6.1.1",
-    "eslint-plugin-react": "^7.32.2",
-    "nodemon": "^2.0.22",
+    "nodemon": "^1.14.9",
     "standard": "^17.1.0"
   }
 }
