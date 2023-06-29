@@ -33,7 +33,7 @@ const verifyAuthToken = async (req, res, next) => {
     // Almecenamos los dattos del usuario en el objeto req
     req.userId = decode.userId;
     req.userEmail = decode.userEmail;
-    //req.userName = decode.userName;
+    req.role = decode.role;
 
     next();
   } catch (error) {

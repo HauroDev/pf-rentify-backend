@@ -12,10 +12,9 @@ const login = async (req, res) => {
     if (!user) {
       throw new Error(402, "Email or Password not valid");
     }
-    const { email, uid, role } = user.dataValues;
+    const { role } = user.dataValues;
 
     const { token, expireIn } = generateToken(uid, email, role, res);
-
     console.log(user.dataValues);
     // res.status(200).json(user.dataValues)
     console.log(token);
