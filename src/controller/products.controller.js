@@ -256,7 +256,14 @@ const getProductById = async (req, res) => {
     // agregar comentarios
 
     const { count: total, rows: comments } = await Comment.findAndCountAll({
-      where: { idProd: id }
+      where: { idProd: id, commentStatus: true },
+      include: [
+        {
+          model: User,
+          as: 'user',
+          attributes: ['name']
+        }
+      ]
     })
 
     res.status(200).json({
