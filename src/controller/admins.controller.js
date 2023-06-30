@@ -11,6 +11,9 @@ const {
 const { CustomError } = require('../utils/customErrors.js')
 
 const getStatistics = async (_req, res) => {
+  const roleUser = req.role
+
+  if(roleUser !== "admin"||roleUser !=="sudo") throw new CustomError(400, "No eres un admin")
   try {
     const [users, products, usersMembership, featured, orders, suscriptions] =
       await Promise.all([
@@ -36,6 +39,10 @@ const getStatistics = async (_req, res) => {
 }
 
 const createAdmin = async (req, res) => {
+  const roleUser = req.role
+
+  if(roleUser !== "admin"||roleUser !=="sudo") throw new CustomError(400, "No eres un admin")
+
   try {
     const { name, email, phone, image, uid } = req.body
 
@@ -66,6 +73,10 @@ const createAdmin = async (req, res) => {
 }
 
 const getAdminsSudo = async (req, res) => {
+  const roleUser = req.role
+
+  if(roleUser !== "admin"||roleUser !=="sudo") throw new CustomError(400, "No eres un admin")
+
   const { name, role } = req.query
   try {
     const whereClause = {}
@@ -96,6 +107,10 @@ const getAdminsSudo = async (req, res) => {
 }
 
 const updateNameAdmin = async (req, res) => {
+  const roleUser = req.role
+
+  if(roleUser !== "admin"||roleUser !=="sudo") throw new CustomError(400, "No eres un admin")
+
   const { idUser, name } = req.body
 
   try {
@@ -116,6 +131,10 @@ const updateNameAdmin = async (req, res) => {
 }
 
 const updatePhoneAdmin = async (req, res) => {
+  const roleUser = req.role
+
+  if(roleUser !== "admin"||roleUser !=="sudo") throw new CustomError(400, "No eres un admin")
+
   const { idUser, phone } = req.body
 
   try {
@@ -136,6 +155,9 @@ const updatePhoneAdmin = async (req, res) => {
 }
 
 const updateEmailAdmin = async (req, res) => {
+  const roleUser = req.role
+
+  if(roleUser !== "admin"||roleUser !=="sudo") throw new CustomError(400, "No eres un admin")
   const { idUser, email } = req.body
 
   try {
@@ -156,6 +178,10 @@ const updateEmailAdmin = async (req, res) => {
 }
 
 const updateStatusAdmin = async (req, res) => {
+  const roleUser = req.role
+
+  if(roleUser !== "admin"||roleUser !=="sudo") throw new CustomError(400, "No eres un admin")
+
   const { idUser, status } = req.body
 
   try {
@@ -183,6 +209,10 @@ const updateStatusAdmin = async (req, res) => {
 }
 
 const updateRoleAdmin = async (req, res) => {
+  const roleUser = req.role
+
+  if(roleUser !== "admin"||roleUser !=="sudo") throw new CustomError(400, "No eres un admin")
+
   const { idUser, role } = req.body
 
   try {
@@ -207,6 +237,10 @@ const updateRoleAdmin = async (req, res) => {
 }
 
 const updateMembershipAdmin = async (req, res) => {
+  const roleUser = req.role
+
+  if(roleUser !== "admin"||roleUser !=="sudo") throw new CustomError(400, "No eres un admin")
+
   const { idUser, membership } = req.body
 
   try {
@@ -234,6 +268,10 @@ const updateMembershipAdmin = async (req, res) => {
 }
 
 const updateImageAdmin = async (req, res) => {
+  const roleUser = req.role
+
+  if(roleUser !== "admin"||roleUser !=="sudo") throw new CustomError(400, "No eres un admin")
+  
   const { idUser, image } = req.body
 
   try {
