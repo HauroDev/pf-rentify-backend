@@ -2,6 +2,14 @@ const { User } = require("../db/db");
 const { CustomError } = require("../utils/customErrors");
 const { Op } = require("sequelize");
 const { obtenerNextPageProductAll } = require("../utils/paginadoAll.js");
+
+//Configuración de Nodemailer
+const { sendWelcomeEmail } = require("../config/nodemailer")
+const { sendUserStatusChangeEmail } = require("../config/nodemailer")
+
+
+
+
 // -- Obtener ususario por id (get userById)
 // -- Crear nuevo usuario (post user)
 // -- Actuliazar datos de usuario (put)
@@ -44,6 +52,10 @@ const postUser = async (req, res) => {
       status: "active",
     });
 
+
+    // Nodemailer
+    await sendWelcomeEmail(newUser.email, newUser.name);
+
     // Envía la respuesta con el usuario creado
     res.status(201).json(newUser);
   } catch (error) {
@@ -52,6 +64,7 @@ const postUser = async (req, res) => {
     res.status(error?.status || 500).json({ error: error?.message });
   }
 };
+
 // Obtener usuario por ID (GET)
 const getUser = async (req, res) => {
   try {
@@ -304,6 +317,9 @@ const updateUserStatus = async (req, res) => {
     // Actualizar el estado del usuario
     user.status = status;
     await user.save();
+
+    // Nodemailer
+    await sendUserStatusChangeEmail(user.email, status);
 
     return res
       .status(200)
