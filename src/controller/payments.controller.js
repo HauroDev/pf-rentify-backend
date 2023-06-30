@@ -9,8 +9,8 @@ const {
 } = require('../../config.js')
 const { CustomError } = require('../utils/customErrors.js')
 
-//Configuración de Nodemailer
-const { sendPaymentConfirmationEmail } = require("../config/nodemailer")
+// Configuración de Nodemailer
+const { sendPaymentConfirmationEmail } = require('../config/nodemailer')
 
 const urlWebHook = urlApi + '/payments/feedback'
 
@@ -97,18 +97,109 @@ const createOrder = async (req, res) => {
       auto_return: 'approved'
     })
 
+    console.log(info)
+
+    /*
+    {
+      additional_info: '',
+      auto_return: 'approved',
+      back_urls: {
+        failure: 'http://localhost:3001/api-rentify/payments/feedback',
+        pending: 'http://localhost:3001/api-rentify/payments/feedback',
+        success: 'http://localhost:3001/api-rentify/payments/feedback'
+      },
+      binary_mode: false,
+      client_id: '5756748749183069',
+      collector_id: 1396294482,
+      coupon_code: null,
+      coupon_labels: null,
+      date_created: '2023-06-30T13:51:45.001-04:00',
+      date_of_expiration: null,
+      expiration_date_from: null,
+      expiration_date_to: null,
+      expires: false,
+      external_reference: '',
+      id: '1396294482-6c28cdc9-ff17-43d6-8c26-2b796dd5edee',
+      init_point: 'https://www.mercadopago.com.ar/checkout/v1/redirect?pref_id=1396294482-6c28cdc9-ff17-43d6-8c26-2b796dd5edee',
+      internal_metadata: null,
+      items: [
+        {
+          id: '',
+          category_id: '',
+          currency_id: 'ARS',
+          description: '',
+          title: 'lata',
+          quantity: 2,
+          unit_price: 1234
+        }
+      ],
+      marketplace: 'NONE',
+      marketplace_fee: 0,
+      metadata: {},
+      notification_url: null,
+      operation_type: 'regular_payment',
+      payer: {
+        phone: { area_code: '', number: '' },
+        address: { zip_code: '', street_name: '', street_number: null },
+        email: '',
+        identification: { number: '', type: '' },
+        name: '',
+        surname: '',
+        date_created: null,
+        last_purchase: null
+      },
+      payment_methods: {
+        default_card_id: null,
+        default_payment_method_id: null,
+        excluded_payment_methods: [ [Object] ],
+        excluded_payment_types: [ [Object] ],
+        installments: null,
+        default_installments: null
+      },
+      processing_modes: null,
+      product_id: null,
+      redirect_urls: { failure: '', pending: '', success: '' },
+      sandbox_init_point: 'https://sandbox.mercadopago.com.ar/checkout/v1/redirect?pref_id=1396294482-6c28cdc9-ff17-43d6-8c26-2b796dd5edee',
+      site_id: 'MLA',
+      shipments: {
+        default_shipping_method: null,
+        receiver_address: {
+          zip_code: '',
+          street_name: '',
+          street_number: null,
+          floor: '',
+          apartment: '',
+          city_name: null,
+          state_name: null,
+          country_name: null
+        }
+      },
+      total_amount: null,// no se actualiza hasta que se ingresa a pagar, por eso el calculo se tiene que hacer a parte o despues de comprar
+      last_updated: null
+    }
+    */
+
     const newOrder = await Order.create({ preferenceId: info.id })
     await newOrder.setUser(user)
 
-    console.log('items:', items);
+    console.log('items:', items)
 
-     //Nodemailer
-     const preference = await mp.preferences.get(info.id);
-     const paymentStatus = preference.status;
-     const itemCount = items.length;
-     const totalAmount = items.reduce((total, item) => total + item.amount, 0);
-     await sendPaymentConfirmationEmail(user.email, newOrder.preferenceId, itemCount, totalAmount, paymentStatus);
- 
+    // Nodemailer
+    // const preference = await mp.preferences.findByPk(info.id)
+    // const paymentStatus = preference.status
+    // const itemCount = items.length
+    const totalAmount = items.reduce(
+      (total, item) => total + item.unit_price * item.quantity,
+      0
+    )
+    await sendPaymentConfirmationEmail(
+      user.email,
+      totalAmount,
+      items.length,
+      'pending'
+    )
+
+    console.log('correo enviado')
 
     res.json({ preferenceId: info.id })
   } catch (error) {
@@ -161,7 +252,9 @@ const confirmOrder = async (req, res, next) => {
     }
 
     // mercado pago envia su error propio
-    const { response: payment } = await mp.payment.findById(payment_id)
+    const { body: payment } = await mp.payment.findById(payment_id)
+
+    console.log(payment)
 
     const hasFound = await Order.findOne({
       where: { preferenceId: preference_id }
@@ -180,7 +273,135 @@ const confirmOrder = async (req, res, next) => {
       )
     }
 
-      
+    const user = await User.findByPk(hasFound.toJSON().idUser)
+
+    console.log(user.toJSON())
+    /* esto es lo que devuelve user.toJSON()
+    {
+      idUser: 'd89a1a1c-c415-4a38-9f22-d5e4fbe34a21',
+      name: '',
+      email: 'victormas208@outlook.com',
+      phone: null,
+      image: null,
+      membership: 'basic',
+      status: 'active',
+      uid: 'gdjbJnIEBUPHl7NNXi7Mj0JYDLW2',
+      role: 'user',
+      createdAt: 2023-06-30T15:28:15.747Z,
+      updatedAt: 2023-06-30T15:28:15.747Z
+    }
+    */
+    // Nodemailer
+
+    console.log(payment)
+    /* esto es lo que devuelve payment
+      {
+        accounts_info: null,
+        acquirer_reconciliation: [],
+        additional_info: {
+          authentication_code: null,
+          available_balance: null,
+          ip_address: '181.45.123.217',
+          items: [ [Object] ],
+          nsu_processadora: null
+        },
+        authorization_code: null,
+        barcode: {
+          content: '3335008800000000006003601106101594500231810310',
+          height: 30,
+          type: 'Code128C',
+          width: 1
+        },
+        binary_mode: false,
+        brand_id: null,
+        build_version: '3.5.0-rc-2',
+        call_for_authorize_id: null,
+        captured: true,
+        card: {},
+        charges_details: [],
+        collector_id: 1396294482,
+        corporation_id: null,
+        counter_currency: null,
+        coupon_amount: 0,
+        currency_id: 'ARS',
+        date_approved: null,
+        date_created: '2023-06-30T13:37:54.295-04:00',
+        date_last_updated: '2023-06-30T13:37:54.295-04:00',
+        date_of_expiration: '2023-07-03T22:59:59.000-04:00',
+        deduction_schema: null,
+        description: 'TEsting',
+        differential_pricing_id: null,
+        external_reference: null,
+        fee_details: [],
+        financing_group: null,
+        id: 1316173857,
+        installments: 1,
+        integrator_id: null,
+        issuer_id: '11',
+        live_mode: false,
+        marketplace_owner: null,
+        merchant_account_id: null,
+        merchant_number: null,
+        metadata: {},
+        money_release_date: null,
+        money_release_schema: null,
+        money_release_status: null,
+        notification_url: null,
+        operation_type: 'regular_payment',
+        order: { id: '10132931975', type: 'mercadopago' },
+        payer: { // no estamos usando esto pero se puede usar a futuro
+          first_name: null,
+          last_name: null,
+          email: 'test_user_80507629@testuser.com',
+          identification: { number: '32659430', type: 'DNI' },
+          phone: { area_code: null, number: null, extension: null },
+          type: null,
+          entity_type: null,
+          id: '1396294720'
+        },
+        payment_method: {
+          data: {},
+          forward_data: { agreement_number: '', ticket_number: '' },
+          id: 'pagofacil',
+          issuer_id: '11',
+          type: 'ticket'
+        },
+        payment_method_id: 'pagofacil',
+        payment_type_id: 'ticket',
+        platform_id: null,
+        point_of_interaction: {
+          business_info: { sub_unit: 'checkout_pro', unit: 'online_payments' },
+          transaction_data: { e2e_id: null },
+          type: 'CHECKOUT'
+        },
+        pos_id: null,
+        processing_mode: 'aggregator',
+        refunds: [],
+        shipping_amount: 0,
+        sponsor_id: null,
+        statement_descriptor: null,
+        status: 'pending',
+        status_detail: 'pending_waiting_payment',
+        store_id: null,
+        tags: null,
+        taxes_amount: 0,
+        transaction_amount: 15945,
+        transaction_amount_refunded: 0,
+        transaction_details: {
+          acquirer_reference: '',
+          external_resource_url: 'https://www.mercadopago.com.ar/sandbox/payments/1316173857/ticket?caller_id=1396294720&payment_method_id=pagofacil&payment_id=1316173857&payment_method_reference_id=6003601106&hash=f6e8b26e-7df3-4017-886b-288eda3c7d33',
+          financial_institution: '',
+          installment_amount: 0,
+          net_received_amount: 0,
+          overpaid_amount: 0,
+          payable_deferral_period: null,
+          payment_method_reference_id: '6003601106',
+          total_paid_amount: 15945,
+          verification_code: '6003601106'
+        }
+      }
+    */
+
     next()
   } catch (error) {
     res.status(error.status || 500).json({ error: error.message })

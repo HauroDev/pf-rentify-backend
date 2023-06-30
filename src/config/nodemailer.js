@@ -1,23 +1,23 @@
-const nodemailer = require('nodemailer');
-const { google } = require('googleapis');
-const path = require('path');
-require("dotenv").config()
+const nodemailer = require('nodemailer')
+const { google } = require('googleapis')
+const path = require('path')
+require('dotenv').config()
 
-const CLIENT_ID = process.env.CLIENT_ID;
-const CLIENT_SECRET = process.env.CLIENT_SECRET;
-const REDIRECT_URI = process.env.REDIRECT_URI;
-const REFRESH_TOKEN = process.env.REFRESH_TOKEN;
+const CLIENT_ID = process.env.CLIENT_ID
+const CLIENT_SECRET = process.env.CLIENT_SECRET
+const REDIRECT_URI = process.env.REDIRECT_URI
+const REFRESH_TOKEN = process.env.REFRESH_TOKEN
 
 const oAuth2Client = new google.auth.OAuth2(
   CLIENT_ID,
   CLIENT_SECRET,
   REDIRECT_URI
-);
+)
 
-oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
+oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN })
 
-const pass = process.env.EMAIL_PASS;
-const email = process.env.EMAIL_RENTIFY;
+const pass = process.env.EMAIL_PASS
+const email = process.env.EMAIL_RENTIFY
 
 const transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -27,21 +27,21 @@ const transporter = nodemailer.createTransport({
     clientId: CLIENT_ID,
     clientSecret: CLIENT_SECRET,
     refreshToken: REFRESH_TOKEN,
-    accessToken: oAuth2Client.getAccessToken(),
-  },
-});
+    accessToken: oAuth2Client.getAccessToken()
+  }
+})
 
-const logoPath = path.join(__dirname, 'logo.png');
+const logoPath = path.join(__dirname, 'logo.png')
 
 const sendWelcomeEmail = async (userEmail) => {
-    try {
-      console.log('userEmail:', userEmail);
-  
-      await transporter.sendMail({
-        subject: 'Welcome to Rent-ify!',
-        from: "Rent-ify <rent.ify.contact@gmail.com>",
-        to: userEmail,
-        html: `<!DOCTYPE html>
+  try {
+    console.log('userEmail:', userEmail)
+
+    await transporter.sendMail({
+      subject: 'Welcome to Rent-ify!',
+      from: 'Rent-ify <rent.ify.contact@gmail.com>',
+      to: userEmail,
+      html: `<!DOCTYPE html>
         <html>
         <head>
           <meta charset="UTF-8">
@@ -110,30 +110,32 @@ const sendWelcomeEmail = async (userEmail) => {
         </body>
         </html>
         `,
-        attachments: [{
+      attachments: [
+        {
           filename: 'logo.png',
           path: logoPath,
           cid: 'logo'
-        }]
-      });
-  
-      console.log('Correo electrónico enviado correctamente');
-    } catch (error) {
-      console.log('Error al enviar el correo electrónico:', error);
-      // Enviar una respuesta de error al cliente
-      throw new Error('Error al enviar el correo electrónico');
-    }
-  };
-  
-  const sendProductCreatedEmail = async (userEmail, product) => {
-    try {
-      console.log('userEmail:', userEmail);
-  
-      await transporter.sendMail({
-        subject: 'Product Created - Rent-ify',
-        from: "Rent-ify <rent.ify.contact@gmail.com>",
-        to: userEmail,
-        html: `<!DOCTYPE html>
+        }
+      ]
+    })
+
+    console.log('Correo electrónico enviado correctamente')
+  } catch (error) {
+    console.log('Error al enviar el correo electrónico:', error)
+    // Enviar una respuesta de error al cliente
+    throw new Error('Error al enviar el correo electrónico')
+  }
+}
+
+const sendProductCreatedEmail = async (userEmail, product) => {
+  try {
+    console.log('userEmail:', userEmail)
+
+    await transporter.sendMail({
+      subject: 'Product Created - Rent-ify',
+      from: 'Rent-ify <rent.ify.contact@gmail.com>',
+      to: userEmail,
+      html: `<!DOCTYPE html>
           <html>
           <head>
             <meta charset="UTF-8">
@@ -223,30 +225,37 @@ const sendWelcomeEmail = async (userEmail) => {
           </body>
           </html>
         `,
-        attachments: [{
+      attachments: [
+        {
           filename: 'logo.png',
           path: logoPath,
           cid: 'logo'
-        }]
-      });
-  
-      console.log('Correo electrónico enviado correctamente');
-    } catch (error) {
-      console.log('Error al enviar el correo electrónico:', error);
-      // Enviar una respuesta de error al cliente
-      throw new Error('Error al enviar el correo electrónico');
-    }
-  };
-  
-  const sendPaymentConfirmationEmail = async (userEmail, paymentAmount, itemCount, paymentStatus) => {
-    try {
-      console.log('userEmail:', userEmail);
-  
-      await transporter.sendMail({
-        subject: 'Payment Confirmation - Rent-ify',
-        from: "Rent-ify <rent.ify.contact@gmail.com>",
-        to: userEmail,
-        html: `<!DOCTYPE html>
+        }
+      ]
+    })
+
+    console.log('Correo electrónico enviado correctamente')
+  } catch (error) {
+    console.log('Error al enviar el correo electrónico:', error)
+    // Enviar una respuesta de error al cliente
+    throw new Error('Error al enviar el correo electrónico')
+  }
+}
+
+const sendPaymentConfirmationEmail = async (
+  userEmail,
+  paymentAmount,
+  itemCount,
+  paymentStatus
+) => {
+  try {
+    console.log('userEmail:', userEmail)
+
+    await transporter.sendMail({
+      subject: 'Payment Confirmation - Rent-ify',
+      from: 'Rent-ify <rent.ify.contact@gmail.com>',
+      to: userEmail,
+      html: `<!DOCTYPE html>
           <html>
           <head>
             <meta charset="UTF-8">
@@ -321,29 +330,31 @@ const sendWelcomeEmail = async (userEmail) => {
           </body>
           </html>
         `,
-        attachments: [{
+      attachments: [
+        {
           filename: 'logo.png',
           path: logoPath,
           cid: 'logo'
-        }]
-      });
-  
-      console.log('Correo electrónico enviado correctamente');
-    } catch (error) {
-      console.log('Error al enviar el correo electrónico:', error);
-      // Enviar una respuesta de error al cliente
-      throw new Error('Error al enviar el correo electrónico');
-    }
-  };
-  const sendUserStatusChangeEmail = async (userEmail, newStatus) => {
-    try {
-      console.log('userEmail:', userEmail);
-  
-      await transporter.sendMail({
-        subject: 'User Status Change - Rent-ify',
-        from: "Rent-ify <rent.ify.contact@gmail.com>",
-        to: userEmail,
-        html: `<!DOCTYPE html>
+        }
+      ]
+    })
+
+    console.log('Correo electrónico enviado correctamente')
+  } catch (error) {
+    console.log('Error al enviar el correo electrónico:', error)
+    // Enviar una respuesta de error al cliente
+    throw new Error('Error al enviar el correo electrónico')
+  }
+}
+const sendUserStatusChangeEmail = async (userEmail, newStatus) => {
+  try {
+    console.log('userEmail:', userEmail)
+
+    await transporter.sendMail({
+      subject: 'User Status Change - Rent-ify',
+      from: 'Rent-ify <rent.ify.contact@gmail.com>',
+      to: userEmail,
+      html: `<!DOCTYPE html>
           <html>
           <head>
             <meta charset="UTF-8">
@@ -412,27 +423,26 @@ const sendWelcomeEmail = async (userEmail) => {
           </body>
           </html>
         `,
-        attachments: [{
+      attachments: [
+        {
           filename: 'logo.png',
           path: logoPath,
           cid: 'logo'
-        }]
-      });
-  
-      console.log('Correo electrónico enviado correctamente');
-    } catch (error) {
-      console.log('Error al enviar el correo electrónico:', error);
-      // Enviar una respuesta de error al cliente
-      throw new Error('Error al enviar el correo electrónico');
-    }
-  };
-  
-  
-  
-  module.exports = {
-    sendWelcomeEmail,
-    sendProductCreatedEmail,
-    sendPaymentConfirmationEmail,
-    sendUserStatusChangeEmail
-  };
-  
+        }
+      ]
+    })
+
+    console.log('Correo electrónico enviado correctamente')
+  } catch (error) {
+    console.log('Error al enviar el correo electrónico:', error)
+    // Enviar una respuesta de error al cliente
+    throw new Error('Error al enviar el correo electrónico')
+  }
+}
+
+module.exports = {
+  sendWelcomeEmail,
+  sendProductCreatedEmail,
+  sendPaymentConfirmationEmail,
+  sendUserStatusChangeEmail
+}
