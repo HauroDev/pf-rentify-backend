@@ -214,7 +214,9 @@ const getOrdersByIdUser = async (req, res) => {
     if (!hasUser) throw new CustomError(404, 'uses is not found')
 
     const { rows, count } = await Order.findAndCountAll({
-      where: whereOption
+      where: whereOption,
+      limit,
+      offset
     })
 
     let nextPage = getNextPage(
