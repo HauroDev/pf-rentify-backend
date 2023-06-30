@@ -1,7 +1,13 @@
 const { Router } = require('express')
 const {
   getStatistics,
-  getAdminsSudo
+  getAdminsSudo,
+  createAdmin,
+  updateNameAdmin,
+  updatePhoneAdmin,
+  updateRoleAdmin,
+  updateImageAdmin,
+  getOrdersByIdUser
 } = require('../controller/admins.controller.js')
 
 const router = Router()
@@ -138,5 +144,269 @@ router.get('/statistics', getStatistics)
  */
 
 router.get('/admins-sudo', getAdminsSudo)
+
+/**
+ * @swagger
+ * /admin/create-admin:
+ *   post:
+ *     summary: Crea un usuario administrador
+ *     description: Este endpoint crea un nuevo usuario administrador. Los campos "image" y "phone" son opcionales.
+ *     tags:
+ *       - Admins
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 description: Nombre del usuario administrador.
+ *               email:
+ *                 type: string
+ *                 description: Correo electrónico del usuario administrador.
+ *                 required: true
+ *               uid:
+ *                 type: string
+ *                 description: Identificador único del usuario administrador.
+ *                 required: true
+ *               image:
+ *                 type: string
+ *                 description: (Opcional) URL de la imagen del usuario administrador.
+ *               phone:
+ *                 type: string
+ *                 description: (Opcional) Número de teléfono del usuario administrador.
+ *     responses:
+ *       201:
+ *         description: Usuario administrador creado exitosamente.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 idUser:
+ *                   type: string
+ *                   description: ID del usuario administrador creado.
+ *                 status:
+ *                   type: string
+ *                   description: Estado del usuario administrador.
+ *                 name:
+ *                   type: string
+ *                   description: Nombre del usuario administrador.
+ *                 email:
+ *                   type: string
+ *                   description: Correo electrónico del usuario administrador.
+ *                 phone:
+ *                   type: string
+ *                   description: (Opcional) Número de teléfono del usuario administrador.
+ *                 image:
+ *                   type: string
+ *                   description: (Opcional) URL de la imagen del usuario administrador.
+ *                 uid:
+ *                   type: string
+ *                   description: Identificador único del usuario administrador.
+ *                 membership:
+ *                   type: string
+ *                   description: Membresía del usuario administrador.
+ *                 role:
+ *                   type: string
+ *                   description: Rol del usuario administrador.
+ *                 updatedAt:
+ *                   type: string
+ *                   format: date-time
+ *                   description: Fecha y hora de la última actualización del usuario administrador.
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                   description: Fecha y hora de creación del usuario administrador.
+ */
+
+router.post('/create-admin', createAdmin)
+
+/**
+ * @swagger
+ * /admin/update-name:
+ *   patch:
+ *     summary: Actualiza el nombre del perfil de un administrador
+ *     description: Puedes cambiar el nombre del perfil de un administrador
+ *     tags:
+ *       - Admins
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               idUser:
+ *                 type: string
+ *                 format: uuid
+ *               name:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: nombre de perfil actualizado exitosamente
+ */
+
+router.patch('/update-name', updateNameAdmin)
+
+/**
+ * @swagger
+ * /admin/update-phone:
+ *   patch:
+ *     summary: Actualiza el número de teléfono de un administrador
+ *     description: Puedes cambiar el número de teléfono de un administrador
+ *     tags:
+ *       - Admins
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               idUser:
+ *                 type: string
+ *                 format: uuid
+ *               phone:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Número de teléfono actualizado exitosamente
+ */
+
+router.patch('/update-phone', updatePhoneAdmin)
+
+/**
+ * @swagger
+ * /admin/update-role:
+ *   patch:
+ *     summary: Actualiza el Rol de un administrador
+ *     description: Puedes cambiar el Rol de un administrador
+ *     tags:
+ *       - Admins
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               idUser:
+ *                 type: string
+ *                 format: uuid
+ *               role:
+ *                 type: string
+ *                 enum:
+ *                   - admin
+ *                   - sudo
+ *     responses:
+ *       200:
+ *         description: Rol actualizado exitosamente
+ */
+
+router.patch('/update-role', updateRoleAdmin)
+
+/**
+ * @swagger
+ * /admin/update-image:
+ *   patch:
+ *     summary: Actualiza el número de teléfono de un administrador
+ *     description: Puedes cambiar el número de teléfono de un administrador
+ *     tags:
+ *       - Admins
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               idUser:
+ *                 type: string
+ *                 format: uuid
+ *               image:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Número de teléfono de usuario actualizado exitosamente
+ */
+
+router.patch('/update-image', updateImageAdmin)
+
+/**
+ * @swagger
+ * /admin/order/user/{idUser}:
+ *   get:
+ *     summary: Obtener órdenes de un usuario
+ *     tags:
+ *      - Admins
+ *     parameters:
+ *       - name: idUser
+ *         in: path
+ *         description: ID del usuario de la Base de datos
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *       - name: status
+ *         in: query
+ *         description: Estado de las órdenes (approved, pending, rejected)
+ *         schema:
+ *           type: string
+ *           enum:
+ *             - approved
+ *             - pending
+ *             - rejected
+ *     responses:
+ *       '200':
+ *         description: OK
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 count:
+ *                   type: integer
+ *                   description: Número total de órdenes
+ *                 next:
+ *                   type: string
+ *                   description: URL de la siguiente página de resultados
+ *                 results:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       idOrder:
+ *                         type: integer
+ *                         description: ID de la orden
+ *                       preferenceId:
+ *                         type: string
+ *                         description: ID de preferencia
+ *                       paymentId:
+ *                         type: string
+ *                         description: ID de pago
+ *                       status:
+ *                         type: string
+ *                         description: Estado de la orden
+ *                       merchantOrderId:
+ *                         type: string
+ *                         description: ID del pedido del comerciante
+ *                       createdAt:
+ *                         type: string
+ *                         format: date-time
+ *                         description: Fecha y hora de creación
+ *                       updatedAt:
+ *                         type: string
+ *                         format: date-time
+ *                         description: Fecha y hora de actualización
+ *                       idUser:
+ *                         type: string
+ *                         format: uuid
+ *                         description: ID del usuario
+ */
+
+router.get('/order/user/:idUser', getOrdersByIdUser)
 
 module.exports = router

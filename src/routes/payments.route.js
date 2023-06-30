@@ -78,10 +78,36 @@ router.post('/suscription', verificationCountryMercadoPago, createSuscription)
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/Order'
+ *             type: object
+ *             properties:
+ *               items:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     title:
+ *                       type: string
+ *                       description: Título del producto.
+ *                     unit_price:
+ *                       type: number
+ *                       description: Precio unitario del producto.
+ *                     quantity:
+ *                       type: integer
+ *                       description: Cantidad del producto.
+ *               idUser:
+ *                 type: string
+ *                 description: Identificador del usuario que genera la orden de pago.
  *     responses:
  *       201:
  *         description: Orden de pago generada exitosamente.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 preferenceId:
+ *                   type: string
+ *                   description: ID de preferencia generado para la orden de pago.
  *       400:
  *         description: Error en la solicitud. Por favor, revise los parámetros enviados.
  */
