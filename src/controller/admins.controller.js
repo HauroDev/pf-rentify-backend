@@ -9,6 +9,7 @@ const {
   getStatisticsSuscriptions
 } = require('../utils/adminStatistics')
 const { CustomError } = require('../utils/customErrors.js')
+const { getNextPage } = require('../utils/paginado.js')
 
 const getStatistics = async (_req, res) => {
   try {
@@ -67,6 +68,10 @@ const createAdmin = async (req, res) => {
 
 const getAdminsSudo = async (req, res) => {
   const { name, role } = req.query
+  let { offset, limit } = req.query
+
+  offset = offset ? +offset : 0
+  limit = limit ? +limit : 12
   try {
     const whereClause = {}
 
@@ -74,21 +79,31 @@ const getAdminsSudo = async (req, res) => {
       whereClause.name = { [Op.iLike]: `%${name}%` }
     }
 
-    if (role === 'admin' || role === 'sudo') {
+    if (['admin', 'sudo'].includes(role)) {
       whereClause.role = role
     } else {
       whereClause.role = ['admin', 'sudo']
     }
 
-    const users = await User.findAll({
+    const { rows, count } = await User.findAndCountAll({
       where: whereClause
     })
 
-    // Hacer algo con los usuarios obtenidos
-    console.log(users)
+    let nextPage = getNextPage('admin/admins-sudo', offset, limit, count)
 
-    // Retornar los usuarios si necesitas utilizarlos fuera de esta función
-    return res.status(200).json(users)
+    if (nextPage) {
+      let queryParams = ''
+
+      if (role) queryParams += '&' + role
+      if (name) queryParams += '&' + name
+
+      nextPage += queryParams
+    }
+    res.status(200).json({
+      count,
+      next: nextPage,
+      results: rows
+    })
   } catch (error) {
     console.error('Error al obtener los usuarios:', error)
     throw error
@@ -135,53 +150,6 @@ const updatePhoneAdmin = async (req, res) => {
   }
 }
 
-const updateEmailAdmin = async (req, res) => {
-  const { idUser, email } = req.body
-
-  try {
-    const user = await User.findByPk(idUser)
-
-    if (!user) throw new CustomError(404, 'user is not exists')
-
-    if (!email) throw new CustomError(400, 'email is required')
-
-    user.email = email
-
-    user.save()
-
-    res.json(user)
-  } catch (error) {
-    res.status(error.status || 500).json({ error: error.message })
-  }
-}
-
-const updateStatusAdmin = async (req, res) => {
-  const { idUser, status } = req.body
-
-  try {
-    const user = await User.findByPk(idUser)
-
-    if (!user) throw new CustomError(404, 'user is not exists')
-
-    if (!status) throw new CustomError(400, 'status is required')
-
-    if (!['active', 'inactive', 'banned'].includes(status)) {
-      throw new CustomError(
-        400,
-        'status should have been "active", "inactive" or "banned"'
-      )
-    }
-
-    user.status = status
-
-    user.save()
-
-    res.json(user)
-  } catch (error) {
-    res.status(error.status || 500).json({ error: error.message })
-  }
-}
-
 const updateRoleAdmin = async (req, res) => {
   const { idUser, role } = req.body
 
@@ -197,33 +165,6 @@ const updateRoleAdmin = async (req, res) => {
     }
 
     user.role = role
-
-    user.save()
-
-    res.json(user)
-  } catch (error) {
-    res.status(error.status || 500).json({ error: error.message })
-  }
-}
-
-const updateMembershipAdmin = async (req, res) => {
-  const { idUser, membership } = req.body
-
-  try {
-    const user = await User.findByPk(idUser)
-
-    if (!user) throw new CustomError(404, 'user is not exists')
-
-    if (!membership) throw new CustomError(400, 'membership is required')
-
-    if (!['basic', 'standard', 'premium'].includes(membership)) {
-      throw new CustomError(
-        400,
-        'membership should have been "basic", "standard" or "premium"'
-      )
-    }
-
-    user.membership = membership
 
     user.save()
 
@@ -255,10 +196,7 @@ const updateImageAdmin = async (req, res) => {
 
 module.exports = {
   updateImageAdmin,
-  updateMembershipAdmin,
   updateRoleAdmin,
-  updateStatusAdmin,
-  updateEmailAdmin,
   updatePhoneAdmin,
   updateNameAdmin,
   getStatistics,
