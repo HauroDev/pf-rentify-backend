@@ -10,6 +10,8 @@ const { Op } = require("sequelize");
 const { obtenerNextPageProduct } = require("../utils/paginado.js");
 const { obtenerNextPageProductAll } = require("../utils/paginadoAll.js");
 const { CustomError } = require("../utils/customErrors.js");
+//Configuración de Nodemailer
+const { sendProductCreatedEmail} = require("../config/nodemailer")
 
 const getFilterProducts = async (req, res) => {
   let {
@@ -203,6 +205,12 @@ const createProduct = async (req, res) => {
 
     delete countrySearch.createdAt;
     delete countrySearch.updatedAt;
+
+    // Envío del correo electrónico
+    const { name, price, image } = productDb.toJSON();
+    const productName = name;
+    const userEmail = user.email;
+    await sendProductCreatedEmail(userEmail, { name, price, image });
 
     res.status(200).json({
       ...productDb.toJSON(),

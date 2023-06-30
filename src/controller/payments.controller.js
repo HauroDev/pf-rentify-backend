@@ -9,6 +9,9 @@ const {
 } = require('../../config.js')
 const { CustomError } = require('../utils/customErrors.js')
 
+//Configuración de Nodemailer
+const { sendPaymentConfirmationEmail } = require("../config/nodemailer")
+
 const urlWebHook = urlApi + '/payments/feedback'
 
 const verificationCountryMercadoPago = (req, res, next) => {
@@ -97,6 +100,16 @@ const createOrder = async (req, res) => {
     const newOrder = await Order.create({ preferenceId: info.id })
     await newOrder.setUser(user)
 
+    console.log('items:', items);
+
+     //Nodemailer
+     const preference = await mp.preferences.get(info.id);
+     const paymentStatus = preference.status;
+     const itemCount = items.length;
+     const totalAmount = items.reduce((total, item) => total + item.amount, 0);
+     await sendPaymentConfirmationEmail(user.email, newOrder.preferenceId, itemCount, totalAmount, paymentStatus);
+ 
+
     res.json({ preferenceId: info.id })
   } catch (error) {
     res.status(error.status || 500).json({ error: error.message })
@@ -167,6 +180,7 @@ const confirmOrder = async (req, res, next) => {
       )
     }
 
+      
     next()
   } catch (error) {
     res.status(error.status || 500).json({ error: error.message })
