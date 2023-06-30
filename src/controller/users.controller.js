@@ -68,7 +68,6 @@ const getAllUsers = async (req, res) => {
         role: 'user'
       },
       order: [['email', 'ASC']],
-      distinct: true,
       offset,
       limit
     })
