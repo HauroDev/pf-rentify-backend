@@ -10,6 +10,7 @@ const {
 const { CustomError } = require('../utils/customErrors.js')
 
 // Configuración de Nodemailer
+const { sendPaymentPendingEmail } = require('../config/nodemailer')
 const { sendPaymentConfirmationEmail } = require('../config/nodemailer')
 
 const urlWebHook = urlApi + '/payments/feedback'
@@ -192,7 +193,7 @@ const createOrder = async (req, res) => {
       (total, item) => total + item.unit_price * item.quantity,
       0
     )
-    await sendPaymentConfirmationEmail(
+    await sendPaymentPendingEmail(
       user.email,
       totalAmount,
       items.length,
@@ -292,6 +293,14 @@ const confirmOrder = async (req, res, next) => {
     }
     */
     // Nodemailer
+    if (payment.status !== 'pending') {
+      // Enviar correo de confirmación de pago
+      const userEmail = user.email;
+      const paymentAmount = payment.transaction_amount;
+      const itemCount = payment.additional_info.items.length;
+
+      await sendPaymentConfirmationEmail(userEmail, paymentAmount, itemCount);
+    }
 
     console.log(payment)
     /* esto es lo que devuelve payment

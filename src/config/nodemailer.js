@@ -242,7 +242,7 @@ const sendProductCreatedEmail = async (userEmail, product) => {
   }
 }
 
-const sendPaymentConfirmationEmail = async (
+const sendPaymentPendingEmail = async (
   userEmail,
   paymentAmount,
   itemCount,
@@ -313,20 +313,18 @@ const sendPaymentConfirmationEmail = async (
           </head>
           <body>
             <div class="container">
-              <img src="cid:logo" alt="Rent-ify Logo" class="logo">
-              <h1>Payment Confirmation</h1>
-              <p>Thank you for your payment on Rent-ify.</p>
-              <p>Payment details:</p>
-              <ul>
-                <li>Number of items: ${itemCount}</li>
-                <li>Total payment amount: $${paymentAmount}</li>
-                <li>Payment status: ${paymentStatus}</li>
-              </ul>
-              <p>We appreciate your business and hope you continue to enjoy our services.</p>
-              <p>If you have any questions or concerns, feel free to <a href="mailto:rent.ify.contact@gmail.com">contact us</a>. Our team is always ready to assist you.</p>
-              <p>Thank you for choosing Rent-ify!</p>
-              <p class="signature">Best regards,<br>The Rent-ify Team</p>
-            </div>
+                <img src="cid:logo" alt="Rent-ify Logo" class="logo">
+                <h1>Payment Confirmation</h1>
+                <p>Your order has been received and is currently being processed.</p>
+                <h3>Payment Details:</h3>
+                <p>Number of items: ${itemCount}</p>
+                <p>Total payment amount: $${paymentAmount}</p>
+                <p>Payment status: Pending</p>
+                <p>We are currently processing your payment, and we will notify you as soon as it is confirmed.</p>
+                <p>We appreciate your business and hope you continue to enjoy our services.</p>
+                <p>If you have any questions or concerns, feel free to <a href="mailto:rent.ify.contact@gmail.com">contact us</a>. Our team is always ready to assist you.</p>
+                <p class="signature">Best regards,<br>The Rent-ify Team</p>
+            </div> 
           </body>
           </html>
         `,
@@ -346,6 +344,109 @@ const sendPaymentConfirmationEmail = async (
     throw new Error('Error al enviar el correo electrónico')
   }
 }
+
+const sendPaymentConfirmationEmail = async (
+    userEmail,
+    paymentAmount,
+    itemCount
+  ) => {
+    try {
+      console.log('userEmail:', userEmail)
+  
+      await transporter.sendMail({
+        subject: 'Payment Confirmation - Rent-ify',
+        from: 'Rent-ify <rent.ify.contact@gmail.com>',
+        to: userEmail,
+        html: `<!DOCTYPE html>
+          <html>
+          <head>
+            <meta charset="UTF-8">
+            <title>Payment Confirmation - Rent-ify</title>
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <style>
+              /* General styles */
+              body {
+                font-family: Arial, sans-serif;
+                font-size: 16px;
+                line-height: 1.5;
+                color: #333333;
+                background-color: #f0f0f0;
+                margin: 0;
+                padding: 0;
+              }
+  
+              /* Main container */
+              .container {
+                max-width: 600px;
+                margin: 0 auto;
+                padding: 5%;
+                background-color: #ffffff;
+                border: 1px solid #dddddd;
+                border-radius: 4px;
+                text-align: center;
+              }
+  
+              /* Logo */
+              .logo {
+                max-width: 200px;
+                margin-bottom: 20px;
+              }
+  
+              /* Header */
+              h1 {
+                font-size: 24px;
+                font-weight: bold;
+                color: #333333;
+                margin: 20px 0;
+              }
+  
+              /* Paragraphs */
+              p {
+                margin-bottom: 20px;
+                color: #333333;
+              }
+  
+              /* Signature */
+              .signature {
+                margin-top: 20px;
+                font-style: italic;
+              }
+            </style>
+          </head>
+          <body>
+            <div class="container">
+              <img src="cid:logo" alt="Rent-ify Logo" class="logo">
+              <h1>Payment Confirmation</h1>
+              <p>Dear Customer,</p>
+              <p>Your payment has been successfully confirmed.</p>
+              <h3>Payment Details:</h3>
+              <p>Number of items: ${itemCount}</p>
+              <p>Total payment amount: $${paymentAmount}</p>
+              <p>We appreciate your business and thank you for choosing Rent-ify.</p>
+              <p>If you have any questions or need further assistance, please feel free to <a href="mailto:rent.ify.contact@gmail.com">contact us</a>. Our team is always ready to help.</p>
+              <p>Best regards,</p>
+              <p>The Rent-ify Team</p>
+            </div>
+          </body>
+          </html>
+        `,
+        attachments: [
+          {
+            filename: 'logo.png',
+            path: logoPath,
+            cid: 'logo'
+          }
+        ]
+      })
+  
+      console.log('Email sent successfully')
+    } catch (error) {
+      console.log('Error sending email:', error)
+      // Send an error response to the client
+      throw new Error('Error sending email')
+    }
+  }
+  
 const sendUserStatusChangeEmail = async (userEmail, newStatus) => {
   try {
     console.log('userEmail:', userEmail)
@@ -443,6 +544,7 @@ const sendUserStatusChangeEmail = async (userEmail, newStatus) => {
 module.exports = {
   sendWelcomeEmail,
   sendProductCreatedEmail,
+  sendPaymentPendingEmail,
   sendPaymentConfirmationEmail,
   sendUserStatusChangeEmail
 }
