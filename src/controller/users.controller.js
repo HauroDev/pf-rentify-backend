@@ -42,14 +42,11 @@ const postUser = async (req, res) => {
 const getUser = async (req, res) => {
   try {
     const { id } = req.params
-    const userId = await User.findOne({
-      where: {
-        idUser: id
-      }
-    })
-    if (!userId) throw new CustomError(404, 'usuario no existente')
+    const user = await User.findByPk(id)
 
-    return res.status(200).json(userId)
+    if (!user) throw new CustomError(404, 'usuario no existente')
+
+    return res.status(200).json(user)
   } catch (error) {
     res
       .status(error?.status || 500)
@@ -70,7 +67,8 @@ const getAllUsers = async (req, res) => {
       where: {
         role: 'user'
       },
-      order: [['name', 'ASC']],
+      order: [['email', 'ASC']],
+      distinct: true,
       offset,
       limit
     })
@@ -101,7 +99,7 @@ const getUsersByName = async (req, res) => {
         name: { [Op.iLike]: `%${name}%` },
         role: 'user'
       },
-      order: [['name', 'ASC']],
+      order: [['email', 'ASC']],
       offset,
       limit
     })
@@ -134,7 +132,7 @@ const getUsersByStatus = async (req, res) => {
         status, // Filtrar por el estado proporcionado
         role: 'user'
       },
-      order: [['name', 'ASC']],
+      order: [['email', 'ASC']],
       offset,
       limit
     })
@@ -176,7 +174,7 @@ const getUsersByMembership = async (req, res) => {
         membership, // Filtrar por la membresía proporcionada
         role: 'user'
       },
-      order: [['name', 'ASC']],
+      order: [['email', 'ASC']],
       offset,
       limit
     })
