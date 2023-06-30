@@ -1,5 +1,5 @@
 const { Op } = require('sequelize')
-const { User } = require('../db/db.js')
+const { User, Order } = require('../db/db.js')
 const {
   getStatisticsUsers,
   getStatisticsProducts,
@@ -194,7 +194,55 @@ const updateImageAdmin = async (req, res) => {
   }
 }
 
+const getOrdersByIdUser = async (req, res) => {
+  const { idUser } = req.params
+  const { status } = req.query
+  let { offset, limit } = req.query
+
+  offset = offset ? +offset : 0
+  limit = limit ? +limit : 12
+
+  const whereOption = { idUser }
+
+  if (['approved', 'pending', 'rejected'].includes(status)) {
+    whereOption.status = status
+  }
+
+  try {
+    const hasUser = await User.count({ where: { idUser } })
+
+    if (!hasUser) throw new CustomError(404, 'uses is not found')
+
+    const { rows, count } = await Order.findAndCountAll({
+      where: whereOption
+    })
+
+    let nextPage = getNextPage(
+      `admin/order/user/${idUser}`,
+      offset,
+      limit,
+      count
+    )
+
+    if (nextPage) {
+      let queryParams = ''
+
+      if (status) queryParams += `&status=${status}`
+
+      nextPage = nextPage + queryParams
+    }
+    res.status(200).json({
+      count,
+      next: nextPage,
+      results: rows
+    })
+  } catch (error) {
+    res.status(error.status || 500).json({ error: error.message })
+  }
+}
+
 module.exports = {
+  getOrdersByIdUser,
   updateImageAdmin,
   updateRoleAdmin,
   updatePhoneAdmin,
