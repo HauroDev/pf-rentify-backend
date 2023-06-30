@@ -7,6 +7,7 @@ const countriesRoutes = require('./countries.route.js')
 const paymentsRoutes = require('./payments.route.js')
 const adminRoutes = require('./admin.route.js')
 const login = require('./login.route.js')
+const logout = require('./logout.route.js')
 
 const router = Router()
 
@@ -20,5 +21,6 @@ router.use('/comment', commentsRoutes)
 router.use('/payments', paymentsRoutes)
 router.use('/admin', adminRoutes)
 router.use('/login-google', login)
+router.use('/logout-google',logout)
 
 module.exports = router

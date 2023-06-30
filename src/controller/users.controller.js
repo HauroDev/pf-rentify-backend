@@ -78,6 +78,10 @@ const getUser = async (req, res) => {
 // };
 //
 const getAllUsers = async (req, res) => {
+  const roleUser = req.role
+
+  if(roleUser !== "admin"||roleUser !=="sudo") throw new CustomError(400, "No eres un admin")
+
   try {
     let { offset, limit } = req.query
 
@@ -110,6 +114,10 @@ const getAllUsers = async (req, res) => {
 }
 
 const getUsersByName = async (req, res) => {
+  const roleUser = req.role
+
+  if(roleUser !== "admin"||roleUser !=="sudo") throw new CustomError(400, "No eres un admin")
+
   const { name } = req.query
   try {
     const users = await User.findAll({
@@ -130,6 +138,10 @@ const getUsersByName = async (req, res) => {
 }
 
 const getUsersByStatus = async (req, res) => {
+  const roleUser = req.role
+
+  if(roleUser !== "admin"||roleUser !=="sudo") throw new CustomError(400, "No eres un admin")
+
   try {
     const { status } = req.query // Obtén el parámetro de consulta 'status'
     const users = await User.findAll({
@@ -255,6 +267,10 @@ const updateUserEmail = async (req, res) => {
 }
 
 const updateUserStatus = async (req, res) => {
+  const roleUser = req.role
+
+  if(roleUser !== "admin"||roleUser !=="sudo") throw new CustomError(400, "No eres un admin")
+  
   const { idUser, status } = req.body
 
   try {
@@ -341,6 +357,10 @@ const updateUserImage = async (req, res) => {
 }
 
 const getUsersByMembership = async (req, res) => {
+  const roleUser = req.role
+
+  if(roleUser !== "admin"||roleUser !=="sudo") throw new CustomError(400, "No eres un admin")
+
   try {
     const { membership } = req.query // Obtén el parámetro de consulta 'membership'
     // Verificar si se especificó una membresía válida

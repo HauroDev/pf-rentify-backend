@@ -1,4 +1,5 @@
 const { Router } = require('express')
+const verifyAuthToken = require("../utils/verifyToken");
 const {
   createCountry,
   getCountries,
@@ -20,10 +21,10 @@ const router = Router()
  *       200:
  *         description: Lista de Paises obtenida exitosamente
  */
-router.get('/', getCountries)
+router.get('/',verifyAuthToken, getCountries)
 
-router.post('/', createCountry)
+router.post('/',verifyAuthToken, createCountry)
 
-router.get('/childrens/:id', getChildrenGeoname)
+router.get('/childrens/:id',verifyAuthToken, getChildrenGeoname)
 
 module.exports = router

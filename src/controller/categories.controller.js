@@ -23,6 +23,10 @@ const getCategories = async (_req, res) => {
 }
 
 const createCategories = async (req, res) => {
+  const roleUser = req.role
+
+  if(roleUser !== "admin"||roleUser !=="sudo") throw new CustomError(400, "No eres un admin")
+  
   try {
     const { name } = req.body
     console.log(name)
