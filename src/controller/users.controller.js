@@ -68,9 +68,7 @@ const getAllUsers = async (req, res) => {
   try {
     const { rows, count } = await User.findAndCountAll({
       where: {
-        role: {
-          [Op.notIn]: ['sudo', 'admin']
-        }
+        role: 'user'
       },
       offset,
       limit
@@ -106,7 +104,7 @@ const getUsersByName = async (req, res) => {
       limit
     })
 
-    let nextPage = getNextPage('user/all', offset, limit, count)
+    let nextPage = getNextPage('user/name', offset, limit, count)
 
     if (nextPage) {
       nextPage = nextPage + `&name=${name}`
@@ -131,12 +129,13 @@ const getUsersByStatus = async (req, res) => {
   try {
     const { rows, count } = await User.findAndCountAll({
       where: {
-        status // Filtrar por el estado proporcionado
+        status, // Filtrar por el estado proporcionado
+        role: 'user'
       },
       offset,
       limit
     })
-
+    // estaria genial si cambiaramos el endpoint a /user/state
     let nextPage = getNextPage('user', offset, limit, count)
 
     if (nextPage) {
@@ -152,6 +151,46 @@ const getUsersByStatus = async (req, res) => {
     return res
       .status(500)
       .json({ error: 'Error en la búsqueda de usuarios por estado' })
+  }
+}
+
+const getUsersByMembership = async (req, res) => {
+  const { membership } = req.query // Obtén el parámetro de consulta 'membership'
+
+  let { offset, limit } = req.query
+
+  offset = offset ? +offset : 0
+  limit = limit ? +limit : 12
+
+  try {
+    const allowedMemberships = ['basic', 'standard', 'premium']
+    if (membership && !allowedMemberships.includes(membership)) {
+      throw new CustomError(400, 'Invalid membership value')
+    }
+
+    const { count, rows } = await User.findAndCountAll({
+      where: {
+        membership, // Filtrar por la membresía proporcionada
+        role: 'user'
+      },
+      offset,
+      limit
+    })
+
+    let nextPage = getNextPage('user/membership', offset, limit, count)
+
+    if (nextPage) {
+      nextPage = nextPage + `&membership=${membership}`
+    }
+
+    return res.status(200).json({
+      count,
+      next: nextPage,
+      results: rows
+    })
+  } catch (error) {
+    console.error('Error getting users by membership:', error)
+    return res.status(500).json({ error: 'Internal server error' })
   }
 }
 
@@ -348,56 +387,17 @@ const updateUserImage = async (req, res) => {
   }
 }
 
-const getUsersByMembership = async (req, res) => {
-  const { membership } = req.query // Obtén el parámetro de consulta 'membership'
-
-  let { offset, limit } = req.query
-
-  offset = offset ? +offset : 0
-  limit = limit ? +limit : 12
-
-  try {
-    const allowedMemberships = ['basic', 'standard', 'premium']
-    if (membership && !allowedMemberships.includes(membership)) {
-      throw new CustomError(400, 'Invalid membership value')
-    }
-
-    const { count, rows } = await User.findAndCountAll({
-      where: {
-        membership // Filtrar por la membresía proporcionada
-      },
-      offset,
-      limit
-    })
-
-    let nextPage = getNextPage('user/membership', offset, limit, count)
-
-    if (nextPage) {
-      nextPage = nextPage + `&membership=${membership}`
-    }
-
-    return res.status(200).json({
-      count,
-      next: nextPage,
-      results: rows
-    })
-  } catch (error) {
-    console.error('Error getting users by membership:', error)
-    return res.status(500).json({ error: 'Internal server error' })
-  }
-}
-
 module.exports = {
   postUser,
   getAllUsers,
   getUser,
   getUsersByName,
   getUsersByStatus,
+  getUsersByMembership,
   updateUserName,
   updateUserPhone,
   updateUserEmail,
   updateUserStatus,
   updateUserMembership,
-  getUsersByMembership,
   updateUserImage
 }

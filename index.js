@@ -6,7 +6,7 @@ const swaggerUI = require('swagger-ui-express')
 const swaggerJsDoc = require('swagger-jsdoc')
 
 //Lo agregue para probar NODEMAILER
-const path = require('path');
+const path = require('path')
 //-----------------------------
 
 const { conn } = require('./src/db/db.js')
@@ -38,9 +38,8 @@ app.name = 'api-rentify'
 
 //Para probar NODEMAILER
 // app.use (require('./src/config/nodemailer.js'))
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, 'public')))
 //----------------------------//
-
 
 app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }))
 app.use(bodyParser.json({ limit: '50mb' }))
@@ -57,7 +56,10 @@ app.use((req, res, next) => {
     'Access-Control-Allow-Headers',
     'Origin, X-Requested-With, Content-Type, Accept'
   )
-  res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE')
+  res.header(
+    'Access-Control-Allow-Methods',
+    'GET, POST, OPTIONS, PUT, DELETE, PATCH'
+  )
   next()
 })
 
