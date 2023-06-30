@@ -5,10 +5,7 @@ const {
   createAdmin,
   updateNameAdmin,
   updatePhoneAdmin,
-  updateEmailAdmin,
-  updateStatusAdmin,
   updateRoleAdmin,
-  updateMembershipAdmin,
   updateImageAdmin
 } = require('../controller/admins.controller.js')
 
@@ -282,64 +279,6 @@ router.patch('/update-phone', updatePhoneAdmin)
 
 /**
  * @swagger
- * /admin/update-email:
- *   patch:
- *     summary: Actualiza el email de un administrador
- *     description: Puedes cambiar el email de un administrador
- *     tags:
- *       - Admins
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               idUser:
- *                 type: string
- *                 format: uuid
- *               email:
- *                 type: string
- *     responses:
- *       200:
- *         description: email actualizado exitosamente
- */
-
-router.patch('/update-email', updateEmailAdmin)
-
-/**
- * @swagger
- * /admin/update-status:
- *   patch:
- *     summary: Actualiza el estado de un administrador
- *     description: Puedes cambiar el estado de un administrador
- *     tags:
- *       - Admins
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               idUser:
- *                 type: string
- *                 format: uuid
- *               status:
- *                 type: string
- *                 enum:
- *                   - active
- *                   - inactive
- *                   - banned
- *     responses:
- *       200:
- *         description: estado actualizado exitosamente
- */
-
-router.patch('/update-status', updateStatusAdmin)
-
-/**
- * @swagger
  * /admin/update-role:
  *   patch:
  *     summary: Actualiza el Rol de un administrador
@@ -367,37 +306,6 @@ router.patch('/update-status', updateStatusAdmin)
  */
 
 router.patch('/update-role', updateRoleAdmin)
-
-/**
- * @swagger
- * /admin/update-membership:
- *   patch:
- *     summary: Actualiza la suscripcion de un administrador
- *     description: Puedes cambiar la suscripcion de un administrador
- *     tags:
- *       - Admins
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               idUser:
- *                 type: string
- *                 format: uuid
- *               membership:
- *                 type: string
- *                 enum:
- *                   - basic
- *                   - standard
- *                   - premium
- *     responses:
- *       200:
- *         description: suscripcion actualizado exitosamente
- */
-
-router.patch('/update-membership', updateMembershipAdmin)
 
 /**
  * @swagger
