@@ -87,7 +87,7 @@ const getAdminsSudo = async (req, res) => {
   try {
     const { rows, count } = await User.findAndCountAll({
       where: whereClause,
-      order: [['name', 'ASC']],
+      order: [['email', 'ASC']],
       limit,
       offset
     })
