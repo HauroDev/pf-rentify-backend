@@ -124,7 +124,7 @@ router.get('/', getUsersByStatus)
  *         description: Error interno del servidor
  */
 
-router.get('/all/', getAllUsers)
+router.get('/all', getAllUsers)
 /**
  * @swagger
  * /user/name:
@@ -182,7 +182,7 @@ router.get('/name', getUsersByName)
  *       500:
  *         description: Error interno del servidor
  */
-router.get('/membership/', getUsersByMembership)
+router.get('/membership', getUsersByMembership)
 
 // metodos post
 

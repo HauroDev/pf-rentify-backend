@@ -59,32 +59,14 @@ const getUser = async (req, res) => {
 
 // Llama todos los usuarios
 
-// const getAllUsers = async (req, res) => {
-//   try {
-//     const users = await User.findAll({
-//       where:{
-//          role: {
-//       [Op.notIn]: ['sudo', 'admin']
-//     }}}); // Consulta para obtener todos los usuarios
-//     // Hacer algo con los usuarios obtenidos
-//     console.log(users);
-//     // Retornar los usuarios si necesitas utilizarlos fuera de esta función
-
-//     return res.status(200).json(users);
-//   } catch (error) {
-//     console.error("Error updating user email:", error);
-//     return res.status(500).json({ error: "Internal server error" });
-//   }
-// };
-//
 const getAllUsers = async (req, res) => {
+  let { offset, limit } = req.query
+
+  offset = offset ? +offset : 0
+  limit = limit ? +limit : 12
+
   try {
-    let { offset, limit } = req.query
-
-    offset = offset ? +offset : 0
-    limit = limit ? +limit : 12
-
-    const users = await User.findAndCountAll({
+    const { rows, count } = await User.findAndCountAll({
       where: {
         role: {
           [Op.notIn]: ['sudo', 'admin']
@@ -94,13 +76,11 @@ const getAllUsers = async (req, res) => {
       limit
     })
 
-    const { rows, count } = users
-
-    const queryExtend = getNextPage('user/all', offset, limit, count)
+    const nextPage = getNextPage('user/all', offset, limit, count)
 
     return res.status(200).json({
       count,
-      next: queryExtend,
+      next: nextPage,
       results: rows
     })
   } catch (error) {
@@ -111,34 +91,62 @@ const getAllUsers = async (req, res) => {
 
 const getUsersByName = async (req, res) => {
   const { name } = req.query
+  let { offset, limit } = req.query
+
+  offset = offset ? +offset : 0
+  limit = limit ? +limit : 12
+
   try {
-    const users = await User.findAll({
+    const { rows, count } = await User.findAndCountAll({
       where: {
         name: { [Op.iLike]: `%${name}%` },
         role: 'user'
-      }
+      },
+      offset,
+      limit
     })
-    // Hacer algo con los usuarios obtenidos por nombre
-    console.log(users)
 
-    // Retornar los usuarios si necesitas utilizarlos fuera de esta función
-    return res.status(200).json(users)
+    let nextPage = getNextPage('user/all', offset, limit, count)
+
+    if (nextPage) {
+      nextPage = nextPage + `&name=${name}`
+    }
+
+    res.status(200).json({
+      count,
+      next: nextPage,
+      results: rows
+    })
   } catch (error) {
-    console.error('Error al obtener los usuarios por nombre:', error)
-    throw error
+    res.status(500).json({ error: error.message })
   }
 }
 
 const getUsersByStatus = async (req, res) => {
+  const { status } = req.query // Obtén el parámetro de consulta 'status'
+  let { offset, limit } = req.query
+
+  offset = offset ? +offset : 0
+  limit = limit ? +limit : 12
   try {
-    const { status } = req.query // Obtén el parámetro de consulta 'status'
-    const users = await User.findAll({
+    const { rows, count } = await User.findAndCountAll({
       where: {
         status // Filtrar por el estado proporcionado
-      }
+      },
+      offset,
+      limit
     })
 
-    return res.status(200).json(users)
+    let nextPage = getNextPage('user', offset, limit, count)
+
+    if (nextPage) {
+      nextPage = nextPage + `&status=${status}`
+    }
+    res.status(200).json({
+      count,
+      next: nextPage,
+      results: rows
+    })
   } catch (error) {
     console.log(error)
     return res
@@ -341,76 +349,43 @@ const updateUserImage = async (req, res) => {
 }
 
 const getUsersByMembership = async (req, res) => {
+  const { membership } = req.query // Obtén el parámetro de consulta 'membership'
+
+  let { offset, limit } = req.query
+
+  offset = offset ? +offset : 0
+  limit = limit ? +limit : 12
+
   try {
-    const { membership } = req.query // Obtén el parámetro de consulta 'membership'
-    // Verificar si se especificó una membresía válida
     const allowedMemberships = ['basic', 'standard', 'premium']
     if (membership && !allowedMemberships.includes(membership)) {
-      return res.status(400).json({ error: 'Invalid membership value' })
+      throw new CustomError(400, 'Invalid membership value')
     }
 
-    const users = await User.findAll({
+    const { count, rows } = await User.findAndCountAll({
       where: {
-        membership: membership // Filtrar por la membresía proporcionada
-      }
+        membership // Filtrar por la membresía proporcionada
+      },
+      offset,
+      limit
     })
 
-    return res.status(200).json(users)
+    let nextPage = getNextPage('user/membership', offset, limit, count)
+
+    if (nextPage) {
+      nextPage = nextPage + `&membership=${membership}`
+    }
+
+    return res.status(200).json({
+      count,
+      next: nextPage,
+      results: rows
+    })
   } catch (error) {
     console.error('Error getting users by membership:', error)
     return res.status(500).json({ error: 'Internal server error' })
   }
 }
-
-// // Actualizar datos de usuario (PUT)
-// const putUser = async (req, res) => {
-//     try {
-//         const { id } = req.params;
-//         const { name, email, phone, image, membership, status } = req.body;
-
-//         const updatedUser = await User.update(
-//             { name, email, phone, image, membership, status },
-//             { where: { id } }
-//         );
-
-//         if (updatedUser[0] === 1) {
-//             res.json({ message: 'Usuario actualizado correctamente' });
-//         } else {
-//             res.status(404).json({ error: 'Usuario no encontrado' });
-//         }
-//     } catch (error) {
-//         res.status(500).json({ error: 'Error al actualizar el usuario' });
-//     }
-// }
-
-// // Eliminar usuario (DELETE)
-// const deleteUser = async (req, res) => {
-//     try {
-//         const { id } = req.params;
-
-//         const deletedUser = await User.destroy({ where: { id } });
-
-//         if (deletedUser === 1) {
-//             res.json({ message: 'Usuario eliminado correctamente' });
-//         } else {
-//             res.status(404).json({ error: 'Usuario no encontrado' });
-//         }
-//     } catch (error) {
-//         res.status(500).json({ error: 'Error al eliminar el usuario' });
-//     }
-// }
-
-// // Obtener usuarios por membresía (GET)
-// const getUserMember = async (req, res) => {
-//     try {
-//         const { membership } = req.query;
-//         const users = await User.findAll({ where: { membership } });
-
-//         res.json(users);
-//     } catch (error) {
-//         res.status(500).json({ error: 'Error al obtener los usuarios' });
-//     }
-// }
 
 module.exports = {
   postUser,
@@ -425,5 +400,4 @@ module.exports = {
   updateUserMembership,
   getUsersByMembership,
   updateUserImage
-  //   putUser, deleteUser, getUserMember
 }
