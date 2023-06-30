@@ -6,7 +6,8 @@ const {
   updateNameAdmin,
   updatePhoneAdmin,
   updateRoleAdmin,
-  updateImageAdmin
+  updateImageAdmin,
+  getOrdersByIdUser
 } = require('../controller/admins.controller.js')
 
 const router = Router()
@@ -333,5 +334,79 @@ router.patch('/update-role', updateRoleAdmin)
  */
 
 router.patch('/update-image', updateImageAdmin)
+
+/**
+ * @swagger
+ * /admin/order/user/{idUser}:
+ *   get:
+ *     summary: Obtener órdenes de un usuario
+ *     tags:
+ *      - Admins
+ *     parameters:
+ *       - name: idUser
+ *         in: path
+ *         description: ID del usuario de la Base de datos
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *       - name: status
+ *         in: query
+ *         description: Estado de las órdenes (approved, pending, rejected)
+ *         schema:
+ *           type: string
+ *           enum:
+ *             - approved
+ *             - pending
+ *             - rejected
+ *     responses:
+ *       '200':
+ *         description: OK
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 count:
+ *                   type: integer
+ *                   description: Número total de órdenes
+ *                 next:
+ *                   type: string
+ *                   description: URL de la siguiente página de resultados
+ *                 results:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       idOrder:
+ *                         type: integer
+ *                         description: ID de la orden
+ *                       preferenceId:
+ *                         type: string
+ *                         description: ID de preferencia
+ *                       paymentId:
+ *                         type: string
+ *                         description: ID de pago
+ *                       status:
+ *                         type: string
+ *                         description: Estado de la orden
+ *                       merchantOrderId:
+ *                         type: string
+ *                         description: ID del pedido del comerciante
+ *                       createdAt:
+ *                         type: string
+ *                         format: date-time
+ *                         description: Fecha y hora de creación
+ *                       updatedAt:
+ *                         type: string
+ *                         format: date-time
+ *                         description: Fecha y hora de actualización
+ *                       idUser:
+ *                         type: string
+ *                         format: uuid
+ *                         description: ID del usuario
+ */
+
+router.get('/order/user/:idUser', getOrdersByIdUser)
 
 module.exports = router
