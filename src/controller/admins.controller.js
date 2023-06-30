@@ -72,21 +72,24 @@ const getAdminsSudo = async (req, res) => {
 
   offset = offset ? +offset : 0
   limit = limit ? +limit : 12
+  const whereClause = {}
+
+  if (name) {
+    whereClause.name = { [Op.iLike]: `%${name}%` }
+  }
+
+  if (['admin', 'sudo'].includes(role)) {
+    whereClause.role = role
+  } else {
+    whereClause.role = ['admin', 'sudo']
+  }
+
   try {
-    const whereClause = {}
-
-    if (name) {
-      whereClause.name = { [Op.iLike]: `%${name}%` }
-    }
-
-    if (['admin', 'sudo'].includes(role)) {
-      whereClause.role = role
-    } else {
-      whereClause.role = ['admin', 'sudo']
-    }
-
     const { rows, count } = await User.findAndCountAll({
-      where: whereClause
+      where: whereClause,
+      order: [['name', 'ASC']],
+      limit,
+      offset
     })
 
     let nextPage = getNextPage('admin/admins-sudo', offset, limit, count)
@@ -99,6 +102,7 @@ const getAdminsSudo = async (req, res) => {
 
       nextPage += queryParams
     }
+
     res.status(200).json({
       count,
       next: nextPage,
@@ -215,6 +219,7 @@ const getOrdersByIdUser = async (req, res) => {
 
     const { rows, count } = await Order.findAndCountAll({
       where: whereOption,
+      order: [['createdAt', 'DESC']],
       limit,
       offset
     })
