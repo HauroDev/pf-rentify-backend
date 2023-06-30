@@ -70,6 +70,7 @@ const getAllUsers = async (req, res) => {
       where: {
         role: 'user'
       },
+      order: [['name', 'ASC']],
       offset,
       limit
     })
@@ -100,6 +101,7 @@ const getUsersByName = async (req, res) => {
         name: { [Op.iLike]: `%${name}%` },
         role: 'user'
       },
+      order: [['name', 'ASC']],
       offset,
       limit
     })
@@ -132,6 +134,7 @@ const getUsersByStatus = async (req, res) => {
         status, // Filtrar por el estado proporcionado
         role: 'user'
       },
+      order: [['name', 'ASC']],
       offset,
       limit
     })
@@ -173,6 +176,7 @@ const getUsersByMembership = async (req, res) => {
         membership, // Filtrar por la membresía proporcionada
         role: 'user'
       },
+      order: [['name', 'ASC']],
       offset,
       limit
     })

@@ -221,6 +221,7 @@ const getAllProducts = async (req, res) => {
 
     // Realiza la consulta para obtener todos los productos con paginación
     const { rows, count } = await Product.findAndCountAll({
+      order: [['createdAt', 'DESC']],
       offset,
       limit
     })

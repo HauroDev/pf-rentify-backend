@@ -16,6 +16,8 @@ const getCategories = async (_req, res) => {
     //   }
     // }
 
+    // agregar paginado a futuro
+
     res.status(200).json(categories)
   } catch (error) {
     res.status(500).json({ error: error.message })
@@ -25,7 +27,9 @@ const getCategories = async (_req, res) => {
 const createCategories = async (req, res) => {
   try {
     const { name } = req.body
-    console.log(name)
+
+    // modificar base de datos para poder agregar mas categorias
+
     const allowedCategories = [
       'electronics',
       'fashion and accessories',
