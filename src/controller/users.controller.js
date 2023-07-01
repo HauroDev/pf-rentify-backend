@@ -57,21 +57,20 @@ const getUser = async (req, res) => {
 // Llama todos los usuarios
 
 const getAllUsers = async (req, res) => {
-  let { offset, limit, email, name } = req.query
+  let { offset, limit, search } = req.query
 
   offset = offset ? +offset : 0
   limit = limit ? +limit : 12
 
-  const whereOption = {
-    role: 'user'
-  }
-
-  if (email) whereOption.email = { [Op.iLike]: `%${email}%` }
-  if (name) whereOption.name = { [Op.iLike]: `%${name}%` }
-
   try {
     const { rows, count } = await User.findAndCountAll({
-      where: whereOption,
+      where: {
+        role: 'user',
+        [Op.or]: [
+          { name: { [Op.iLike]: search ? `%${search}%` : '%%' } },
+          { email: { [Op.iLike]: search ? `%${search}%` : '%%' } }
+        ]
+      },
       order: [['email', 'ASC']],
       offset,
       limit
@@ -81,8 +80,7 @@ const getAllUsers = async (req, res) => {
 
     if (nextPage) {
       let queryParams = ''
-      if (name) queryParams += `&name=${name}`
-      if (email) queryParams += `&email=${email}`
+      if (search) queryParams += `&search=${search}`
 
       nextPage += queryParams
     }

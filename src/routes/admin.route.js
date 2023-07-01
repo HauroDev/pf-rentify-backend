@@ -121,15 +121,10 @@ router.get('/statistics', getStatistics)
  *       - Admins
  *     parameters:
  *       - in: query
- *         name: name
+ *         name: search
  *         schema:
  *           type: string
- *         description: Filtro por nombre de usuario
- *       - in: query
- *         name: email
- *         schema:
- *           type: string
- *         description: Filtro por correo de usuario
+ *         description: Filtro por nombre y email de usuario
  *       - in: query
  *         name: role
  *         schema:
