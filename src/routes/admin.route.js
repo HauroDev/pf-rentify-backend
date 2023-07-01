@@ -126,6 +126,11 @@ router.get('/statistics', getStatistics)
  *           type: string
  *         description: Filtro por nombre de usuario
  *       - in: query
+ *         name: email
+ *         schema:
+ *           type: string
+ *         description: Filtro por correo de usuario
+ *       - in: query
  *         name: role
  *         schema:
  *           type: string
