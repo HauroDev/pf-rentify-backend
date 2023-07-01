@@ -77,7 +77,15 @@ const getAllUsers = async (req, res) => {
       limit
     })
 
-    const nextPage = getNextPage('user/all', offset, limit, count)
+    let nextPage = getNextPage('user/all', offset, limit, count)
+
+    if (nextPage) {
+      let queryParams = ''
+      if (name) queryParams += `&name=${name}`
+      if (email) queryParams += `&email=${email}`
+
+      nextPage += queryParams
+    }
 
     return res.status(200).json({
       count,
