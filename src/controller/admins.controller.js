@@ -67,29 +67,21 @@ const createAdmin = async (req, res) => {
 }
 
 const getAdminsSudo = async (req, res) => {
-  const { email, name, role } = req.query
+  const { search, role } = req.query
   let { offset, limit } = req.query
 
   offset = offset ? +offset : 0
   limit = limit ? +limit : 12
-  const whereClause = {}
-
-  if (name) {
-    whereClause.name = { [Op.iLike]: `%${name}%` }
-  }
-  if (email) {
-    whereClause.email = { [Op.iLike]: `%${email}%` }
-  }
-
-  if (['admin', 'sudo'].includes(role)) {
-    whereClause.role = role
-  } else {
-    whereClause.role = ['admin', 'sudo']
-  }
 
   try {
     const { rows, count } = await User.findAndCountAll({
-      where: whereClause,
+      where: {
+        role: role || ['admin', 'sudo'],
+        [Op.or]: [
+          { name: { [Op.iLike]: search ? `%${search}%` : '%%' } },
+          { email: { [Op.iLike]: search ? `%${search}%` : '%%' } }
+        ]
+      },
       order: [['email', 'ASC']],
       limit,
       offset
@@ -100,8 +92,8 @@ const getAdminsSudo = async (req, res) => {
     if (nextPage) {
       let queryParams = ''
 
-      if (role) queryParams += '&' + role
-      if (name) queryParams += '&' + name
+      if (role) queryParams += `&role=${role}`
+      if (search) queryParams += `&search=${search}`
 
       nextPage += queryParams
     }

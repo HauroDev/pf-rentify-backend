@@ -93,15 +93,10 @@ router.get('/', getUsersByStatus)
  *       - User
  *     parameters:
  *       - in: query
- *         name: name
+ *         name: search
  *         schema:
  *           type: string
- *         description: Filtra por nombre de usuario
- *       - in: query
- *         name: email
- *         schema:
- *           type: string
- *         description: Filtra por email de usuario
+ *         description: Filtra por nombre y email de usuario
  *       - in: query
  *         name: offset
  *         schema:
