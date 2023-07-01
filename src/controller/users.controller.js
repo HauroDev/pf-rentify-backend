@@ -51,14 +51,11 @@ const postUser = async (req, res) => {
 const getUser = async (req, res) => {
   try {
     const { id } = req.params
-    const userId = await User.findOne({
-      where: {
-        idUser: id
-      }
-    })
-    if (!userId) throw new CustomError(404, 'usuario no existente')
+    const user = await User.findByPk(id)
 
-    return res.status(200).json(userId)
+    if (!user) throw new CustomError(404, 'usuario no existente')
+
+    return res.status(200).json(user)
   } catch (error) {
     res
       .status(error?.status || 500)
@@ -69,21 +66,35 @@ const getUser = async (req, res) => {
 // Llama todos los usuarios
 
 const getAllUsers = async (req, res) => {
-  let { offset, limit } = req.query
+  let { offset, limit, email, name } = req.query
 
   offset = offset ? +offset : 0
   limit = limit ? +limit : 12
 
+  const whereOption = {
+    role: 'user'
+  }
+
+  if (email) whereOption.email = { [Op.iLike]: `%${email}%` }
+  if (name) whereOption.name = { [Op.iLike]: `%${name}%` }
+
   try {
     const { rows, count } = await User.findAndCountAll({
-      where: {
-        role: 'user'
-      },
+      where: whereOption,
+      order: [['email', 'ASC']],
       offset,
       limit
     })
 
-    const nextPage = getNextPage('user/all', offset, limit, count)
+    let nextPage = getNextPage('user/all', offset, limit, count)
+
+    if (nextPage) {
+      let queryParams = ''
+      if (name) queryParams += `&name=${name}`
+      if (email) queryParams += `&email=${email}`
+
+      nextPage += queryParams
+    }
 
     return res.status(200).json({
       count,
@@ -109,6 +120,7 @@ const getUsersByName = async (req, res) => {
         name: { [Op.iLike]: `%${name}%` },
         role: 'user'
       },
+      order: [['email', 'ASC']],
       offset,
       limit
     })
@@ -141,6 +153,7 @@ const getUsersByStatus = async (req, res) => {
         status, // Filtrar por el estado proporcionado
         role: 'user'
       },
+      order: [['email', 'ASC']],
       offset,
       limit
     })
@@ -182,6 +195,7 @@ const getUsersByMembership = async (req, res) => {
         membership, // Filtrar por la membresía proporcionada
         role: 'user'
       },
+      order: [['email', 'ASC']],
       offset,
       limit
     })
