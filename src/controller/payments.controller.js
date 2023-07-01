@@ -29,10 +29,10 @@ const createSuscription = async (req, res) => {
   // ngrok con usuario autenticado permite hacer pruebas
   // podes remplazar urlApi con la url que te proporcione el mismo
   // recorda que las url son temporales, asi que cambialas cuando termines de trabajar
-  // const back_url = urlApi + '/payments/confirm-suscription'
-  const back_url =
-    'https://c2f9-2800-810-4fc-84a8-a549-3be9-b552-4227.ngrok-free.app/api-rentify' +
-    '/payments/confirm-suscription'
+  const back_url = urlApi + '/payments/confirm-suscription'
+  // const back_url =
+  //   'https://c2f9-2800-810-4fc-84a8-a549-3be9-b552-4227.ngrok-free.app/api-rentify' +
+  //   '/payments/confirm-suscription'
 
   const payload = {
     reason,
