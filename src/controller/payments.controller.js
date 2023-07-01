@@ -1,6 +1,6 @@
 /* eslint-disable camelcase */
 const { mercadopago: mp, configMercadoPago } = require('../mercadopago.js')
-const { User, Order, Suscription } = require('../db/db.js')
+const { User, Product, Order, Suscription } = require('../db/db.js')
 const {
   urlApi,
   MODE,
@@ -29,10 +29,10 @@ const createSuscription = async (req, res) => {
   // ngrok con usuario autenticado permite hacer pruebas
   // podes remplazar urlApi con la url que te proporcione el mismo
   // recorda que las url son temporales, asi que cambialas cuando termines de trabajar
-  const back_url = urlApi + '/payments/confirm-suscription'
-  // const back_url =
-  //   'https://c521-2800-810-4fc-84a8-78aa-4ee-3d2f-76fd.ngrok-free.app/api-rentify' +
-  //   '/payments/confirm-suscription'
+  // const back_url = urlApi + '/payments/confirm-suscription'
+  const back_url =
+    'https://c2f9-2800-810-4fc-84a8-a549-3be9-b552-4227.ngrok-free.app/api-rentify' +
+    '/payments/confirm-suscription'
 
   const payload = {
     reason,
@@ -149,8 +149,11 @@ const confirmOrder = async (req, res, next) => {
 
     // mercado pago envia su error propio
     const { response: payment } = await mp.payment.findById(payment_id)
+    const { response: preference } = await mp.preferences.findById(
+      preference_id
+    )
 
-    const hasFound = await Order.findOne({
+    let hasFound = await Order.findOne({
       where: { preferenceId: preference_id }
     })
 
@@ -166,7 +169,21 @@ const confirmOrder = async (req, res, next) => {
         }
       )
     }
+    hasFound = hasFound.toJSON()
 
+    if (payment.status === 'approved') {
+      const idProds = preference.items?.map((item) => item.id)
+      let promise = idProds.map((idProd) => Product.findByPk(idProd))
+      const products = await Promise.all(promise)
+
+      const user = await User.findByPk(hasFound.idUser)
+
+      promise = products.map((product) =>
+        user.addProduct(product, { through: { type: 'renter' } })
+      )
+
+      await Promise.all(promise)
+    }
     next()
   } catch (error) {
     res.status(error.status || 500).json({ error: error.message })
@@ -184,15 +201,21 @@ const confirmSuscription = async (req, res, next) => {
     })
 
     if (hasSuscription) {
-      await Suscription.update(
-        { status: info.status },
-        { where: { preApprovalId: preapproval_id } }
+      hasSuscription.status = info.status
+      hasSuscription.save()
+    }
+
+    if (hasSuscription.toJSON().status === 'authorized') {
+      await User.update(
+        { membership: hasSuscription.type },
+        { where: { idUser: hasSuscription.idUser } }
       )
     }
 
     next()
   } catch (error) {
-    res.status(500).json({ error })
+    console.log(error)
+    res.status(500).json({ error: error.message })
   }
 }
 

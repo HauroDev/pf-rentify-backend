@@ -57,16 +57,21 @@ const getUser = async (req, res) => {
 // Llama todos los usuarios
 
 const getAllUsers = async (req, res) => {
-  let { offset, limit } = req.query
+  let { offset, limit, email, name } = req.query
 
   offset = offset ? +offset : 0
   limit = limit ? +limit : 12
 
+  const whereOption = {
+    role: 'user'
+  }
+
+  if (email) whereOption.email = { [Op.iLike]: `%${email}%` }
+  if (name) whereOption.name = { [Op.iLike]: `%${name}%` }
+
   try {
     const { rows, count } = await User.findAndCountAll({
-      where: {
-        role: 'user'
-      },
+      where: whereOption,
       order: [['email', 'ASC']],
       offset,
       limit
