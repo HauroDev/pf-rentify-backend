@@ -6,7 +6,7 @@ const swaggerUI = require('swagger-ui-express')
 const swaggerJsDoc = require('swagger-jsdoc')
 
 const { conn } = require('./src/db/db.js')
-const { PORT, urlApi, urlDoc, URL_CLIENTE } = require('./config')
+const { PORT, urlApi, urlDoc, URL_CLIENTE, URL_ADMIN } = require('./config')
 const routerManager = require('./src/routes/index.js')
 
 const swaggerSpec = {
@@ -37,7 +37,7 @@ app.use(bodyParser.json({ limit: '50mb' }))
 app.use(cookieParser())
 app.use(morgan('dev'))
 app.use((req, res, next) => {
-  const allowedOrigins = [URL_CLIENTE, 'http://localhost:5173']
+  const allowedOrigins = [URL_ADMIN, URL_CLIENTE, 'http://localhost:5173']
   const origin = req.headers.origin
   if (allowedOrigins.includes(origin)) {
     res.header('Access-Control-Allow-Origin', origin)
