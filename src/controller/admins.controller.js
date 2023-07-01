@@ -67,7 +67,7 @@ const createAdmin = async (req, res) => {
 }
 
 const getAdminsSudo = async (req, res) => {
-  const { name, role } = req.query
+  const { email, name, role } = req.query
   let { offset, limit } = req.query
 
   offset = offset ? +offset : 0
@@ -76,6 +76,9 @@ const getAdminsSudo = async (req, res) => {
 
   if (name) {
     whereClause.name = { [Op.iLike]: `%${name}%` }
+  }
+  if (email) {
+    whereClause.email = { [Op.iLike]: `%${email}%` }
   }
 
   if (['admin', 'sudo'].includes(role)) {
