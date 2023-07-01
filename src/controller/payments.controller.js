@@ -277,21 +277,20 @@ const confirmOrder = async (req, res, next) => {
       )
     }
     hasFound = hasFound.toJSON()
+    const user = await User.findByPk(hasFound.idUser)
 
     if (payment.status === 'approved') {
       const idProds = preference.items?.map((item) => item.id)
       let promise = idProds.map((idProd) => Product.findByPk(idProd))
       const products = await Promise.all(promise)
 
-      const user = await User.findByPk(hasFound.idUser)
-
       promise = products.map((product) =>
         user.addProduct(product, { through: { type: 'renter' } })
       )
 
-    await Promise.all(promise)
-  }
-    console.log(user.toJSON())
+      await Promise.all(promise)
+    }
+    console.log(user)
     /* esto es lo que devuelve user.toJSON()
     {
       idUser: 'd89a1a1c-c415-4a38-9f22-d5e4fbe34a21',
@@ -310,11 +309,11 @@ const confirmOrder = async (req, res, next) => {
     // Nodemailer
     if (payment.status !== 'pending') {
       // Enviar correo de confirmación de pago
-      const userEmail = user.email;
-      const paymentAmount = payment.transaction_amount;
-      const itemCount = payment.additional_info.items.length;
+      const userEmail = user.email
+      const paymentAmount = payment.transaction_amount
+      const itemCount = payment.additional_info.items.length
 
-      await sendPaymentConfirmationEmail(userEmail, paymentAmount, itemCount);
+      await sendPaymentConfirmationEmail(userEmail, paymentAmount, itemCount)
     }
 
     console.log(payment)
@@ -426,7 +425,6 @@ const confirmOrder = async (req, res, next) => {
       }
     */
 
-    
     next()
   } catch (error) {
     res.status(error.status || 500).json({ error: error.message })
