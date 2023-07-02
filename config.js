@@ -17,7 +17,8 @@ const {
   MP_ACCESS_TOKEN_BR,
   MP_ACCESS_TOKEN_UY,
   URL_CLIENTE_PRUEBAS,
-  URL_ADMIN
+  URL_ADMIN_1,
+  URL_ADMIN_2
 } = process.env
 
 const PORT = 3001
@@ -43,7 +44,8 @@ module.exports = {
   MP_ACCESS_TOKEN_BR,
   MP_ACCESS_TOKEN_UY,
   URL_CLIENTE_PRUEBAS,
-  URL_ADMIN,
+  URL_ADMIN_1,
+  URL_ADMIN_2,
   url,
   urlApi,
   urlDoc
