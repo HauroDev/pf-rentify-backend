@@ -1,30 +1,30 @@
-const CustomError = require("../utils/customErrors");
+const { CustomError } = require('../utils/customErrors')
 const {
   getBlackList,
-  saveTokenInBlackList,
-} = require("../services/blacklist.service");
+  saveTokenInBlackList
+} = require('../services/blacklist.service')
 
 const logout = async (req, res) => {
-  const blacklistSet = await getBlackList();
-  const blacklist = new Set(blacklistSet);
+  const blacklistSet = await getBlackList()
+  const blacklist = new Set(blacklistSet)
   try {
-    let auth_token = req.headers?.authorization;
+    let auth_token = req.headers?.authorization
 
     if (!auth_token) {
-      throw new CustomError(400, "Send the the authorization header");
+      throw new CustomError(400, 'Send the the authorization header')
     }
 
-    auth_token = auth_token.split(" ")[1]; // nos quedamos unicamente con el token y no con el Bearer
+    auth_token = auth_token.split(' ')[1] // nos quedamos unicamente con el token y no con el Bearer
 
-    blacklist.add(auth_token);
-    await saveTokenInBlackList(blacklist);
+    blacklist.add(auth_token)
+    await saveTokenInBlackList(blacklist)
 
-    res.clearCookie("auth_token");
-    res.status(200).send("hola");
+    res.clearCookie('auth_token')
+    res.status(200).send('hola')
   } catch (error) {
-    const status = error.status || 500;
-    res.status(status).json({ error: error.message });
+    const status = error.status || 500
+    res.status(status).json({ error: error.message })
   }
-};
+}
 
-module.exports = { logout };
+module.exports = { logout }

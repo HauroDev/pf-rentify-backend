@@ -1,9 +1,10 @@
 const { Router } = require('express')
-const verifyAuthToken = require("../utils/verifyToken");
+const verifyAuthToken = require('../utils/verifyToken')
 const {
   newComment,
   getCommentsByProductId
 } = require('../controller/comment.controller.js')
+const { isAdmin } = require('@firebase/util')
 
 const router = Router()
 // schema Comment
@@ -58,7 +59,7 @@ const router = Router()
  *               $ref: '#/components/schemas/Comment'
  */
 
-router.post('/',verifyAuthToken, newComment)
+router.post('/', verifyAuthToken, newComment)
 
 // Get Comments product
 /**
@@ -86,6 +87,6 @@ router.post('/',verifyAuthToken, newComment)
  *               items:
  *                 $ref: '#/components/schemas/Comment'
  */
-router.get('/:idProduct',verifyAuthToken, getCommentsByProductId)
+router.get('/:idProduct', verifyAuthToken, isAdmin, getCommentsByProductId) // ADMIN
 
 module.exports = router

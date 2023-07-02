@@ -1,6 +1,6 @@
 /* eslint-disable camelcase */
 const { Router } = require('express')
-const verifyAuthToken = require("../utils/verifyToken");
+const verifyAuthToken = require('../utils/verifyToken')
 const {
   createOrder,
   redirectToWebSiteCheckOut,
@@ -63,7 +63,12 @@ const router = Router()
  *                   example: "https://www.mercadopago.com.ar/subscriptions/checkout?preapproval_id=2c93808488fc9b7701890526a7bd036c"
  */
 
-router.post('/suscription', verifyAuthToken,verificationCountryMercadoPago, createSuscription)
+router.post(
+  '/suscription',
+  verifyAuthToken,
+  verificationCountryMercadoPago,
+  createSuscription
+)
 
 /**
  * @swagger
@@ -112,7 +117,12 @@ router.post('/suscription', verifyAuthToken,verificationCountryMercadoPago, crea
  *         description: Error en la solicitud. Por favor, revise los parámetros enviados.
  */
 
-router.post('/order',verifyAuthToken, verificationCountryMercadoPago, createOrder)
+router.post(
+  '/order',
+  verifyAuthToken,
+  verificationCountryMercadoPago,
+  createOrder
+)
 /**
  * @swagger
  * /payments/feedback:
