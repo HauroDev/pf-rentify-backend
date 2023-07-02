@@ -20,12 +20,7 @@ const logout = async (req, res) => {
     await saveTokenInBlackList(blacklist);
 
     res.clearCookie("auth_token");
-    res.status(200).json({
-      access: false,
-      user: null,
-      auth_token: null,
-      error: null,
-    });
+    res.status(200).send("hola");
   } catch (error) {
     const status = error.status || 500;
     res.status(status).json({ error: error.message });
