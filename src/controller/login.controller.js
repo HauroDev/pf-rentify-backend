@@ -19,13 +19,11 @@ const login = async (req, res) => {
     // res.status(200).json(user.dataValues)
     console.log(token);
     return res.status(200).json({
-      access: true,
-      user: { email, uid, role },
+      user: user,
       auth_token: {
         token,
         expireIn,
       },
-      error: null,
     });
   } catch (error) {
     console.error("Credential not validated:", error);
