@@ -7,6 +7,7 @@ const countriesRoutes = require('./countries.route.js')
 const paymentsRoutes = require('./payments.route.js')
 const adminRoutes = require('./admin.route.js')
 const login = require('./login.route.js')
+const contactRoutes = require('./contact.route.js') //agregue
 
 const router = Router()
 
@@ -20,5 +21,6 @@ router.use('/comment', commentsRoutes)
 router.use('/payments', paymentsRoutes)
 router.use('/admin', adminRoutes)
 router.use('/login-google', login)
+router.use('/form-contact', contactRoutes) //agregue
 
 module.exports = router
