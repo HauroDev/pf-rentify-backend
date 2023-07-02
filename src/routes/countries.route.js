@@ -1,10 +1,11 @@
 const { Router } = require('express')
-const verifyAuthToken = require("../utils/verifyToken");
+const verifyAuthToken = require('../utils/verifyToken')
 const {
   createCountry,
   getCountries,
   getChildrenGeoname
 } = require('../controller/countries.controler')
+const { isAdmin } = require('@firebase/util')
 
 const router = Router()
 
@@ -21,10 +22,10 @@ const router = Router()
  *       200:
  *         description: Lista de Paises obtenida exitosamente
  */
-router.get('/',verifyAuthToken, getCountries)
+router.get('/', getCountries)
 
-router.post('/',verifyAuthToken, createCountry)//ADMINS
+router.post('/', verifyAuthToken, isAdmin, createCountry) // ADMINS
 
-router.get('/childrens/:id',verifyAuthToken, getChildrenGeoname)
+router.get('/childrens/:id', getChildrenGeoname)
 
 module.exports = router

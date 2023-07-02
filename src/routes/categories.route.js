@@ -1,9 +1,10 @@
 const { Router } = require('express')
-const verifyAuthToken = require("../utils/verifyToken");
+const verifyAuthToken = require('../utils/verifyToken')
 const {
   getCategories,
   createCategories
 } = require('../controller/categories.controller.js')
+const { isAdmin } = require('@firebase/util')
 
 const router = Router()
 // schema Categories
@@ -40,7 +41,7 @@ const router = Router()
  *                 $ref: '#/components/schemas/Category'
  */
 
-router.get('/',verifyAuthToken, getCategories)
+router.get('/', getCategories)
 
 // Post Category
 /**
@@ -66,6 +67,6 @@ router.get('/',verifyAuthToken, getCategories)
  *               $ref: '#/components/schemas/Category'
  */
 
-router.post('/',verifyAuthToken, createCategories)//ADMIN
+router.post('/', verifyAuthToken, isAdmin, createCategories) // ADMIN
 
 module.exports = router

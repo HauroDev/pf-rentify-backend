@@ -72,7 +72,6 @@ const getCommentsByProductId = async (req, res) => {
     const comments = await Comment.findAll({
       where: { idProd: idProduct }
     })
-    console.log(comments)
     res.status(200).json(comments)
   } catch (error) {
     console.error('Error al obtener comentarios:', error)

@@ -1,5 +1,5 @@
-const { Router } = require("express");
-const verifyAuthToken = require("../utils/verifyToken");
+const { Router } = require('express')
+const verifyAuthToken = require('../utils/verifyToken')
 const {
   getStatistics,
   getAdminsSudo,
@@ -8,10 +8,12 @@ const {
   updatePhoneAdmin,
   updateRoleAdmin,
   updateImageAdmin,
-  getOrdersByIdUser,
-} = require("../controller/admins.controller.js");
+  getOrdersByIdUser
+} = require('../controller/admins.controller.js')
+const { isAdmin } = require('@firebase/util')
+const { isSudo } = require('../utils/isAdmin')
 
-const router = Router();
+const router = Router()
 /**
  * @swagger
  * /admin/statistics:
@@ -111,7 +113,7 @@ const router = Router();
  *                         description: Total de suscripciones en esa categoría.
  */
 
-router.get("/statistics", verifyAuthToken, getStatistics);
+router.get('/statistics', verifyAuthToken, isAdmin, getStatistics)
 /**
  * @swagger
  * /admin/admins-sudo:
@@ -144,7 +146,7 @@ router.get("/statistics", verifyAuthToken, getStatistics);
  *         description: Error interno del servidor
  */
 
-router.get("/admins-sudo", verifyAuthToken, getAdminsSudo);
+router.get('/admins-sudo', verifyAuthToken, isAdmin, getAdminsSudo)
 
 /**
  * @swagger
@@ -223,7 +225,7 @@ router.get("/admins-sudo", verifyAuthToken, getAdminsSudo);
  *                   description: Fecha y hora de creación del usuario administrador.
  */
 
-router.post("/create-admin", verifyAuthToken, createAdmin);
+router.post('/create-admin', verifyAuthToken, isSudo, createAdmin)
 
 /**
  * @swagger
@@ -250,7 +252,7 @@ router.post("/create-admin", verifyAuthToken, createAdmin);
  *         description: nombre de perfil actualizado exitosamente
  */
 
-router.patch("/update-name", verifyAuthToken, updateNameAdmin);
+router.patch('/update-name', verifyAuthToken, isAdmin, updateNameAdmin)
 
 /**
  * @swagger
@@ -277,7 +279,7 @@ router.patch("/update-name", verifyAuthToken, updateNameAdmin);
  *         description: Número de teléfono actualizado exitosamente
  */
 
-router.patch("/update-phone", verifyAuthToken, updatePhoneAdmin);
+router.patch('/update-phone', verifyAuthToken, isAdmin, updatePhoneAdmin)
 
 /**
  * @swagger
@@ -307,7 +309,7 @@ router.patch("/update-phone", verifyAuthToken, updatePhoneAdmin);
  *         description: Rol actualizado exitosamente
  */
 
-router.patch("/update-role", verifyAuthToken, updateRoleAdmin);
+router.patch('/update-role', verifyAuthToken, isAdmin, updateRoleAdmin)
 
 /**
  * @swagger
@@ -334,7 +336,7 @@ router.patch("/update-role", verifyAuthToken, updateRoleAdmin);
  *         description: Número de teléfono de usuario actualizado exitosamente
  */
 
-router.patch("/update-image", verifyAuthToken, updateImageAdmin);
+router.patch('/update-image', verifyAuthToken, isAdmin, updateImageAdmin)
 
 /**
  * @swagger
@@ -408,6 +410,6 @@ router.patch("/update-image", verifyAuthToken, updateImageAdmin);
  *                         description: ID del usuario
  */
 
-router.get("/order/user/:idUser", getOrdersByIdUser);
+router.get('/order/user/:idUser', verifyAuthToken, isAdmin, getOrdersByIdUser)
 
-module.exports = router;
+module.exports = router

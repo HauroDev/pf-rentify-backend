@@ -1,5 +1,5 @@
-const { Router } = require("express");
-const verifyAuthToken = require("../utils/verifyToken");
+const { Router } = require('express')
+const verifyAuthToken = require('../utils/verifyToken')
 const {
   postUser,
   getUser,
@@ -10,13 +10,13 @@ const {
   updateUserPhone,
   updateUserEmail,
   updateUserStatus,
-  updateUserMembership,
+  // updateUserMembership,
   getUsersByMembership,
-  updateUserImage,
-  // deleteUser, getUserMember
-} = require("../controller/users.controller.js");
+  updateUserImage
+} = require('../controller/users.controller.js')
+const { isAdmin } = require('@firebase/util')
 
-const router = Router();
+const router = Router()
 
 // Swagger Schema
 /**
@@ -82,7 +82,7 @@ const router = Router();
  *       500:
  *         description: Error interno del servidor
  */
-router.get("/", verifyAuthToken, getUsersByStatus); //ADMIN
+router.get('/', verifyAuthToken, isAdmin, getUsersByStatus) // ADMIN
 /**
  * @swagger
  * /user/all:
@@ -129,7 +129,7 @@ router.get("/", verifyAuthToken, getUsersByStatus); //ADMIN
  *         description: Error interno del servidor
  */
 
-router.get("/all/", verifyAuthToken, getAllUsers); //ADMIN
+router.get('/all', verifyAuthToken, isAdmin, getAllUsers) // ADMIN
 /**
  * @swagger
  * /user/name:
@@ -157,7 +157,7 @@ router.get("/all/", verifyAuthToken, getAllUsers); //ADMIN
  *         description: Error interno del servidor
  */
 
-router.get("/name", verifyAuthToken, getUsersByName); //ADMIN
+router.get('/name', verifyAuthToken, isAdmin, getUsersByName) // ADMIN
 
 /**
  * @swagger
@@ -187,7 +187,7 @@ router.get("/name", verifyAuthToken, getUsersByName); //ADMIN
  *       500:
  *         description: Error interno del servidor
  */
-router.get("/membership/", verifyAuthToken, getUsersByMembership); //ADMIN
+router.get('/membership', verifyAuthToken, isAdmin, getUsersByMembership) // ADMIN
 
 // metodos post
 
@@ -211,7 +211,7 @@ router.get("/membership/", verifyAuthToken, getUsersByMembership); //ADMIN
  *       400:
  *         description: Error en los parámetros de entrada
  */
-router.post("/", postUser);
+router.post('/', postUser)
 
 // metodos put
 /**
@@ -244,7 +244,7 @@ router.post("/", postUser);
  *       500:
  *         description: Error interno del servidor
  */
-router.put("/update-name", verifyAuthToken, updateUserName);
+router.put('/update-name', verifyAuthToken, updateUserName)
 /**
  * @swagger
  * /user/update-phone:
@@ -275,7 +275,7 @@ router.put("/update-name", verifyAuthToken, updateUserName);
  *       500:
  *         description: Error interno del servidor
  */
-router.put("/update-phone", verifyAuthToken, updateUserPhone);
+router.put('/update-phone', verifyAuthToken, updateUserPhone)
 /**
  * @swagger
  * /user/update-email:
@@ -307,7 +307,7 @@ router.put("/update-phone", verifyAuthToken, updateUserPhone);
  *       500:
  *         description: Error interno del servidor
  */
-router.put("/update-email", verifyAuthToken, updateUserEmail);
+router.put('/update-email', verifyAuthToken, updateUserEmail)
 /**
  * @swagger
  * /user/update-status:
@@ -343,7 +343,7 @@ router.put("/update-email", verifyAuthToken, updateUserEmail);
  *       500:
  *         description: Error interno del servidor
  */
-router.put("/update-status", verifyAuthToken, updateUserStatus); //ADMIN
+router.put('/update-status', verifyAuthToken, isAdmin, updateUserStatus) // ADMIN
 /**
  * @swagger
  * /user/update-membership:
@@ -377,11 +377,11 @@ router.put("/update-status", verifyAuthToken, updateUserStatus); //ADMIN
  *       500:
  *         description: Error interno del servidor
  */
-router.put(
-  "/update-membership",
-  verifyAuthToken,
-  updateUserMembership
-); /**NO DEBERIA EXISTIR */
+// router.put(
+//   '/update-membership',
+//   verifyAuthToken,
+//   updateUserMembership
+// ) /**NO DEBERIA EXISTIR */
 /**
  * @swagger
  * /user/update-image:
@@ -413,7 +413,7 @@ router.put(
  *       500:
  *         description: Error interno del servidor
  */
-router.put("/update-image", verifyAuthToken, updateUserImage);
+router.put('/update-image', verifyAuthToken, updateUserImage)
 
 // metodos delete
 // router.delete('/:id', deleteUser);
@@ -443,5 +443,6 @@ router.put("/update-image", verifyAuthToken, updateUserImage);
  *         description: Usuario no encontrado
  */
 
-router.get("/:id", verifyAuthToken, getUser);
-module.exports = router;
+router.get('/:id', verifyAuthToken, getUser)
+
+module.exports = router
