@@ -1,5 +1,5 @@
-const { Router } = require('express')
-
+const { Router } = require("express");
+const verifyAuthToken = require("../utils/verifyToken");
 const {
   postUser,
   getUser,
@@ -12,11 +12,11 @@ const {
   updateUserStatus,
   updateUserMembership,
   getUsersByMembership,
-  updateUserImage
+  updateUserImage,
   // deleteUser, getUserMember
-} = require('../controller/users.controller.js')
+} = require("../controller/users.controller.js");
 
-const router = Router()
+const router = Router();
 
 // Swagger Schema
 /**
@@ -82,7 +82,7 @@ const router = Router()
  *       500:
  *         description: Error interno del servidor
  */
-router.get('/', getUsersByStatus)
+router.get("/", verifyAuthToken, getUsersByStatus); //ADMIN
 /**
  * @swagger
  * /user/all:
@@ -129,7 +129,7 @@ router.get('/', getUsersByStatus)
  *         description: Error interno del servidor
  */
 
-router.get('/all', getAllUsers)
+router.get("/all/", verifyAuthToken, getAllUsers); //ADMIN
 /**
  * @swagger
  * /user/name:
@@ -157,7 +157,7 @@ router.get('/all', getAllUsers)
  *         description: Error interno del servidor
  */
 
-router.get('/name', getUsersByName)
+router.get("/name", verifyAuthToken, getUsersByName); //ADMIN
 
 /**
  * @swagger
@@ -187,7 +187,7 @@ router.get('/name', getUsersByName)
  *       500:
  *         description: Error interno del servidor
  */
-router.get('/membership', getUsersByMembership)
+router.get("/membership/", verifyAuthToken, getUsersByMembership); //ADMIN
 
 // metodos post
 
@@ -211,7 +211,7 @@ router.get('/membership', getUsersByMembership)
  *       400:
  *         description: Error en los parámetros de entrada
  */
-router.post('/', postUser)
+router.post("/", postUser);
 
 // metodos put
 /**
@@ -244,7 +244,7 @@ router.post('/', postUser)
  *       500:
  *         description: Error interno del servidor
  */
-router.put('/update-name', updateUserName)
+router.put("/update-name", verifyAuthToken, updateUserName);
 /**
  * @swagger
  * /user/update-phone:
@@ -275,7 +275,7 @@ router.put('/update-name', updateUserName)
  *       500:
  *         description: Error interno del servidor
  */
-router.put('/update-phone', updateUserPhone)
+router.put("/update-phone", verifyAuthToken, updateUserPhone);
 /**
  * @swagger
  * /user/update-email:
@@ -307,7 +307,7 @@ router.put('/update-phone', updateUserPhone)
  *       500:
  *         description: Error interno del servidor
  */
-router.put('/update-email', updateUserEmail)
+router.put("/update-email", verifyAuthToken, updateUserEmail);
 /**
  * @swagger
  * /user/update-status:
@@ -343,7 +343,7 @@ router.put('/update-email', updateUserEmail)
  *       500:
  *         description: Error interno del servidor
  */
-router.put('/update-status', updateUserStatus)
+router.put("/update-status", verifyAuthToken, updateUserStatus); //ADMIN
 /**
  * @swagger
  * /user/update-membership:
@@ -377,7 +377,11 @@ router.put('/update-status', updateUserStatus)
  *       500:
  *         description: Error interno del servidor
  */
-router.put('/update-membership', updateUserMembership)
+router.put(
+  "/update-membership",
+  verifyAuthToken,
+  updateUserMembership
+); /**NO DEBERIA EXISTIR */
 /**
  * @swagger
  * /user/update-image:
@@ -409,7 +413,7 @@ router.put('/update-membership', updateUserMembership)
  *       500:
  *         description: Error interno del servidor
  */
-router.put('/update-image', updateUserImage)
+router.put("/update-image", verifyAuthToken, updateUserImage);
 
 // metodos delete
 // router.delete('/:id', deleteUser);
@@ -439,5 +443,5 @@ router.put('/update-image', updateUserImage)
  *         description: Usuario no encontrado
  */
 
-router.get('/:id', getUser)
-module.exports = router
+router.get("/:id", verifyAuthToken, getUser);
+module.exports = router;

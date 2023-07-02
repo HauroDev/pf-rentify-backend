@@ -1,4 +1,5 @@
 const { Router } = require('express')
+const verifyAuthToken = require("../utils/verifyToken");
 const {
   getCategories,
   createCategories
@@ -39,7 +40,7 @@ const router = Router()
  *                 $ref: '#/components/schemas/Category'
  */
 
-router.get('/', getCategories)
+router.get('/',verifyAuthToken, getCategories)
 
 // Post Category
 /**
@@ -65,6 +66,6 @@ router.get('/', getCategories)
  *               $ref: '#/components/schemas/Category'
  */
 
-router.post('/', createCategories)
+router.post('/',verifyAuthToken, createCategories)//ADMIN
 
 module.exports = router

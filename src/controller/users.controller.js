@@ -1,11 +1,11 @@
 const { User } = require("../db/db");
 const { CustomError } = require("../utils/customErrors");
 const { Op } = require("sequelize");
-const { getNextPage } = require('../utils/paginado')
+const { getNextPage } = require("../utils/paginado");
 
 //Configuración de Nodemailer
-const { sendWelcomeEmail } = require("../config/nodemailer")
-const { sendUserStatusChangeEmail } = require("../config/nodemailer")
+const { sendWelcomeEmail } = require("../config/nodemailer");
+const { sendUserStatusChangeEmail } = require("../config/nodemailer");
 // -- Obtener ususario por id (get userById)
 // -- Crear nuevo usuario (post user)
 // -- Actuliazar datos de usuario (put)
@@ -15,15 +15,15 @@ const { sendUserStatusChangeEmail } = require("../config/nodemailer")
 
 const postUser = async (req, res) => {
   try {
-    const { name, email, phone, image, uid } = req.body
+    const { name, email, phone, image, uid } = req.body;
 
-    const existingUser = await User.findOne({ where: { email } })
-    const existingUid = await User.findOne({ where: { uid } })
+    const existingUser = await User.findOne({ where: { email } });
+    const existingUid = await User.findOne({ where: { uid } });
     if (existingUser) {
-      throw new CustomError(400, 'Error correo existente')
+      throw new CustomError(400, "Error correo existente");
     }
     if (existingUid) {
-      throw new CustomError(400, 'Error usuario registrado')
+      throw new CustomError(400, "Error usuario registrado");
     }
 
     const newUser = await User.create({
@@ -31,9 +31,8 @@ const postUser = async (req, res) => {
       email,
       phone,
       image,
-      uid
-    })
-
+      uid,
+    });
 
     // Nodemailer
     await sendWelcomeEmail(newUser.email, newUser.name);
@@ -41,376 +40,388 @@ const postUser = async (req, res) => {
     // Envía la respuesta con el usuario creado
     res.status(201).json(newUser);
   } catch (error) {
-    console.log(error)
+    console.log(error);
     // En caso de error, envía una respuesta de error
-    res.status(error?.status || 500).json({ error: error?.message })
+    res.status(error?.status || 500).json({ error: error?.message });
   }
 };
 
 // Obtener usuario por ID (GET)
 const getUser = async (req, res) => {
   try {
-    const { id } = req.params
-    const user = await User.findByPk(id)
+    const { id } = req.params;
+    const user = await User.findByPk(id);
 
-    if (!user) throw new CustomError(404, 'usuario no existente')
+    if (!user) throw new CustomError(404, "usuario no existente");
 
-    return res.status(200).json(user)
+    return res.status(200).json(user);
   } catch (error) {
     res
       .status(error?.status || 500)
-      .json({ error: error?.message || 'Error en la busqueda de users' })
+      .json({ error: error?.message || "Error en la busqueda de users" });
   }
-}
+};
 
 // Llama todos los usuarios
 
 const getAllUsers = async (req, res) => {
-  let { offset, limit, search } = req.query
+  let { offset, limit, search } = req.query;
 
-  offset = offset ? +offset : 0
-  limit = limit ? +limit : 12
+  offset = offset ? +offset : 0;
+  limit = limit ? +limit : 12;
 
   try {
     const { rows, count } = await User.findAndCountAll({
       where: {
-        role: 'user',
+        role: "user",
         [Op.or]: [
-          { name: { [Op.iLike]: search ? `%${search}%` : '%%' } },
-          { email: { [Op.iLike]: search ? `%${search}%` : '%%' } }
-        ]
+          { name: { [Op.iLike]: search ? `%${search}%` : "%%" } },
+          { email: { [Op.iLike]: search ? `%${search}%` : "%%" } },
+        ],
       },
-      order: [['email', 'ASC']],
+      order: [["email", "ASC"]],
       offset,
-      limit
-    })
+      limit,
+    });
 
-    let nextPage = getNextPage('user/all', offset, limit, count)
+    let nextPage = getNextPage("user/all", offset, limit, count);
 
     if (nextPage) {
-      let queryParams = ''
-      if (search) queryParams += `&search=${search}`
+      let queryParams = "";
+      if (search) queryParams += `&search=${search}`;
 
-      nextPage += queryParams
+      nextPage += queryParams;
     }
 
     return res.status(200).json({
       count,
       next: nextPage,
-      results: rows
-    })
+      results: rows,
+    });
   } catch (error) {
-    console.error('Error updating user email:', error)
-    return res.status(500).json({ error: 'Internal server error' })
+    console.error("Error updating user email:", error);
+    return res.status(500).json({ error: "Internal server error" });
   }
-}
+};
 
 const getUsersByName = async (req, res) => {
-  const { name } = req.query
-  let { offset, limit } = req.query
+  const roleUser = req.role;
 
-  offset = offset ? +offset : 0
-  limit = limit ? +limit : 12
+  if (roleUser !== "admin" || roleUser !== "sudo")
+    throw new CustomError(400, "No eres un admin");
+
+  const { name } = req.query;
+  let { offset, limit } = req.query;
+
+  offset = offset ? +offset : 0;
+  limit = limit ? +limit : 12;
 
   try {
     const { rows, count } = await User.findAndCountAll({
       where: {
         name: { [Op.iLike]: `%${name}%` },
-        role: 'user'
+        role: "user",
       },
-      order: [['email', 'ASC']],
+      order: [["email", "ASC"]],
       offset,
-      limit
-    })
+      limit,
+    });
 
-    let nextPage = getNextPage('user/name', offset, limit, count)
+    let nextPage = getNextPage("user/name", offset, limit, count);
 
     if (nextPage) {
-      nextPage = nextPage + `&name=${name}`
+      nextPage = nextPage + `&name=${name}`;
     }
 
     res.status(200).json({
       count,
       next: nextPage,
-      results: rows
-    })
+      results: rows,
+    });
   } catch (error) {
-    res.status(500).json({ error: error.message })
+    res.status(500).json({ error: error.message });
   }
-}
+};
 
 const getUsersByStatus = async (req, res) => {
-  const { status } = req.query // Obtén el parámetro de consulta 'status'
-  let { offset, limit } = req.query
+  const { status } = req.query; // Obtén el parámetro de consulta 'status'
+  let { offset, limit } = req.query;
 
-  offset = offset ? +offset : 0
-  limit = limit ? +limit : 12
+  offset = offset ? +offset : 0;
+  limit = limit ? +limit : 12;
   try {
     const { rows, count } = await User.findAndCountAll({
       where: {
         status, // Filtrar por el estado proporcionado
-        role: 'user'
+        role: "user",
       },
-      order: [['email', 'ASC']],
+      order: [["email", "ASC"]],
       offset,
-      limit
-    })
+      limit,
+    });
     // estaria genial si cambiaramos el endpoint a /user/state
-    let nextPage = getNextPage('user', offset, limit, count)
+    let nextPage = getNextPage("user", offset, limit, count);
 
     if (nextPage) {
-      nextPage = nextPage + `&status=${status}`
+      nextPage = nextPage + `&status=${status}`;
     }
     res.status(200).json({
       count,
       next: nextPage,
-      results: rows
-    })
+      results: rows,
+    });
   } catch (error) {
-    console.log(error)
+    console.log(error);
     return res
       .status(500)
-      .json({ error: 'Error en la búsqueda de usuarios por estado' })
+      .json({ error: "Error en la búsqueda de usuarios por estado" });
   }
-}
+};
 
 const getUsersByMembership = async (req, res) => {
-  const { membership } = req.query // Obtén el parámetro de consulta 'membership'
+  const { membership } = req.query; // Obtén el parámetro de consulta 'membership'
 
-  let { offset, limit } = req.query
+  let { offset, limit } = req.query;
 
-  offset = offset ? +offset : 0
-  limit = limit ? +limit : 12
+  offset = offset ? +offset : 0;
+  limit = limit ? +limit : 12;
 
   try {
-    const allowedMemberships = ['basic', 'standard', 'premium']
+    const allowedMemberships = ["basic", "standard", "premium"];
     if (membership && !allowedMemberships.includes(membership)) {
-      throw new CustomError(400, 'Invalid membership value')
+      throw new CustomError(400, "Invalid membership value");
     }
 
     const { count, rows } = await User.findAndCountAll({
       where: {
         membership, // Filtrar por la membresía proporcionada
-        role: 'user'
+        role: "user",
       },
-      order: [['email', 'ASC']],
+      order: [["email", "ASC"]],
       offset,
-      limit
-    })
+      limit,
+    });
 
-    let nextPage = getNextPage('user/membership', offset, limit, count)
+    let nextPage = getNextPage("user/membership", offset, limit, count);
 
     if (nextPage) {
-      nextPage = nextPage + `&membership=${membership}`
+      nextPage = nextPage + `&membership=${membership}`;
     }
 
     return res.status(200).json({
       count,
       next: nextPage,
-      results: rows
-    })
+      results: rows,
+    });
   } catch (error) {
-    console.error('Error getting users by membership:', error)
-    return res.status(500).json({ error: 'Internal server error' })
+    console.error("Error getting users by membership:", error);
+    return res.status(500).json({ error: "Internal server error" });
   }
-}
+};
 
 const updateUserName = async (req, res) => {
-  const { idUser, name } = req.body
+  const { idUser, name } = req.body;
 
   try {
-    const user = await User.findByPk(idUser)
+    const user = await User.findByPk(idUser);
     if (!user) {
-      return res.status(404).json({ error: 'User not found' })
+      return res.status(404).json({ error: "User not found" });
     }
 
     // Validar que el nuevo nombre no esté vacío
-    if (!name || name.trim() === '') {
-      return res.status(400).json({ error: 'Name is required' })
+    if (!name || name.trim() === "") {
+      return res.status(400).json({ error: "Name is required" });
     }
 
     // Validar que el nuevo nombre tenga al menos 3 caracteres
     if (name.trim().length < 3) {
       return res
         .status(400)
-        .json({ error: 'Name must have at least 3 characters' })
+        .json({ error: "Name must have at least 3 characters" });
     }
     // Actualizar el nombre del usuario
-    user.name = name
-    await user.save()
+    user.name = name;
+    await user.save();
 
-    return res.status(200).json({ message: 'User name updated successfully' })
+    return res.status(200).json({ message: "User name updated successfully" });
   } catch (error) {
-    console.error('Error updating user name:', error)
-    return res.status(500).json({ error: 'Internal server error' })
+    console.error("Error updating user name:", error);
+    return res.status(500).json({ error: "Internal server error" });
   }
-}
+};
 
 const updateUserPhone = async (req, res) => {
-  const { idUser, phone } = req.body
+  const { idUser, phone } = req.body;
 
   try {
-    const user = await User.findByPk(idUser)
+    const user = await User.findByPk(idUser);
     if (!user) {
-      return res.status(404).json({ error: 'User not found' })
+      return res.status(404).json({ error: "User not found" });
     }
 
     // Validar que el número de teléfono sea un valor válido
-    if (!phone || phone.trim() === '') {
-      return res.status(400).json({ error: 'Phone number is required' })
+    if (!phone || phone.trim() === "") {
+      return res.status(400).json({ error: "Phone number is required" });
     }
 
     // Validar que el número de teléfono tenga al menos 6 dígitos
     if (phone.length < 5) {
       return res
         .status(400)
-        .json({ error: 'Phone number must have at least 6 digits' })
+        .json({ error: "Phone number must have at least 6 digits" });
     }
 
     // Validar que el número de teléfono tenga máximo 20 dígitos
     if (phone.length > 21) {
       return res
         .status(400)
-        .json({ error: 'Phone number must have at most 20 digits' })
+        .json({ error: "Phone number must have at most 20 digits" });
     }
     // Validar que el número de teléfono solo contenga números
     if (!/^\d+$/.test(phone)) {
       return res
         .status(400)
-        .json({ error: 'Phone number must contain only digits' })
+        .json({ error: "Phone number must contain only digits" });
     }
     // Actualizar el número de teléfono del usuario
-    user.phone = phone
-    await user.save()
+    user.phone = phone;
+    await user.save();
 
     return res
       .status(200)
-      .json({ message: 'User phone number updated successfully' })
+      .json({ message: "User phone number updated successfully" });
   } catch (error) {
-    console.error('Error updating user phone number:', error)
-    return res.status(500).json({ error: 'Internal server error' })
+    console.error("Error updating user phone number:", error);
+    return res.status(500).json({ error: "Internal server error" });
   }
-}
+};
 
 const updateUserEmail = async (req, res) => {
-  const { idUser, email } = req.body
-  const regeexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  const { idUser, email } = req.body;
+  const regeexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   try {
-    const user = await User.findByPk(idUser)
+    const user = await User.findByPk(idUser);
     if (!user) {
-      return res.status(404).json({ error: 'User not found' })
+      return res.status(404).json({ error: "User not found" });
     }
 
     // Validar que el correo electrónico sea un valor válido
-    if (!email || email.trim() === '') {
-      return res.status(400).json({ error: 'Email is required' })
+    if (!email || email.trim() === "") {
+      return res.status(400).json({ error: "Email is required" });
     }
 
     // Validar que el correo electrónico tenga un formato válido
     if (!regeexEmail.test(email)) {
-      return res.status(400).json({ error: 'Invalid email format' })
+      return res.status(400).json({ error: "Invalid email format" });
     }
 
     // Actualizar el correo electrónico del usuario
-    user.email = email
-    await user.save()
+    user.email = email;
+    await user.save();
 
-    return res.status(200).json({ message: 'User email updated successfully' })
+    return res.status(200).json({ message: "User email updated successfully" });
   } catch (error) {
-    console.error('Error updating user email:', error)
-    return res.status(500).json({ error: 'Internal server error' })
+    console.error("Error updating user email:", error);
+    return res.status(500).json({ error: "Internal server error" });
   }
-}
+};
 
 const updateUserStatus = async (req, res) => {
-  const { idUser, status } = req.body
+  const roleUser = req.role;
+
+  if (roleUser !== "admin" || roleUser !== "sudo")
+    throw new CustomError(400, "No eres un admin");
+
+  const { idUser, status } = req.body;
 
   try {
-    const user = await User.findByPk(idUser)
+    const user = await User.findByPk(idUser);
     if (!user) {
-      return res.status(404).json({ error: 'User not found' })
+      return res.status(404).json({ error: "User not found" });
     }
 
     // Validar que el estado sea un valor válido
-    const allowedStatus = ['active', 'inactive', 'paused', 'banned']
+    const allowedStatus = ["active", "inactive", "paused", "banned"];
     if (!status || !allowedStatus.includes(status)) {
-      return res.status(400).json({ error: 'Invalid status value' })
+      return res.status(400).json({ error: "Invalid status value" });
     }
     // Validar que el estado no sea igual al valor actual en la base de datos
     if (status === user.status) {
       return res
         .status(400)
-        .json({ error: 'Status is already set to the provided value' })
+        .json({ error: "Status is already set to the provided value" });
     }
     // Actualizar el estado del usuario
-    user.status = status
-    await user.save()
-     // Nodemailer
-     await sendUserStatusChangeEmail(user.email, status);
+    user.status = status;
+    await user.save();
+    // Nodemailer
+    await sendUserStatusChangeEmail(user.email, status);
 
     return res
       .status(200)
       .json({ message: "User status updated successfully" });
   } catch (error) {
-    console.error('Error updating user status:', error)
-    return res.status(500).json({ error: 'Internal server error' })
+    console.error("Error updating user status:", error);
+    return res.status(500).json({ error: "Internal server error" });
   }
-}
+};
 const updateUserMembership = async (req, res) => {
-  const { idUser, membership } = req.body
+  const { idUser, membership } = req.body;
 
   try {
-    const user = await User.findByPk(idUser)
+    const user = await User.findByPk(idUser);
     if (!user) {
-      return res.status(404).json({ error: 'User not found' })
+      return res.status(404).json({ error: "User not found" });
     }
 
     // Validar que el estado sea un valor válido
-    const allowedMembership = ['basic', 'standard', 'premium']
+    const allowedMembership = ["basic", "standard", "premium"];
     if (!membership || !allowedMembership.includes(membership)) {
-      return res.status(400).json({ error: 'Invalid membership value' })
+      return res.status(400).json({ error: "Invalid membership value" });
     }
     // Validar que el estado no sea igual al valor actual en la base de datos
     if (membership === user.membership) {
       return res
         .status(400)
-        .json({ error: 'Status is already set to the provided value' })
+        .json({ error: "Status is already set to the provided value" });
     }
     // Actualizar el estado del usuario
-    user.membership = membership
-    await user.save()
+    user.membership = membership;
+    await user.save();
 
-    return res.status(200).json({ message: 'User status updated successfully' })
+    return res
+      .status(200)
+      .json({ message: "User status updated successfully" });
   } catch (error) {
-    console.error('Error updating user status:', error)
-    return res.status(500).json({ error: 'Internal server error' })
+    console.error("Error updating user status:", error);
+    return res.status(500).json({ error: "Internal server error" });
   }
-}
+};
 const updateUserImage = async (req, res) => {
-  const { idUser, image } = req.body
+  const { idUser, image } = req.body;
 
   try {
-    const user = await User.findByPk(idUser)
+    const user = await User.findByPk(idUser);
     if (!user) {
-      return res.status(404).json({ error: 'User not found' })
+      return res.status(404).json({ error: "User not found" });
     }
 
     // Validar que la imagen sea una URL válida
-    const urlRegex = /^(ftp|http|https):\/\/[^ "]+$/
+    const urlRegex = /^(ftp|http|https):\/\/[^ "]+$/;
     if (!urlRegex.test(image)) {
-      return res.status(400).json({ error: 'Invalid image URL' })
+      return res.status(400).json({ error: "Invalid image URL" });
     }
 
     // Actualizar la imagen del usuario
-    user.image = image
-    await user.save()
+    user.image = image;
+    await user.save();
 
-    return res.status(200).json({ message: 'User image updated successfully' })
+    return res.status(200).json({ message: "User image updated successfully" });
   } catch (error) {
-    console.error('Error updating user image:', error)
-    return res.status(500).json({ error: 'Internal server error' })
+    console.error("Error updating user image:", error);
+    return res.status(500).json({ error: "Internal server error" });
   }
-}
+};
 
 module.exports = {
   postUser,
@@ -424,5 +435,5 @@ module.exports = {
   updateUserEmail,
   updateUserStatus,
   updateUserMembership,
-  updateUserImage
-}
+  updateUserImage,
+};
