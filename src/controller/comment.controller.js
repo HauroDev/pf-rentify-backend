@@ -1,4 +1,4 @@
-// const { Op } = require('sequelize')
+const { Op } = require('sequelize')
 const { Comment, Product, User } = require('../db/db')
 const { CustomError } = require('../utils/customErrors')
 
@@ -39,13 +39,13 @@ const newComment = async (req, res) => {
       )
     }
 
-    // const hasCommentedUser = await Comment.findOne({
-    //   where: { [Op.and]: [{ idUser }, { idProd }] }
-    // })
+    const hasCommentedUser = await Comment.findOne({
+      where: { [Op.and]: [{ idUser }, { idProd }] }
+    })
 
-    // if (hasCommentedUser) {
-    //   throw new CustomError(400, 'User has commented this product')
-    // }
+    if (hasCommentedUser) {
+      throw new CustomError(400, 'User has commented this product')
+    }
     // fin validaciones //
 
     const newComment = await Comment.create({
