@@ -1,21 +1,21 @@
-const { Op } = require("sequelize");
-const { User, Order } = require("../db/db.js");
+const { Op } = require('sequelize')
+const { User, Order } = require('../db/db.js')
 const {
   getStatisticsUsers,
   getStatisticsProducts,
   getStatisticsUsersMembership,
   getStatisticsFeaturedProducts,
   getStatisticsOrders,
-  getStatisticsSuscriptions,
-} = require("../utils/adminStatistics");
-const { CustomError } = require("../utils/customErrors.js");
-const { getNextPage } = require("../utils/paginado.js");
+  getStatisticsSuscriptions
+} = require('../utils/adminStatistics')
+const { CustomError } = require('../utils/customErrors.js')
+const { getNextPage } = require('../utils/paginado.js')
 
-const getStatistics = async (_req, res) => {
-  const roleUser = req.role;
+const getStatistics = async (req, res) => {
+  const roleUser = req.role
 
-  if (roleUser !== "admin" || roleUser !== "sudo")
-    throw new CustomError(400, "No eres un admin");
+  if (roleUser !== 'admin' || roleUser !== 'sudo')
+    throw new CustomError(400, 'No eres un admin')
   try {
     const [users, products, usersMembership, featured, orders, suscriptions] =
       await Promise.all([
@@ -24,39 +24,39 @@ const getStatistics = async (_req, res) => {
         getStatisticsUsersMembership(),
         getStatisticsFeaturedProducts(),
         getStatisticsOrders(),
-        getStatisticsSuscriptions(),
-      ]);
+        getStatisticsSuscriptions()
+      ])
 
     res.json({
       users,
-      "user-membership": usersMembership,
+      'user-membership': usersMembership,
       products,
-      "products-featured": featured,
+      'products-featured': featured,
       orders,
-      suscriptions,
-    });
+      suscriptions
+    })
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: error.message })
   }
-};
+}
 
 const createAdmin = async (req, res) => {
-  const roleUser = req.role;
+  const roleUser = req.role
 
-  if (roleUser !== "admin" || roleUser !== "sudo")
-    throw new CustomError(400, "No eres un admin");
+  if (roleUser !== 'admin' || roleUser !== 'sudo')
+    throw new CustomError(400, 'No eres un admin')
 
   try {
-    const { name, email, phone, image, uid } = req.body;
+    const { name, email, phone, image, uid } = req.body
 
-    const existingUser = await User.findOne({ where: { email } });
-    const existingUid = await User.findOne({ where: { uid } });
+    const existingUser = await User.findOne({ where: { email } })
+    const existingUid = await User.findOne({ where: { uid } })
 
     if (existingUser) {
-      throw new CustomError(400, "Error correo existente");
+      throw new CustomError(400, 'Error correo existente')
     }
     if (existingUid) {
-      throw new CustomError(400, "Error usuario registrado");
+      throw new CustomError(400, 'Error usuario registrado')
     }
 
     const newUser = await User.create({
@@ -65,212 +65,212 @@ const createAdmin = async (req, res) => {
       phone,
       image,
       uid,
-      membership: "premium",
-      role: "admin",
-    });
+      membership: 'premium',
+      role: 'admin'
+    })
 
-    res.status(201).json(newUser);
+    res.status(201).json(newUser)
   } catch (error) {
-    res.status(error?.status || 500).json({ error: error?.message });
+    res.status(error?.status || 500).json({ error: error?.message })
   }
-};
+}
 
 const getAdminsSudo = async (req, res) => {
-  const { search, role } = req.query;
-  let { offset, limit } = req.query;
+  const { search, role } = req.query
+  let { offset, limit } = req.query
 
-  offset = offset ? +offset : 0;
-  limit = limit ? +limit : 12;
+  offset = offset ? +offset : 0
+  limit = limit ? +limit : 12
 
   try {
     const { rows, count } = await User.findAndCountAll({
       where: {
-        role: role || ["admin", "sudo"],
+        role: role || ['admin', 'sudo'],
         [Op.or]: [
-          { name: { [Op.iLike]: search ? `%${search}%` : "%%" } },
-          { email: { [Op.iLike]: search ? `%${search}%` : "%%" } },
-        ],
+          { name: { [Op.iLike]: search ? `%${search}%` : '%%' } },
+          { email: { [Op.iLike]: search ? `%${search}%` : '%%' } }
+        ]
       },
-      order: [["email", "ASC"]],
+      order: [['email', 'ASC']],
       limit,
-      offset,
-    });
+      offset
+    })
 
-    let nextPage = getNextPage("admin/admins-sudo", offset, limit, count);
+    let nextPage = getNextPage('admin/admins-sudo', offset, limit, count)
 
     if (nextPage) {
-      let queryParams = "";
+      let queryParams = ''
 
-      if (role) queryParams += `&role=${role}`;
-      if (search) queryParams += `&search=${search}`;
+      if (role) queryParams += `&role=${role}`
+      if (search) queryParams += `&search=${search}`
 
-      nextPage += queryParams;
+      nextPage += queryParams
     }
 
     res.status(200).json({
       count,
       next: nextPage,
-      results: rows,
-    });
+      results: rows
+    })
   } catch (error) {
-    console.error("Error al obtener los usuarios:", error);
-    throw error;
+    console.error('Error al obtener los usuarios:', error)
+    throw error
   }
-};
+}
 
 const updateNameAdmin = async (req, res) => {
-  const roleUser = req.role;
+  const roleUser = req.role
 
-  if (roleUser !== "admin" || roleUser !== "sudo")
-    throw new CustomError(400, "No eres un admin");
+  if (roleUser !== 'admin' || roleUser !== 'sudo')
+    throw new CustomError(400, 'No eres un admin')
 
-  const { idUser, name } = req.body;
+  const { idUser, name } = req.body
 
   try {
-    const user = await User.findByPk(idUser);
+    const user = await User.findByPk(idUser)
 
-    if (!user) throw new CustomError(404, "user is not exists");
+    if (!user) throw new CustomError(404, 'user is not exists')
 
-    if (!name) throw new CustomError(400, "name is required");
+    if (!name) throw new CustomError(400, 'name is required')
 
-    user.name = name;
+    user.name = name
 
-    user.save();
+    user.save()
 
-    res.json(user);
+    res.json(user)
   } catch (error) {
-    res.status(error.status || 500).json({ error: error.message });
+    res.status(error.status || 500).json({ error: error.message })
   }
-};
+}
 
 const updatePhoneAdmin = async (req, res) => {
-  const roleUser = req.role;
+  const roleUser = req.role
 
-  if (roleUser !== "admin" || roleUser !== "sudo")
-    throw new CustomError(400, "No eres un admin");
+  if (roleUser !== 'admin' || roleUser !== 'sudo')
+    throw new CustomError(400, 'No eres un admin')
 
-  const { idUser, phone } = req.body;
+  const { idUser, phone } = req.body
 
   try {
-    const user = await User.findByPk(idUser);
+    const user = await User.findByPk(idUser)
 
-    if (!user) throw new CustomError(404, "user is not exists");
+    if (!user) throw new CustomError(404, 'user is not exists')
 
-    if (!phone) throw new CustomError(400, "phone is required");
+    if (!phone) throw new CustomError(400, 'phone is required')
 
-    user.phone = phone;
+    user.phone = phone
 
-    user.save();
+    user.save()
 
-    res.json(user);
+    res.json(user)
   } catch (error) {
-    res.status(error.status || 500).json({ error: error.message });
+    res.status(error.status || 500).json({ error: error.message })
   }
-};
+}
 
 const updateRoleAdmin = async (req, res) => {
-  const roleUser = req.role;
+  const roleUser = req.role
 
-  if (roleUser !== "admin" || roleUser !== "sudo")
-    throw new CustomError(400, "No eres un admin");
+  if (roleUser !== 'admin' || roleUser !== 'sudo')
+    throw new CustomError(400, 'No eres un admin')
 
-  const { idUser, role } = req.body;
+  const { idUser, role } = req.body
 
   try {
-    const user = await User.findByPk(idUser);
+    const user = await User.findByPk(idUser)
 
-    if (!user) throw new CustomError(404, "user is not exists");
+    if (!user) throw new CustomError(404, 'user is not exists')
 
-    if (!role) throw new CustomError(400, "role is required");
+    if (!role) throw new CustomError(400, 'role is required')
 
-    if (!["admin", "sudo"].includes(role)) {
-      throw new CustomError(400, 'role should have been "admin" or "sudo"');
+    if (!['admin', 'sudo'].includes(role)) {
+      throw new CustomError(400, 'role should have been "admin" or "sudo"')
     }
 
-    user.role = role;
+    user.role = role
 
-    user.save();
+    user.save()
 
-    res.json(user);
+    res.json(user)
   } catch (error) {
-    res.status(error.status || 500).json({ error: error.message });
+    res.status(error.status || 500).json({ error: error.message })
   }
-};
+}
 
 const updateImageAdmin = async (req, res) => {
-  const roleUser = req.role;
+  const roleUser = req.role
 
-  if (roleUser !== "admin" || roleUser !== "sudo")
-    throw new CustomError(400, "No eres un admin");
+  if (roleUser !== 'admin' || roleUser !== 'sudo')
+    throw new CustomError(400, 'No eres un admin')
 
-  const { idUser, image } = req.body;
+  const { idUser, image } = req.body
 
   try {
-    const user = await User.findByPk(idUser);
+    const user = await User.findByPk(idUser)
 
-    if (!user) throw new CustomError(404, "user is not exists");
+    if (!user) throw new CustomError(404, 'user is not exists')
 
-    if (!image) throw new CustomError(400, "image is required");
+    if (!image) throw new CustomError(400, 'image is required')
 
-    user.image = image;
+    user.image = image
 
-    user.save();
+    user.save()
 
-    res.json(user);
+    res.json(user)
   } catch (error) {
-    res.status(error.status || 500).json({ error: error.message });
+    res.status(error.status || 500).json({ error: error.message })
   }
-};
+}
 
 const getOrdersByIdUser = async (req, res) => {
-  const { idUser } = req.params;
-  const { status } = req.query;
-  let { offset, limit } = req.query;
+  const { idUser } = req.params
+  const { status } = req.query
+  let { offset, limit } = req.query
 
-  offset = offset ? +offset : 0;
-  limit = limit ? +limit : 12;
+  offset = offset ? +offset : 0
+  limit = limit ? +limit : 12
 
-  const whereOption = { idUser };
+  const whereOption = { idUser }
 
-  if (["approved", "pending", "rejected"].includes(status)) {
-    whereOption.status = status;
+  if (['approved', 'pending', 'rejected'].includes(status)) {
+    whereOption.status = status
   }
 
   try {
-    const hasUser = await User.count({ where: { idUser } });
+    const hasUser = await User.count({ where: { idUser } })
 
-    if (!hasUser) throw new CustomError(404, "uses is not found");
+    if (!hasUser) throw new CustomError(404, 'uses is not found')
 
     const { rows, count } = await Order.findAndCountAll({
       where: whereOption,
-      order: [["createdAt", "DESC"]],
+      order: [['createdAt', 'DESC']],
       limit,
-      offset,
-    });
+      offset
+    })
 
     let nextPage = getNextPage(
       `admin/order/user/${idUser}`,
       offset,
       limit,
       count
-    );
+    )
 
     if (nextPage) {
-      let queryParams = "";
+      let queryParams = ''
 
-      if (status) queryParams += `&status=${status}`;
+      if (status) queryParams += `&status=${status}`
 
-      nextPage = nextPage + queryParams;
+      nextPage = nextPage + queryParams
     }
     res.status(200).json({
       count,
       next: nextPage,
-      results: rows,
-    });
+      results: rows
+    })
   } catch (error) {
-    res.status(error.status || 500).json({ error: error.message });
+    res.status(error.status || 500).json({ error: error.message })
   }
-};
+}
 
 module.exports = {
   getOrdersByIdUser,
@@ -280,5 +280,5 @@ module.exports = {
   updateNameAdmin,
   getStatistics,
   createAdmin,
-  getAdminsSudo,
-};
+  getAdminsSudo
+}
