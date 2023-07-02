@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 const jwt = require('jsonwebtoken')
 const { errorsToken } = require('../utils/errorToken')
 const { JWT_SECRET } = process.env
@@ -11,7 +12,7 @@ const verifyAuthToken = async (req, res, next) => {
   let auth_token = req.headers?.authorization
   const blacklistSet = await getBlackList()
   const blacklist = new Set(blacklistSet)
-  console.log(auth_token)
+
   try {
     // obtenemos el token de la cookie
 

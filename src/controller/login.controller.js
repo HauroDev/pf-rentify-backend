@@ -1,34 +1,32 @@
-const { User } = require("../db/db");
-const { Op } = require("sequelize");
-const { generateToken } = require("../utils/generateToken");
+const { User } = require('../db/db')
+const { Op } = require('sequelize')
+const { generateToken } = require('../utils/generateToken')
 const login = async (req, res) => {
-  const { uid, email } = req.body;
+  const { uid, email } = req.body
 
   try {
     const user = await User.findOne({
-      where: { [Op.and]: [{ uid }, { email }] },
-    });
+      where: { [Op.and]: [{ uid }, { email }] }
+    })
 
     if (!user) {
-      throw new Error(402, "Email or Password not valid");
+      throw new Error(402, 'Email or Password not valid')
     }
-    const { role } = user.dataValues;
+    const { role } = user.dataValues
 
-    const { token, expireIn } = generateToken(uid, email, role, res);
-    console.log(user.dataValues);
-    // res.status(200).json(user.dataValues)
-    console.log(token);
+    const { token, expireIn } = generateToken(uid, email, role, res)
+
     return res.status(200).json({
-      user: user,
+      user,
       auth_token: {
         token,
-        expireIn,
-      },
-    });
+        expireIn
+      }
+    })
   } catch (error) {
-    console.error("Credential not validated:", error);
-    res.status(401).json({ error: "Credential not validated" });
+    console.error('Credential not validated:', error)
+    res.status(401).json({ error: 'Credential not validated' })
   }
-};
+}
 
-module.exports = { login };
+module.exports = { login }
