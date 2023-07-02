@@ -1,5 +1,5 @@
-const { Router } = require('express')
-
+const { Router } = require("express");
+const verifyAuthToken = require("../utils/verifyToken");
 const {
   getAllProducts,
   createProduct,
@@ -10,10 +10,10 @@ const {
   updateProductPrice,
   updateProductIsFeatured,
   getProductByFeature,
-  getFilterProducts
-} = require('../controller/products.controller.js')
+  getFilterProducts,
+} = require("../controller/products.controller.js");
 
-const router = Router()
+const router = Router();
 
 // Schema Product
 /**
@@ -111,8 +111,8 @@ const router = Router()
  *       '500':
  *         description: Error interno del servidor
  */
-router.get('/all', getAllProducts)
-/**
+router.get('/all',verifyAuthToken, getAllProducts)//ADMIN
+/**+
  * @swagger
  * /products:
  *   get:
@@ -189,7 +189,7 @@ router.get('/all', getAllProducts)
  *                 $ref: '#/components/schemas/Product'
  */
 
-router.get('/', getFilterProducts)
+router.get("/", verifyAuthToken, getFilterProducts);
 /**
  * @swagger
  * /products/isFeatured:
@@ -217,7 +217,7 @@ router.get('/', getFilterProducts)
  *         description: Error interno del servidor
  */
 
-router.get('/isFeatured', getProductByFeature)
+router.get("/isFeatured/",verifyAuthToken, getProductByFeature);//ADMIN
 // Post product
 /**
  * @swagger
@@ -239,7 +239,7 @@ router.get('/isFeatured', getProductByFeature)
  *       400:
  *         description: Error en los parámetros de entrada
  */
-router.post('/', createProduct)
+router.post("/",verifyAuthToken, createProduct);
 
 // PRUEBA GONZALO
 /**
@@ -276,7 +276,7 @@ router.post('/', createProduct)
  *       500:
  *         description: Error interno del servidor
  */
-router.put('/update-status', updateProductstatusPub)
+router.put("/update-status",verifyAuthToken, updateProductstatusPub);
 /**
  * @swagger
  * /products/update-name:
@@ -307,7 +307,7 @@ router.put('/update-status', updateProductstatusPub)
  *       500:
  *         description: Error interno del servidor
  */
-router.put('/update-name', updateProductName)
+router.put("/update-name",verifyAuthToken, updateProductName);
 /**
  * @swagger
  * /products/update-price:
@@ -338,7 +338,7 @@ router.put('/update-name', updateProductName)
  *       500:
  *         description: Error interno del servidor
  */
-router.put('/update-price', updateProductPrice)
+router.put("/update-price",verifyAuthToken, updateProductPrice);
 /**
  * @swagger
  * /products/update-featured:
@@ -369,7 +369,7 @@ router.put('/update-price', updateProductPrice)
  *       500:
  *         description: Error interno del servidor
  */
-router.put('/update-featured', updateProductIsFeatured)
+router.put("/update-featured",verifyAuthToken, updateProductIsFeatured);//**PREMIUM - STANDARD */
 
 // Get IdProduct
 /**
@@ -397,7 +397,7 @@ router.put('/update-featured', updateProductIsFeatured)
  *       404:
  *         description: Producto no encontrado
  */
-router.get('/:id', getProductById)
+router.get("/:id",verifyAuthToken, getProductById);
 /**
  * @swagger
  * /products/user/{id}:
@@ -428,5 +428,5 @@ router.get('/:id', getProductById)
  *         description: Error interno del servidor
  */
 
-router.get('/user/:id', getUserProducts)
-module.exports = router
+router.get("/user/:id",verifyAuthToken, getUserProducts);
+module.exports = router;

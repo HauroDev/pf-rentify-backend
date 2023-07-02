@@ -1,4 +1,5 @@
 const { Router } = require('express')
+const verifyAuthToken = require("../utils/verifyToken");
 const {
   newComment,
   getCommentsByProductId
@@ -57,7 +58,7 @@ const router = Router()
  *               $ref: '#/components/schemas/Comment'
  */
 
-router.post('/', newComment)
+router.post('/',verifyAuthToken, newComment)
 
 // Get Comments product
 /**
@@ -85,6 +86,6 @@ router.post('/', newComment)
  *               items:
  *                 $ref: '#/components/schemas/Comment'
  */
-router.get('/:idProduct', getCommentsByProductId)
+router.get('/:idProduct',verifyAuthToken, getCommentsByProductId)
 
 module.exports = router

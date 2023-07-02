@@ -221,6 +221,10 @@ const createProduct = async (req, res) => {
 }
 
 const getAllProducts = async (req, res) => {
+  const roleUser = req.role
+
+  if(roleUser !== "admin"||roleUser !=="sudo") throw new CustomError(400, "No eres un admin")
+  
   try {
     let { offset, limit } = req.query
 
@@ -458,6 +462,10 @@ const updateProductIsFeatured = async (req, res) => {
 }
 
 const getProductByFeature = async (req, res) => {
+  const roleUser = req.role
+
+  if(roleUser !== "admin"||roleUser !=="sudo") throw new CustomError(400, "No eres un admin")
+
   try {
     const { isFeatured } = req.query // Obtén el parámetro de consulta 'feature'
 

@@ -1,4 +1,5 @@
-const { Router } = require('express')
+const { Router } = require("express");
+const verifyAuthToken = require("../utils/verifyToken");
 const {
   getStatistics,
   getAdminsSudo,
@@ -7,10 +8,10 @@ const {
   updatePhoneAdmin,
   updateRoleAdmin,
   updateImageAdmin,
-  getOrdersByIdUser
-} = require('../controller/admins.controller.js')
+  getOrdersByIdUser,
+} = require("../controller/admins.controller.js");
 
-const router = Router()
+const router = Router();
 /**
  * @swagger
  * /admin/statistics:
@@ -110,7 +111,7 @@ const router = Router()
  *                         description: Total de suscripciones en esa categoría.
  */
 
-router.get('/statistics', getStatistics)
+router.get("/statistics", verifyAuthToken, getStatistics);
 /**
  * @swagger
  * /admin/admins-sudo:
@@ -143,7 +144,7 @@ router.get('/statistics', getStatistics)
  *         description: Error interno del servidor
  */
 
-router.get('/admins-sudo', getAdminsSudo)
+router.get("/admins-sudo", verifyAuthToken, getAdminsSudo);
 
 /**
  * @swagger
@@ -222,7 +223,7 @@ router.get('/admins-sudo', getAdminsSudo)
  *                   description: Fecha y hora de creación del usuario administrador.
  */
 
-router.post('/create-admin', createAdmin)
+router.post("/create-admin", verifyAuthToken, createAdmin);
 
 /**
  * @swagger
@@ -249,7 +250,7 @@ router.post('/create-admin', createAdmin)
  *         description: nombre de perfil actualizado exitosamente
  */
 
-router.patch('/update-name', updateNameAdmin)
+router.patch("/update-name", verifyAuthToken, updateNameAdmin);
 
 /**
  * @swagger
@@ -276,7 +277,7 @@ router.patch('/update-name', updateNameAdmin)
  *         description: Número de teléfono actualizado exitosamente
  */
 
-router.patch('/update-phone', updatePhoneAdmin)
+router.patch("/update-phone", verifyAuthToken, updatePhoneAdmin);
 
 /**
  * @swagger
@@ -306,7 +307,7 @@ router.patch('/update-phone', updatePhoneAdmin)
  *         description: Rol actualizado exitosamente
  */
 
-router.patch('/update-role', updateRoleAdmin)
+router.patch("/update-role", verifyAuthToken, updateRoleAdmin);
 
 /**
  * @swagger
@@ -333,7 +334,7 @@ router.patch('/update-role', updateRoleAdmin)
  *         description: Número de teléfono de usuario actualizado exitosamente
  */
 
-router.patch('/update-image', updateImageAdmin)
+router.patch("/update-image", verifyAuthToken, updateImageAdmin);
 
 /**
  * @swagger
@@ -407,6 +408,6 @@ router.patch('/update-image', updateImageAdmin)
  *                         description: ID del usuario
  */
 
-router.get('/order/user/:idUser', getOrdersByIdUser)
+router.get("/order/user/:idUser", getOrdersByIdUser);
 
-module.exports = router
+module.exports = router;
