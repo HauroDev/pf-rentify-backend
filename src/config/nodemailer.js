@@ -18,6 +18,7 @@ oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN })
 
 const pass = process.env.EMAIL_PASS
 const email = process.env.EMAIL_RENTIFY
+const baseUrl =process.env.URL_CLIENTE_PRUEBAS
 
 const transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -119,11 +120,10 @@ const sendWelcomeEmail = async (userEmail) => {
       ]
     })
 
-    console.log('Correo electrónico enviado correctamente')
+    console.log('Email sent successfully');
   } catch (error) {
-    console.log('Error al enviar el correo electrónico:', error)
-    // Enviar una respuesta de error al cliente
-    throw new Error('Error al enviar el correo electrónico')
+    console.log('Error sending email:', error);
+    throw new Error('Error sending email');
   }
 }
 
@@ -234,11 +234,10 @@ const sendProductCreatedEmail = async (userEmail, product) => {
       ]
     })
 
-    console.log('Correo electrónico enviado correctamente')
+    console.log('Email sent successfully');
   } catch (error) {
-    console.log('Error al enviar el correo electrónico:', error)
-    // Enviar una respuesta de error al cliente
-    throw new Error('Error al enviar el correo electrónico')
+    console.log('Error sending email:', error);
+    throw new Error('Error sending email');
   }
 }
 
@@ -337,11 +336,10 @@ const sendPaymentPendingEmail = async (
       ]
     })
 
-    console.log('Correo electrónico enviado correctamente')
+    console.log('Email sent successfully');
   } catch (error) {
-    console.log('Error al enviar el correo electrónico:', error)
-    // Enviar una respuesta de error al cliente
-    throw new Error('Error al enviar el correo electrónico')
+    console.log('Error sending email:', error);
+    throw new Error('Error sending email');
   }
 }
 
@@ -442,10 +440,9 @@ const sendPaymentConfirmationEmail = async (
       console.log('Email sent successfully')
     } catch (error) {
       console.log('Error sending email:', error)
-      // Send an error response to the client
       throw new Error('Error sending email')
     }
-  }
+}
   
 const sendUserStatusChangeEmail = async (userEmail, newStatus) => {
   try {
@@ -533,18 +530,228 @@ const sendUserStatusChangeEmail = async (userEmail, newStatus) => {
       ]
     })
 
-    console.log('Correo electrónico enviado correctamente')
+    console.log('Email sent successfully');
   } catch (error) {
-    console.log('Error al enviar el correo electrónico:', error)
-    // Enviar una respuesta de error al cliente
-    throw new Error('Error al enviar el correo electrónico')
+    console.log('Error sending email:', error);
+    throw new Error('Error sending email');
   }
 }
+
+const sendOwnerEmail = async (nameUser, emailUser, ownerEmail, product) => {
+  const productLink = `${baseUrl}/product/${product.idProd}`;
+  
+  try {
+    await transporter.sendMail({
+      subject: 'Interest in Product - Rent-ify',
+      from: 'Rent-ify <rent.ify.contact@gmail.com>',
+      to: ownerEmail,
+      html: `<!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="UTF-8">
+          <title>Interest in Product - Rent-ify</title>
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <style>
+            /* General styles */
+            body {
+              font-family: Arial, sans-serif;
+              font-size: 16px;
+              line-height: 1.5;
+              color: #333333;
+              background-color: #f0f0f0;
+              margin: 0;
+              padding: 0;
+            }
+
+            /* Main container */
+            .container {
+              max-width: 600px;
+              margin: 0 auto;
+              padding: 5%;
+              background-color: #ffffff;
+              border: 1px solid #dddddd;
+              border-radius: 4px;
+              text-align: center;
+            }
+
+            /* Heading */
+            h1 {
+              font-size: 24px;
+              font-weight: bold;
+              color: #333333;
+              margin: 20px 0;
+            }
+
+            /* Product card */
+            .card {
+              display: inline-block;
+              max-width: 300px;
+              background-color: #ffffff;
+              border: 1px solid #dddddd;
+              border-radius: 4px;
+              padding: 10px;
+              margin-right: 10px;
+              margin-bottom: 10px;
+              text-align: center;
+            }
+
+            /* Product image */
+            .card img {
+              max-width: 100%;
+              height: auto;
+            }
+
+            /* Logo */
+            .logo {
+              text-align: center;
+              margin-bottom: 20px;
+            }
+
+            /* Paragraphs */
+            p {
+              margin-bottom: 20px;
+            }
+
+            /* Signature */
+            .signature {
+              margin-top: 20px;
+              font-style: italic;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="logo">
+              <img src="cid:logo" alt="Rent-ify Logo">
+            </div>
+            <h1>Interest in Product - Rent-ify</h1>
+            <p>Name: ${nameUser}</p>
+            <p>This user is interested in the product. <a href="mailto:${emailUser}?subject=Regarding Product Inquiry - Rent-ify">Contact them</a> for further details.</p>
+            <a href="${productLink}">
+              <div class="card">
+                <img src="${product.image}" alt="Product Image">
+                <h2>${product.name}</h2>
+                <p>Description: ${product.description}</p>
+                <p>Price: $${product.price}</p>
+                <p>Location: ${product.location}, ${product.state}, ${product.country.name}</p>
+              </div>
+            </a>
+           </div>
+        </body>
+        </html>
+        `,
+      attachments: [
+        {
+          filename: 'logo.png',
+          path: logoPath,
+          cid: 'logo'
+        }
+      ]
+    });
+
+    console.log('Email sent successfully');
+  } catch (error) {
+    console.log('Error sending email:', error);
+    throw new Error('Error sending email');
+  }
+};
+
+const sendContactEmail = async (nameUser, userEmail, message) => {
+  try {
+    await transporter.sendMail({
+      subject: 'Contact Form - Support',
+      from: 'Rent-ify <rent.ify.contact@gmail.com>',
+      to: 'rent.ify.contact@gmail.com',
+      html: `<!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="UTF-8">
+          <title>Contact Form - Support</title>
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <style>
+            /* General styles */
+            body {
+              font-family: Arial, sans-serif;
+              font-size: 16px;
+              line-height: 1.5;
+              color: #333333;
+              background-color: #f0f0f0;
+              margin: 0;
+              padding: 0;
+            }
+  
+            /* Main container */
+            .container {
+              max-width: 600px;
+              margin: 0 auto;
+              padding: 5%;
+              background-color: #ffffff;
+              border: 1px solid #dddddd;
+              border-radius: 4px;
+              text-align: center;
+            }
+  
+            /* Heading */
+            h1 {
+              font-size: 24px;
+              font-weight: bold;
+              color: #333333;
+              margin: 20px 0;
+            }
+  
+            /* Paragraphs */
+            p {
+              margin-bottom: 20px;
+            }
+  
+            /* Signature */
+            .signature {
+              margin-top: 20px;
+              font-style: italic;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+          <div class="logo">
+              <img src="cid:logo" alt="Rent-ify Logo">
+            </div>
+            <h1>Contact Form - Support</h1>
+            <p>Name: ${nameUser}</p>
+            <p>Email: ${userEmail}</p>
+            <p>Message: ${message}</p>
+            <p>Please contact the user by clicking <a href="mailto:${userEmail}?subject=Contact%20Support%20-%20Rent-ify">Contact them</a>.</p>
+          </div>
+        </body>
+        </html>
+        `,
+      attachments: [
+        {
+          filename: 'logo.png',
+          path: logoPath,
+          cid: 'logo'
+        }
+      ]
+    });
+    console.log('Email sent successfully');
+  } catch (error) {
+    console.log('Error sending email:', error);
+    throw new Error('Error sending email');
+  }
+};
+
+
+
+
+
+ 
 
 module.exports = {
   sendWelcomeEmail,
   sendProductCreatedEmail,
   sendPaymentPendingEmail,
   sendPaymentConfirmationEmail,
-  sendUserStatusChangeEmail
+  sendUserStatusChangeEmail,
+  sendContactEmail,
+  sendOwnerEmail
 }
