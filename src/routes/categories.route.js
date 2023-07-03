@@ -4,7 +4,7 @@ const {
   getCategories,
   createCategories
 } = require('../controller/categories.controller.js')
-const { isAdmin } = require('../utils/isAdmin.js')
+const { isBannedUser, isAdmin } = require('../utils/usersVerify')
 
 const router = Router()
 // schema Categories
@@ -67,6 +67,6 @@ router.get('/', getCategories)
  *               $ref: '#/components/schemas/Category'
  */
 
-router.post('/', verifyAuthToken, isAdmin, createCategories) // ADMIN
+router.post('/', verifyAuthToken, isBannedUser, isAdmin, createCategories) // ADMIN
 
 module.exports = router

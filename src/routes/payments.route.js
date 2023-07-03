@@ -10,6 +10,7 @@ const {
   confirmSuscription,
   redirectToWebSiteHome
 } = require('../controller/payments.controller.js')
+const { isBannedUser } = require('../utils/usersVerify')
 
 const router = Router()
 
@@ -66,6 +67,7 @@ const router = Router()
 router.post(
   '/suscription',
   verifyAuthToken,
+  isBannedUser,
   verificationCountryMercadoPago,
   createSuscription
 )
@@ -120,6 +122,7 @@ router.post(
 router.post(
   '/order',
   verifyAuthToken,
+  isBannedUser,
   verificationCountryMercadoPago,
   createOrder
 )
