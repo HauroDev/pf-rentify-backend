@@ -1,6 +1,7 @@
 const { CustomError } = require('../utils/customErrors.js')
 const { Country } = require('../db/db.js')
 const { default: axios } = require('axios')
+const { API_KEY_GEO } = require('../../config.js')
 
 const getCountries = async (_req, res) => {
   try {
@@ -75,4 +76,28 @@ const getChildrenGeoname = async (req, res) => {
     res.status(500).json({ error: 'Api geonames no responde' })
   }
 }
-module.exports = { getCountries, createCountry, getChildrenGeoname }
+
+const getCountryByIp = async (req, res) => {
+  const { ip } = req.params
+  try {
+    const {
+      data: { country_geoname_id: geonameId }
+    } = await axios.get(
+      `https://ipgeolocation.abstractapi.com/v1/?fields=country_geoname_id&api_key=${API_KEY_GEO}&ip_address=${ip}`
+    )
+
+    const country = await Country.findOne({ where: { geonameId } })
+
+    if (!country) throw new CustomError(404, 'Country is not register')
+
+    res.json(country)
+  } catch (error) {
+    res.status(error.status || 500).json({ error: error.message })
+  }
+}
+module.exports = {
+  getCountryByIp,
+  getCountries,
+  createCountry,
+  getChildrenGeoname
+}
