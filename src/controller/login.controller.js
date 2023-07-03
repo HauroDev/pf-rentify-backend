@@ -9,6 +9,8 @@ const login = async (req, res) => {
       where: { [Op.and]: [{ uid }, { email }] }
     })
 
+    // cuando el usuario se loguea y esta baneado , mandar un error
+
     if (!user) {
       throw new Error(402, 'Email or Password not valid')
     }
