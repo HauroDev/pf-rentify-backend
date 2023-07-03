@@ -3,14 +3,11 @@ const verifyAuthToken = require('../utils/verifyToken')
 const {
   createCountry,
   getCountries,
-  getChildrenGeoname
+  getChildrenGeoname,
+  getCountryByIp
 } = require('../controller/countries.controler')
 
 const { isBannedUser, isAdmin } = require('../utils/usersVerify')
-const { default: axios } = require('axios')
-const { API_KEY_GEO } = require('../../config')
-const { Country } = require('../db/db')
-const { CustomError } = require('../utils/customErrors')
 
 const router = Router()
 
@@ -85,23 +82,6 @@ router.get('/childrens/:id', getChildrenGeoname)
  *         description: Error interno del servidor.
  */
 
-router.get('/geolocation/:ip', async (req, res) => {
-  const { ip } = req.params
-  try {
-    const {
-      data: { country_geoname_id: geonameId }
-    } = await axios.get(
-      `https://ipgeolocation.abstractapi.com/v1/?fields=country_geoname_id&api_key=${API_KEY_GEO}&ip_address=${ip}`
-    )
-
-    const country = await Country.findOne({ where: { geonameId } })
-
-    if (!country) throw new CustomError(404, 'Country is not register')
-
-    res.json(country)
-  } catch (error) {
-    res.status(error.status || 500).json({ error: error.message })
-  }
-})
+router.get('/geolocation/:ip', getCountryByIp)
 
 module.exports = router
