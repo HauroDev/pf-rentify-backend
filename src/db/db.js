@@ -50,7 +50,8 @@ const {
   Suscription,
   Category,
   Country,
-  UserProduct
+  UserProduct,
+  BlackList
 } = sequelize.models
 
 // un Usuario tiene muchas Ordenes/Pagos,y una Orden/Pago tiene un solo Usuario
@@ -106,5 +107,7 @@ module.exports = {
   Suscription,
   Category,
   Country,
-  UserProduct
+  UserProduct,
+  BlackList,
+  ...sequelize.models
 }
