@@ -3,7 +3,7 @@ const { CustomError } = require('../utils/customErrors')
 const { Op } = require('sequelize')
 const { getNextPage } = require('../utils/paginado')
 
-//Configuración de Nodemailer
+// Configuración de Nodemailer
 const { sendWelcomeEmail } = require('../config/nodemailer')
 const { sendUserStatusChangeEmail } = require('../config/nodemailer')
 // -- Obtener ususario por id (get userById)
@@ -105,12 +105,6 @@ const getAllUsers = async (req, res) => {
 }
 
 const getUsersByName = async (req, res) => {
-  const roleUser = req.role
-
-  if (roleUser !== 'admin' || roleUser !== 'sudo') {
-    throw new CustomError(400, 'No eres un admin')
-  }
-
   const { name } = req.query
   let { offset, limit } = req.query
 
@@ -173,7 +167,7 @@ const getUsersByStatus = async (req, res) => {
     })
   } catch (error) {
     console.log(error)
-    return res
+    res
       .status(500)
       .json({ error: 'Error en la búsqueda de usuarios por estado' })
   }
@@ -216,7 +210,7 @@ const getUsersByMembership = async (req, res) => {
     })
   } catch (error) {
     console.error('Error getting users by membership:', error)
-    return res.status(500).json({ error: 'Internal server error' })
+    res.status(500).json({ error: 'Internal server error' })
   }
 }
 
@@ -293,7 +287,7 @@ const updateUserPhone = async (req, res) => {
       .json({ message: 'User phone number updated successfully' })
   } catch (error) {
     console.error('Error updating user phone number:', error)
-    return res.status(500).json({ error: 'Internal server error' })
+    res.status(500).json({ error: 'Internal server error' })
   }
 }
 
@@ -323,16 +317,11 @@ const updateUserEmail = async (req, res) => {
     return res.status(200).json({ message: 'User email updated successfully' })
   } catch (error) {
     console.error('Error updating user email:', error)
-    return res.status(500).json({ error: 'Internal server error' })
+    res.status(500).json({ error: 'Internal server error' })
   }
 }
 
 const updateUserStatus = async (req, res) => {
-  const roleUser = req.role
-
-  if (roleUser !== 'admin' || roleUser !== 'sudo')
-    throw new CustomError(400, 'No eres un admin')
-
   const { idUser, status } = req.body
 
   try {

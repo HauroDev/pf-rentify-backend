@@ -369,7 +369,7 @@ router.put('/update-price', verifyAuthToken, updateProductPrice)
  *       500:
  *         description: Error interno del servidor
  */
-router.put('/update-featured', verifyAuthToken, updateProductIsFeatured) //**PREMIUM - STANDARD */
+router.put('/update-featured', verifyAuthToken, updateProductIsFeatured) // **PREMIUM - STANDARD */
 
 // Get IdProduct
 /**
