@@ -43,8 +43,9 @@ const getStatistics = async (req, res) => {
 const createAdmin = async (req, res) => {
   const roleUser = req.role
 
-  if (roleUser !== 'admin' || roleUser !== 'sudo')
+  if (roleUser !== 'admin' || roleUser !== 'sudo') {
     throw new CustomError(400, 'No eres un admin')
+  }
 
   try {
     const { name, email, phone, image, uid } = req.body
@@ -121,8 +122,9 @@ const getAdminsSudo = async (req, res) => {
 const updateNameAdmin = async (req, res) => {
   const roleUser = req.role
 
-  if (roleUser !== 'admin' || roleUser !== 'sudo')
+  if (roleUser !== 'admin' || roleUser !== 'sudo') {
     throw new CustomError(400, 'No eres un admin')
+  }
 
   const { idUser, name } = req.body
 
@@ -146,8 +148,9 @@ const updateNameAdmin = async (req, res) => {
 const updatePhoneAdmin = async (req, res) => {
   const roleUser = req.role
 
-  if (roleUser !== 'admin' || roleUser !== 'sudo')
+  if (roleUser !== 'admin' || roleUser !== 'sudo') {
     throw new CustomError(400, 'No eres un admin')
+  }
 
   const { idUser, phone } = req.body
 
@@ -159,7 +162,6 @@ const updatePhoneAdmin = async (req, res) => {
     if (!phone) throw new CustomError(400, 'phone is required')
 
     user.phone = phone
-
     user.save()
 
     res.json(user)
