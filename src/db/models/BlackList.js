@@ -1,16 +1,16 @@
-const { DataTypes } = require("sequelize");
+const { DataTypes } = require('sequelize')
 
 module.exports = (sequelize) => {
-  sequelize.define("Blacklist", {
+  sequelize.define('Blacklist', {
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
-      autoIncrement: true,
+      autoIncrement: true
     },
     token: {
       type: DataTypes.TEXT,
       allowNull: false,
-      unique: true,
-    },
-  });
-};
+      unique: true
+    }
+  })
+}
