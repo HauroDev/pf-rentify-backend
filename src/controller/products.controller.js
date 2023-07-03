@@ -10,7 +10,7 @@ const { Op } = require('sequelize')
 const { getNextPage } = require('../utils/paginado.js')
 const { CustomError } = require('../utils/customErrors.js')
 //Configuración de Nodemailer
-const { sendProductCreatedEmail} = require("../config/nodemailer")
+const { sendProductCreatedEmail } = require('../config/nodemailer')
 
 const getFilterProducts = async (req, res) => {
   let {
@@ -191,23 +191,23 @@ const createProduct = async (req, res) => {
       // cada categoria encontrada en la asociacion
       // es un objeto JSON por lo que es necesario
       // para editarlo correctamente hacer esto
-      cat = cat.toJSON();
+      cat = cat.toJSON()
 
-      delete cat.createdAt;
-      delete cat.updatedAt;
-      delete cat.CategoryProduct;
+      delete cat.createdAt
+      delete cat.updatedAt
+      delete cat.CategoryProduct
 
-      return cat;
-    });
+      return cat
+    })
 
-    delete countrySearch.createdAt;
-    delete countrySearch.updatedAt;
+    delete countrySearch.createdAt
+    delete countrySearch.updatedAt
 
     // Envío del correo electrónico
-    const { name, price, image } = productDb.toJSON();
-    const productName = name;
-    const userEmail = user.email;
-    await sendProductCreatedEmail(userEmail, { name, price, image });
+    const { name, price, image } = productDb.toJSON()
+    const productName = name
+    const userEmail = user.email
+    await sendProductCreatedEmail(userEmail, { name, price, image })
 
     res.status(200).json({
       ...productDb.toJSON(),
@@ -223,8 +223,9 @@ const createProduct = async (req, res) => {
 const getAllProducts = async (req, res) => {
   const roleUser = req.role
 
-  if(roleUser !== "admin"||roleUser !=="sudo") throw new CustomError(400, "No eres un admin")
-  
+  if (roleUser !== 'admin' || roleUser !== 'sudo')
+    throw new CustomError(400, 'No eres un admin')
+
   try {
     let { offset, limit } = req.query
 
@@ -298,7 +299,8 @@ const getProductById = async (req, res) => {
           as: 'user',
           attributes: ['name']
         }
-      ]
+      ],
+      order: [['createdAt', 'DESC']]
     })
 
     const promises = [1, 2, 3, 4, 5].map((puntuation) =>
@@ -464,7 +466,8 @@ const updateProductIsFeatured = async (req, res) => {
 const getProductByFeature = async (req, res) => {
   const roleUser = req.role
 
-  if(roleUser !== "admin"||roleUser !=="sudo") throw new CustomError(400, "No eres un admin")
+  if (roleUser !== 'admin' || roleUser !== 'sudo')
+    throw new CustomError(400, 'No eres un admin')
 
   try {
     const { isFeatured } = req.query // Obtén el parámetro de consulta 'feature'
