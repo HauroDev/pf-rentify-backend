@@ -1,6 +1,5 @@
 const { Router } = require('express')
 const verifyAuthToken = require('../utils/verifyToken')
-const { isAdmin } = require('../utils/isAdmin.js')
 const {
   postUser,
   getUser,
@@ -14,6 +13,7 @@ const {
   getUsersByMembership,
   updateUserImage
 } = require('../controller/users.controller.js')
+const { isBannedUser, isAdmin } = require('../utils/usersVerify')
 
 const router = Router()
 
@@ -81,7 +81,7 @@ const router = Router()
  *       500:
  *         description: Error interno del servidor
  */
-router.get('/', verifyAuthToken, isAdmin, getUsersByStatus) // ADMIN
+router.get('/', verifyAuthToken, isBannedUser, isAdmin, getUsersByStatus) // ADMIN
 /**
  * @swagger
  * /user/all:
@@ -128,7 +128,7 @@ router.get('/', verifyAuthToken, isAdmin, getUsersByStatus) // ADMIN
  *         description: Error interno del servidor
  */
 
-router.get('/all', verifyAuthToken, isAdmin, getAllUsers) // ADMIN
+router.get('/all', verifyAuthToken, isBannedUser, isAdmin, getAllUsers) // ADMIN
 /**
  * @swagger
  * /user/name:
@@ -156,7 +156,7 @@ router.get('/all', verifyAuthToken, isAdmin, getAllUsers) // ADMIN
  *         description: Error interno del servidor
  */
 
-router.get('/name', verifyAuthToken, isAdmin, getUsersByName) // ADMIN
+router.get('/name', verifyAuthToken, isBannedUser, isAdmin, getUsersByName) // ADMIN
 
 /**
  * @swagger
@@ -186,7 +186,13 @@ router.get('/name', verifyAuthToken, isAdmin, getUsersByName) // ADMIN
  *       500:
  *         description: Error interno del servidor
  */
-router.get('/membership', verifyAuthToken, isAdmin, getUsersByMembership) // ADMIN
+router.get(
+  '/membership',
+  verifyAuthToken,
+  isBannedUser,
+  isAdmin,
+  getUsersByMembership
+) // ADMIN
 
 // metodos post
 
@@ -243,7 +249,7 @@ router.post('/', postUser)
  *       500:
  *         description: Error interno del servidor
  */
-router.put('/update-name', verifyAuthToken, updateUserName)
+router.put('/update-name', verifyAuthToken, isBannedUser, updateUserName)
 /**
  * @swagger
  * /user/update-phone:
@@ -274,7 +280,7 @@ router.put('/update-name', verifyAuthToken, updateUserName)
  *       500:
  *         description: Error interno del servidor
  */
-router.put('/update-phone', verifyAuthToken, updateUserPhone)
+router.put('/update-phone', verifyAuthToken, isBannedUser, updateUserPhone)
 /**
  * @swagger
  * /user/update-email:
@@ -306,7 +312,7 @@ router.put('/update-phone', verifyAuthToken, updateUserPhone)
  *       500:
  *         description: Error interno del servidor
  */
-router.put('/update-email', verifyAuthToken, updateUserEmail)
+router.put('/update-email', verifyAuthToken, isBannedUser, updateUserEmail)
 /**
  * @swagger
  * /user/update-status:
@@ -342,7 +348,13 @@ router.put('/update-email', verifyAuthToken, updateUserEmail)
  *       500:
  *         description: Error interno del servidor
  */
-router.put('/update-status', verifyAuthToken, isAdmin, updateUserStatus) // ADMIN
+router.put(
+  '/update-status',
+  verifyAuthToken,
+  isBannedUser,
+  isAdmin,
+  updateUserStatus
+) // ADMIN
 /**
  * @swagger
  * /user/update-membership:
@@ -412,7 +424,7 @@ router.put('/update-status', verifyAuthToken, isAdmin, updateUserStatus) // ADMI
  *       500:
  *         description: Error interno del servidor
  */
-router.put('/update-image', verifyAuthToken, updateUserImage)
+router.put('/update-image', verifyAuthToken, isBannedUser, updateUserImage)
 
 // metodos delete
 // router.delete('/:id', deleteUser);
@@ -442,6 +454,6 @@ router.put('/update-image', verifyAuthToken, updateUserImage)
  *         description: Usuario no encontrado
  */
 
-router.get('/:id', verifyAuthToken, getUser)
+router.get('/:id', verifyAuthToken, isBannedUser, getUser)
 
 module.exports = router

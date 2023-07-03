@@ -5,7 +5,8 @@ const {
   getCountries,
   getChildrenGeoname
 } = require('../controller/countries.controler')
-const { isAdmin } = require('../utils/isAdmin.js')
+
+const { isBannedUser, isAdmin } = require('../utils/usersVerify')
 
 const router = Router()
 
@@ -24,7 +25,7 @@ const router = Router()
  */
 router.get('/', getCountries)
 
-router.post('/', verifyAuthToken, isAdmin, createCountry) // ADMINS
+router.post('/', verifyAuthToken, isBannedUser, isAdmin, createCountry) // ADMINS
 
 router.get('/childrens/:id', getChildrenGeoname)
 

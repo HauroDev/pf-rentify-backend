@@ -12,7 +12,8 @@ const {
   getProductByFeature,
   getFilterProducts
 } = require('../controller/products.controller.js')
-const { isAdmin } = require('../utils/isAdmin.js')
+
+const { isBannedUser, isAdmin } = require('../utils/usersVerify')
 
 const router = Router()
 
@@ -112,7 +113,7 @@ const router = Router()
  *       '500':
  *         description: Error interno del servidor
  */
-router.get('/all', verifyAuthToken, isAdmin, getAllProducts) // ADMIN
+router.get('/all', verifyAuthToken, isBannedUser, isAdmin, getAllProducts) // ADMIN
 /**
  * @swagger
  * /products:
@@ -240,7 +241,7 @@ router.get('/isFeatured/', verifyAuthToken, isAdmin, getProductByFeature) // ADM
  *       400:
  *         description: Error en los parámetros de entrada
  */
-router.post('/', verifyAuthToken, createProduct)
+router.post('/', verifyAuthToken, isBannedUser, createProduct)
 
 /**
  * @swagger
@@ -276,7 +277,12 @@ router.post('/', verifyAuthToken, createProduct)
  *       500:
  *         description: Error interno del servidor
  */
-router.put('/update-status', verifyAuthToken, updateProductstatusPub)
+router.put(
+  '/update-status',
+  verifyAuthToken,
+  isBannedUser,
+  updateProductstatusPub
+)
 /**
  * @swagger
  * /products/update-name:
@@ -307,7 +313,7 @@ router.put('/update-status', verifyAuthToken, updateProductstatusPub)
  *       500:
  *         description: Error interno del servidor
  */
-router.put('/update-name', verifyAuthToken, updateProductName)
+router.put('/update-name', verifyAuthToken, isBannedUser, updateProductName)
 /**
  * @swagger
  * /products/update-price:
@@ -338,7 +344,7 @@ router.put('/update-name', verifyAuthToken, updateProductName)
  *       500:
  *         description: Error interno del servidor
  */
-router.put('/update-price', verifyAuthToken, updateProductPrice)
+router.put('/update-price', verifyAuthToken, isBannedUser, updateProductPrice)
 /**
  * @swagger
  * /products/update-featured:
@@ -369,7 +375,12 @@ router.put('/update-price', verifyAuthToken, updateProductPrice)
  *       500:
  *         description: Error interno del servidor
  */
-router.put('/update-featured', verifyAuthToken, updateProductIsFeatured) // **PREMIUM - STANDARD */
+router.put(
+  '/update-featured',
+  verifyAuthToken,
+  isBannedUser,
+  updateProductIsFeatured
+) // **PREMIUM - STANDARD */
 
 // Get IdProduct
 /**
@@ -428,5 +439,5 @@ router.get('/:id', getProductById)
  *         description: Error interno del servidor
  */
 
-router.get('/user/:id', verifyAuthToken, getUserProducts)
+router.get('/user/:id', verifyAuthToken, isBannedUser, getUserProducts)
 module.exports = router

@@ -10,7 +10,7 @@ const {
   updateImageAdmin,
   getOrdersByIdUser
 } = require('../controller/admins.controller.js')
-const { isSudo, isAdmin } = require('../utils/isAdmin')
+const { isSudo, isAdmin, isBannedUser } = require('../utils/usersVerify.js')
 
 const router = Router()
 /**
@@ -112,7 +112,7 @@ const router = Router()
  *                         description: Total de suscripciones en esa categoría.
  */
 
-router.get('/statistics', verifyAuthToken, isAdmin, getStatistics)
+router.get('/statistics', verifyAuthToken, isBannedUser, isAdmin, getStatistics)
 /**
  * @swagger
  * /admin/admins-sudo:
@@ -145,7 +145,13 @@ router.get('/statistics', verifyAuthToken, isAdmin, getStatistics)
  *         description: Error interno del servidor
  */
 
-router.get('/admins-sudo', verifyAuthToken, isAdmin, getAdminsSudo)
+router.get(
+  '/admins-sudo',
+  verifyAuthToken,
+  isBannedUser,
+  isAdmin,
+  getAdminsSudo
+)
 
 /**
  * @swagger
@@ -224,7 +230,7 @@ router.get('/admins-sudo', verifyAuthToken, isAdmin, getAdminsSudo)
  *                   description: Fecha y hora de creación del usuario administrador.
  */
 
-router.post('/create-admin', verifyAuthToken, isSudo, createAdmin)
+router.post('/create-admin', verifyAuthToken, isBannedUser, isSudo, createAdmin)
 
 /**
  * @swagger
@@ -251,7 +257,13 @@ router.post('/create-admin', verifyAuthToken, isSudo, createAdmin)
  *         description: nombre de perfil actualizado exitosamente
  */
 
-router.patch('/update-name', verifyAuthToken, isAdmin, updateNameAdmin)
+router.patch(
+  '/update-name',
+  verifyAuthToken,
+  isBannedUser,
+  isAdmin,
+  updateNameAdmin
+)
 
 /**
  * @swagger
@@ -278,7 +290,13 @@ router.patch('/update-name', verifyAuthToken, isAdmin, updateNameAdmin)
  *         description: Número de teléfono actualizado exitosamente
  */
 
-router.patch('/update-phone', verifyAuthToken, isAdmin, updatePhoneAdmin)
+router.patch(
+  '/update-phone',
+  verifyAuthToken,
+  isBannedUser,
+  isAdmin,
+  updatePhoneAdmin
+)
 
 /**
  * @swagger
@@ -308,7 +326,13 @@ router.patch('/update-phone', verifyAuthToken, isAdmin, updatePhoneAdmin)
  *         description: Rol actualizado exitosamente
  */
 
-router.patch('/update-role', verifyAuthToken, isAdmin, updateRoleAdmin)
+router.patch(
+  '/update-role',
+  verifyAuthToken,
+  isBannedUser,
+  isAdmin,
+  updateRoleAdmin
+)
 
 /**
  * @swagger
@@ -335,7 +359,13 @@ router.patch('/update-role', verifyAuthToken, isAdmin, updateRoleAdmin)
  *         description: Número de teléfono de usuario actualizado exitosamente
  */
 
-router.patch('/update-image', verifyAuthToken, isAdmin, updateImageAdmin)
+router.patch(
+  '/update-image',
+  verifyAuthToken,
+  isBannedUser,
+  isAdmin,
+  updateImageAdmin
+)
 
 /**
  * @swagger
@@ -409,6 +439,12 @@ router.patch('/update-image', verifyAuthToken, isAdmin, updateImageAdmin)
  *                         description: ID del usuario
  */
 
-router.get('/order/user/:idUser', verifyAuthToken, isAdmin, getOrdersByIdUser)
+router.get(
+  '/order/user/:idUser',
+  verifyAuthToken,
+  isBannedUser,
+  isAdmin,
+  getOrdersByIdUser
+)
 
 module.exports = router

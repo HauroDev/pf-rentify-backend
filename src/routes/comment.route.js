@@ -1,5 +1,4 @@
 const { Router } = require('express')
-const { isAdmin } = require('../utils/isAdmin.js')
 const verifyAuthToken = require('../utils/verifyToken')
 const {
   newComment,
@@ -7,6 +6,7 @@ const {
   editComment,
   deletedComment
 } = require('../controller/comment.controller.js')
+const { isBannedUser, isAdmin } = require('../utils/usersVerify.js')
 
 const router = Router()
 // schema Comment
@@ -72,7 +72,7 @@ const router = Router()
  *               type: boolean
  */
 
-router.patch('/visual', verifyAuthToken, deletedComment)
+router.patch('/visual', verifyAuthToken, isBannedUser, deletedComment)
 
 /**
  * @swagger
@@ -109,7 +109,7 @@ router.patch('/visual', verifyAuthToken, deletedComment)
  *               $ref: '#/components/schemas/Comment'
  */
 
-router.put('/edit', verifyAuthToken, editComment)
+router.put('/edit', verifyAuthToken, isBannedUser, editComment)
 
 // metodos post
 /**
@@ -135,7 +135,7 @@ router.put('/edit', verifyAuthToken, editComment)
  *               $ref: '#/components/schemas/Comment'
  */
 
-router.post('/', verifyAuthToken, newComment)
+router.post('/', verifyAuthToken, isBannedUser, newComment)
 
 // Get Comments product
 /**
@@ -163,6 +163,12 @@ router.post('/', verifyAuthToken, newComment)
  *               items:
  *                 $ref: '#/components/schemas/Comment'
  */
-router.get('/:idProduct', verifyAuthToken, isAdmin, getCommentsByProductId) // ADMIN
+router.get(
+  '/:idProduct',
+  verifyAuthToken,
+  isBannedUser,
+  isAdmin,
+  getCommentsByProductId
+) // ADMIN
 
 module.exports = router
