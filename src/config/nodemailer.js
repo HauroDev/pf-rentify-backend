@@ -1,12 +1,16 @@
 const nodemailer = require('nodemailer')
 const { google } = require('googleapis')
 const path = require('path')
-require('dotenv').config()
-
-const CLIENT_ID = process.env.CLIENT_ID
-const CLIENT_SECRET = process.env.CLIENT_SECRET
-const REDIRECT_URI = process.env.REDIRECT_URI
-const REFRESH_TOKEN = process.env.REFRESH_TOKEN
+const {
+  CLIENT_ID,
+  CLIENT_SECRET,
+  REDIRECT_URI,
+  EMAIL_RENTIFY,
+  REFRESH_TOKEN,
+  MODE,
+  URL_CLIENTE,
+  URL_CLIENTE_PRUEBAS
+} = require('../../config')
 
 const oAuth2Client = new google.auth.OAuth2(
   CLIENT_ID,
@@ -16,15 +20,13 @@ const oAuth2Client = new google.auth.OAuth2(
 
 oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN })
 
-const pass = process.env.EMAIL_PASS
-const email = process.env.EMAIL_RENTIFY
-const baseUrl =process.env.URL_CLIENTE_PRUEBAS
+const baseUrl = MODE === 'PRODUCTION' ? URL_CLIENTE : URL_CLIENTE_PRUEBAS
 
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
     type: 'OAuth2',
-    user: email,
+    user: EMAIL_RENTIFY,
     clientId: CLIENT_ID,
     clientSecret: CLIENT_SECRET,
     refreshToken: REFRESH_TOKEN,
@@ -120,10 +122,10 @@ const sendWelcomeEmail = async (userEmail) => {
       ]
     })
 
-    console.log('Email sent successfully');
+    console.log('Email sent successfully')
   } catch (error) {
-    console.log('Error sending email:', error);
-    throw new Error('Error sending email');
+    console.log('Error sending email:', error)
+    throw new Error('Error sending email')
   }
 }
 
@@ -234,10 +236,10 @@ const sendProductCreatedEmail = async (userEmail, product) => {
       ]
     })
 
-    console.log('Email sent successfully');
+    console.log('Email sent successfully')
   } catch (error) {
-    console.log('Error sending email:', error);
-    throw new Error('Error sending email');
+    console.log('Error sending email:', error)
+    throw new Error('Error sending email')
   }
 }
 
@@ -336,26 +338,26 @@ const sendPaymentPendingEmail = async (
       ]
     })
 
-    console.log('Email sent successfully');
+    console.log('Email sent successfully')
   } catch (error) {
-    console.log('Error sending email:', error);
-    throw new Error('Error sending email');
+    console.log('Error sending email:', error)
+    throw new Error('Error sending email')
   }
 }
 
 const sendPaymentConfirmationEmail = async (
-    userEmail,
-    paymentAmount,
-    itemCount
-  ) => {
-    try {
-      console.log('userEmail:', userEmail)
-  
-      await transporter.sendMail({
-        subject: 'Payment Confirmation - Rent-ify',
-        from: 'Rent-ify <rent.ify.contact@gmail.com>',
-        to: userEmail,
-        html: `<!DOCTYPE html>
+  userEmail,
+  paymentAmount,
+  itemCount
+) => {
+  try {
+    console.log('userEmail:', userEmail)
+
+    await transporter.sendMail({
+      subject: 'Payment Confirmation - Rent-ify',
+      from: 'Rent-ify <rent.ify.contact@gmail.com>',
+      to: userEmail,
+      html: `<!DOCTYPE html>
           <html>
           <head>
             <meta charset="UTF-8">
@@ -428,22 +430,22 @@ const sendPaymentConfirmationEmail = async (
           </body>
           </html>
         `,
-        attachments: [
-          {
-            filename: 'logo.png',
-            path: logoPath,
-            cid: 'logo'
-          }
-        ]
-      })
-  
-      console.log('Email sent successfully')
-    } catch (error) {
-      console.log('Error sending email:', error)
-      throw new Error('Error sending email')
-    }
+      attachments: [
+        {
+          filename: 'logo.png',
+          path: logoPath,
+          cid: 'logo'
+        }
+      ]
+    })
+
+    console.log('Email sent successfully')
+  } catch (error) {
+    console.log('Error sending email:', error)
+    throw new Error('Error sending email')
+  }
 }
-  
+
 const sendUserStatusChangeEmail = async (userEmail, newStatus) => {
   try {
     console.log('userEmail:', userEmail)
@@ -530,16 +532,16 @@ const sendUserStatusChangeEmail = async (userEmail, newStatus) => {
       ]
     })
 
-    console.log('Email sent successfully');
+    console.log('Email sent successfully')
   } catch (error) {
-    console.log('Error sending email:', error);
-    throw new Error('Error sending email');
+    console.log('Error sending email:', error)
+    throw new Error('Error sending email')
   }
 }
 
 const sendOwnerEmail = async (nameUser, emailUser, ownerEmail, product) => {
-  const productLink = `${baseUrl}/product/${product.idProd}`;
-  
+  const productLink = `${baseUrl}/product/${product.idProd}`
+
   try {
     await transporter.sendMail({
       subject: 'Interest in Product - Rent-ify',
@@ -647,14 +649,14 @@ const sendOwnerEmail = async (nameUser, emailUser, ownerEmail, product) => {
           cid: 'logo'
         }
       ]
-    });
+    })
 
-    console.log('Email sent successfully');
+    console.log('Email sent successfully')
   } catch (error) {
-    console.log('Error sending email:', error);
-    throw new Error('Error sending email');
+    console.log('Error sending email:', error)
+    throw new Error('Error sending email')
   }
-};
+}
 
 const sendContactEmail = async (nameUser, userEmail, message) => {
   try {
@@ -732,19 +734,13 @@ const sendContactEmail = async (nameUser, userEmail, message) => {
           cid: 'logo'
         }
       ]
-    });
-    console.log('Email sent successfully');
+    })
+    console.log('Email sent successfully')
   } catch (error) {
-    console.log('Error sending email:', error);
-    throw new Error('Error sending email');
+    console.log('Error sending email:', error)
+    throw new Error('Error sending email')
   }
-};
-
-
-
-
-
- 
+}
 
 module.exports = {
   sendWelcomeEmail,
