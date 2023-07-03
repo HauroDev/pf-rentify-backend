@@ -4,7 +4,7 @@ const {
   newComment,
   getCommentsByProductId
 } = require('../controller/comment.controller.js')
-const { isAdmin } = require('@firebase/util')
+const { isAdmin } = require('../utils/isAdmin.js')
 
 const router = Router()
 // schema Comment
