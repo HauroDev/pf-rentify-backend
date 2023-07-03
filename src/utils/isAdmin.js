@@ -2,7 +2,7 @@ const isAdmin = (req, res, next) => {
   const { role } = req
 
   if (['sudo', 'admin'].includes(role)) next()
-  else res.status(409).json({ error: 'User not Authorized' })
+  else res.status(409).json({ error: 'User is not Authorized' })
 }
 
 const isSudo = (req, res, next) => {

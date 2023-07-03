@@ -12,12 +12,7 @@ const { CustomError } = require('../utils/customErrors.js')
 const { getNextPage } = require('../utils/paginado.js')
 
 const getStatistics = async (req, res) => {
-  const roleUser = req.role
-
   try {
-    if (roleUser !== 'admin' || roleUser !== 'sudo') {
-      throw new CustomError(400, 'No eres un admin')
-    }
     const [users, products, usersMembership, featured, orders, suscriptions] =
       await Promise.all([
         getStatisticsUsers(),
@@ -42,12 +37,7 @@ const getStatistics = async (req, res) => {
 }
 
 const createAdmin = async (req, res) => {
-  const roleUser = req.role
-
   try {
-    if (roleUser !== 'admin' || roleUser !== 'sudo') {
-      throw new CustomError(400, 'No eres un admin')
-    }
     const { name, email, phone, image, uid } = req.body
 
     const existingUser = await User.findOne({ where: { email } })
@@ -114,20 +104,14 @@ const getAdminsSudo = async (req, res) => {
       results: rows
     })
   } catch (error) {
-    console.error('Error al obtener los usuarios:', error)
-    throw error
+    res.status(500).json({ error: error.message })
   }
 }
 
 const updateNameAdmin = async (req, res) => {
-  const roleUser = req.role
-
   const { idUser, name } = req.body
 
   try {
-    if (roleUser !== 'admin' || roleUser !== 'sudo') {
-      throw new CustomError(400, 'No eres un admin')
-    }
     const user = await User.findByPk(idUser)
 
     if (!user) throw new CustomError(404, 'user is not exists')
@@ -145,14 +129,9 @@ const updateNameAdmin = async (req, res) => {
 }
 
 const updatePhoneAdmin = async (req, res) => {
-  const roleUser = req.role
-
   const { idUser, phone } = req.body
 
   try {
-    if (roleUser !== 'admin' || roleUser !== 'sudo') {
-      throw new CustomError(400, 'No eres un admin')
-    }
     const user = await User.findByPk(idUser)
 
     if (!user) throw new CustomError(404, 'user is not exists')
@@ -169,15 +148,9 @@ const updatePhoneAdmin = async (req, res) => {
 }
 
 const updateRoleAdmin = async (req, res) => {
-  const roleUser = req.role
-
   const { idUser, role } = req.body
 
   try {
-    if (roleUser !== 'admin' || roleUser !== 'sudo') {
-      throw new CustomError(400, 'No eres un admin')
-    }
-
     const user = await User.findByPk(idUser)
 
     if (!user) throw new CustomError(404, 'user is not exists')
@@ -199,14 +172,9 @@ const updateRoleAdmin = async (req, res) => {
 }
 
 const updateImageAdmin = async (req, res) => {
-  const roleUser = req.role
-
   const { idUser, image } = req.body
 
   try {
-    if (roleUser !== 'admin' || roleUser !== 'sudo') {
-      throw new CustomError(400, 'No eres un admin')
-    }
     const user = await User.findByPk(idUser)
 
     if (!user) throw new CustomError(404, 'user is not exists')
