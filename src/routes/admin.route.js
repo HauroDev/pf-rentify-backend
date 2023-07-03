@@ -10,8 +10,7 @@ const {
   updateImageAdmin,
   getOrdersByIdUser
 } = require('../controller/admins.controller.js')
-const { isAdmin } = require('@firebase/util')
-const { isSudo } = require('../utils/isAdmin')
+const { isSudo, isAdmin } = require('../utils/isAdmin')
 
 const router = Router()
 /**

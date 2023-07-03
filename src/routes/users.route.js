@@ -1,5 +1,6 @@
 const { Router } = require('express')
 const verifyAuthToken = require('../utils/verifyToken')
+const { isAdmin } = require('../utils/isAdmin.js')
 const {
   postUser,
   getUser,
@@ -10,11 +11,9 @@ const {
   updateUserPhone,
   updateUserEmail,
   updateUserStatus,
-  // updateUserMembership,
   getUsersByMembership,
   updateUserImage
 } = require('../controller/users.controller.js')
-const { isAdmin } = require('@firebase/util')
 
 const router = Router()
 

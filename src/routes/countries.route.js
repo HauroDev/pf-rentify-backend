@@ -5,7 +5,7 @@ const {
   getCountries,
   getChildrenGeoname
 } = require('../controller/countries.controler')
-const { isAdmin } = require('@firebase/util')
+const { isAdmin } = require('../utils/isAdmin.js')
 
 const router = Router()
 
