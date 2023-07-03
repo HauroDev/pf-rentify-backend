@@ -41,7 +41,7 @@ const newComment = async (req, res) => {
     }
 
     const hasCommentedUser = await Comment.findOne({
-      where: { [Op.and]: [{ idUser }, { idProd }] }
+      where: { [Op.and]: [{ idUser }, { idProd }, { commentStatus: true }] }
     })
 
     if (hasCommentedUser) {
