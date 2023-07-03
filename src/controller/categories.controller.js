@@ -4,16 +4,6 @@ const { CustomError } = require('../utils/customErrors')
 const getCategories = async (_req, res) => {
   try {
     const categories = await Category.findAll()
-    //  crear un endpoint que agrege esto
-    //
-    // {
-    //   include: {
-    //     model: Product,
-    //     as: 'products',
-    //     attributes: ['idProd', 'name'],
-    //     through: { attributes: [] }
-    //   }
-    // }
 
     // agregar paginado a futuro
 
@@ -81,7 +71,7 @@ const createCategories = async (req, res) => {
 
     res.status(201).json(categoryCreated)
   } catch (error) {
-    res.status(error?.status || 500).json({ error: error?.message })
+    res.status(error.status || 500).json({ error: error?.message })
   }
 }
 

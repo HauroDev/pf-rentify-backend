@@ -243,7 +243,7 @@ const getAllProducts = async (req, res) => {
       results: rows
     })
   } catch (error) {
-    res.status(500).json({ error: 'Internal server error' })
+    res.status(500).json({ error: error.message })
   }
 }
 
@@ -391,7 +391,7 @@ const updateProductName = async (req, res) => {
     product.name = name
     await product.save()
 
-    res.status(200).json({ error: 'Product name updated successfully' })
+    res.status(200).json({ message: 'Product name updated successfully' })
   } catch (error) {
     res.status(error.status || 500).json({ error: error.message })
   }
@@ -415,7 +415,7 @@ const updateProductPrice = async (req, res) => {
     product.price = price
     await product.save()
 
-    res.json({ error: 'Product price updated successfully' })
+    res.json({ message: 'Product price updated successfully' })
   } catch (error) {
     res.status(500).json({ error: error.message })
   }

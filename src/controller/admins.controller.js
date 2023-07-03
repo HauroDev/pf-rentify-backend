@@ -11,7 +11,7 @@ const {
 const { CustomError } = require('../utils/customErrors.js')
 const { getNextPage } = require('../utils/paginado.js')
 
-const getStatistics = async (req, res) => {
+const getStatistics = async (_req, res) => {
   try {
     const [users, products, usersMembership, featured, orders, suscriptions] =
       await Promise.all([

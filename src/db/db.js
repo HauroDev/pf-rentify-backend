@@ -99,5 +99,12 @@ Product.belongsTo(Country, { as: 'country', foreignKey: 'idCountry' })
 
 module.exports = {
   conn: sequelize,
-  ...sequelize.models
+  User,
+  Product,
+  Comment,
+  Order,
+  Suscription,
+  Category,
+  Country,
+  UserProduct
 }

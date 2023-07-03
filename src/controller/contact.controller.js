@@ -19,7 +19,7 @@ const contactOwner = async (req, res) => {
 
     res.json({ success: true })
   } catch (error) {
-    res.status(500).json({ error: 'Error sending the email' })
+    res.status(error.status || 500).json({ error: error.message })
   }
 }
 
@@ -41,7 +41,7 @@ const contactUs = async (req, res) => {
 
     res.json({ success: true })
   } catch (error) {
-    res.status(500).json({ error: 'Error sending the email' })
+    res.status(error.status || 500).json({ error: error.message })
   }
 }
 

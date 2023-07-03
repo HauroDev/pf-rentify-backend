@@ -13,10 +13,6 @@ const getCountries = async (_req, res) => {
 }
 
 const createCountry = async (req, res) => {
-  const roleUser = req.role
-
-  if(roleUser !== "admin"||roleUser !=="sudo") throw new CustomError(400, "No eres un admin")
-  
   try {
     const { name, currency } = req.body
 
@@ -63,13 +59,14 @@ const createCountry = async (req, res) => {
 
     res.status(201).json(CountryCreated)
   } catch (error) {
-    res.status(error?.status || 500).json({ error: error.message })
+    res.status(error.status || 500).json({ error: error.message })
   }
 }
-const API = (id) =>
-  `http://api.geonames.org/childrenJSON?geonameId=${id}&username=gabriel`
 
 const getChildrenGeoname = async (req, res) => {
+  const API = (id) =>
+    `http://api.geonames.org/childrenJSON?geonameId=${id}&username=gabriel`
+
   const { id } = req.params
   try {
     const { data } = await axios(API(id))
