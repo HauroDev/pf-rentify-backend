@@ -1,10 +1,12 @@
 const { Router } = require('express')
+const { isAdmin } = require('../utils/isAdmin.js')
 const verifyAuthToken = require('../utils/verifyToken')
 const {
   newComment,
-  getCommentsByProductId
+  getCommentsByProductId,
+  editComment,
+  deletedComment
 } = require('../controller/comment.controller.js')
-const { isAdmin } = require('../utils/isAdmin.js')
 
 const router = Router()
 // schema Comment
@@ -34,6 +36,80 @@ const router = Router()
  *         - idProd
  *         - idUser
  */
+
+// metodos patch y put
+
+/**
+ * @swagger
+ * /comment/visual:
+ *   patch:
+ *     summary: Actualiza el estado de visibilidad de un comentario
+ *     description: Actualiza el estado de visibilidad de un comentario específico
+ *     tags:
+ *       - Comentarios
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               idUser:
+ *                 type: string
+ *                 format: uuid
+ *               idProd:
+ *                 type: integer
+ *               idComment:
+ *                 type: integer
+ *               commentStatus:
+ *                 type: boolean
+ *     responses:
+ *       200:
+ *         description: Estado de visibilidad del comentario actualizado exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: boolean
+ */
+
+router.patch('/visual', verifyAuthToken, deletedComment)
+
+/**
+ * @swagger
+ * /comment/edit:
+ *   put:
+ *     summary: Edita un comentario existente
+ *     description: Edita un comentario existente utilizando los datos proporcionados
+ *     tags:
+ *       - Comentarios
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               idUser:
+ *                 type: string
+ *                 format: uuid
+ *               idProd:
+ *                 type: integer
+ *               idComment:
+ *                 type: integer
+ *               comment:
+ *                 type: string
+ *               puntuation:
+ *                 type: integer
+ *     responses:
+ *       200:
+ *         description: Comentario editado exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Comment'
+ */
+
+router.put('/edit', verifyAuthToken, editComment)
 
 // metodos post
 /**
