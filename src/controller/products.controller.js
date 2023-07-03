@@ -132,7 +132,7 @@ const getFilterProducts = async (req, res) => {
       results: products
     })
   } catch (error) {
-    res.status(500).json({ message: error.message })
+    res.status(500).json({ error: error.message })
   }
 }
 
@@ -215,7 +215,7 @@ const createProduct = async (req, res) => {
     })
   } catch (error) {
     console.log(error)
-    res.status(500).json({ message: error.message })
+    res.status(error.status || 500).json({ error: error.message })
   }
 }
 
@@ -317,7 +317,7 @@ const getProductById = async (req, res) => {
       reviews: { total, average, stars: { s1, s2, s3, s4, s5 }, comments }
     })
   } catch (error) {
-    res.status(500).json({ message: error.message })
+    res.status(error.status || 500).json({ error: error.message })
   }
 }
 
@@ -350,34 +350,29 @@ const updateProductstatusPub = async (req, res) => {
     const product = await Product.findByPk(idProd)
 
     if (!product) {
-      return res.status(404).json({ error: 'Product not found ??' })
+      throw new Error(404, 'Product is not exists')
     }
 
     // Validar que statusPub sea uno de los valores permitidos
     const allowedStatus = ['active', 'inactive', 'deleted']
     if (!allowedStatus.includes(statusPub)) {
-      return res.status(400).json({
-        error:
-          'Invalid value for statusPub. It must be one of: active, inactive, delete'
-      })
+      throw new CustomError(
+        400,
+        'Invalid value for statusPub. It must be one of: active, inactive, delete'
+      )
     }
     // Validar que el estado no sea igual al valor actual en la base de datos
     if (statusPub === product.statusPub) {
-      return res
-        .status(400)
-        .json({ error: 'Status is already set to the provided value' })
+      throw new CustomError(400, 'Status is already set to the provided value')
     }
 
     // Actualizar el statusProd del producto
     product.statusPub = statusPub
     await product.save()
 
-    return res
-      .status(200)
-      .json({ message: 'Product status updated successfully' })
+    res.json({ message: 'Product status updated successfully' })
   } catch (error) {
-    console.error('Error updating product status:', error)
-    return res.status(500).json({ error: 'Internal server error' })
+    res.status(error.status || 500).json({ error: error.message })
   }
 }
 
@@ -389,45 +384,40 @@ const updateProductName = async (req, res) => {
     const product = await Product.findByPk(idProd)
 
     if (!product) {
-      return res.status(404).json({ error: 'Product not found' })
+      throw new CustomError(404, 'Product not found')
     }
 
     // Actualizar el nombre del producto
     product.name = name
     await product.save()
 
-    return res
-      .status(200)
-      .json({ message: 'Product name updated successfully' })
+    res.status(200).json({ error: 'Product name updated successfully' })
   } catch (error) {
-    return res.status(500).json({ error: 'Internal server error' })
+    res.status(error.status || 500).json({ error: error.message })
   }
 }
 
 const updateProductPrice = async (req, res) => {
   const { idProd, price } = req.body
-  if (isNaN(price)) {
-    return res.status(400).json({ error: 'Price must be a number' })
-  }
 
   try {
+    if (isNaN(price)) {
+      throw new CustomError(400, 'Price must be a number')
+    }
     // Buscar el producto por su ID
     const product = await Product.findByPk(idProd)
 
     if (!product) {
-      return res.status(404).json({ error: 'Product not found' })
+      throw new CustomError(404, 'Product not found')
     }
 
     // Actualizar el precio del producto
     product.price = price
     await product.save()
 
-    return res
-      .status(200)
-      .json({ message: 'Product price updated successfully' })
+    res.json({ error: 'Product price updated successfully' })
   } catch (error) {
-    console.error('Error updating product price:', error)
-    return res.status(500).json({ error: 'Internal server error' })
+    res.status(500).json({ error: error.message })
   }
 }
 
@@ -437,23 +427,22 @@ const updateProductIsFeatured = async (req, res) => {
   try {
     const product = await Product.findByPk(idProd)
     if (!product) {
-      return res.status(404).json({ error: 'Product not found' })
+      throw new CustomError(404, 'Product not found')
     }
+
     if (typeof isFeatured !== 'boolean') {
-      return res
-        .status(400)
-        .json({ error: 'Invalid value for isFeatured. It must be a boolean.' })
+      throw new CustomError(
+        400,
+        'Invalid value for isFeatured. It must be a boolean.'
+      )
     }
     // Actualizar el campo isFeatured del producto
     product.isFeatured = isFeatured
     await product.save()
 
-    return res
-      .status(200)
-      .json({ message: 'Product isFeatured updated successfully' })
+    res.status(200).json({ message: 'Product isFeatured updated successfully' })
   } catch (error) {
-    console.error('Error updating product isFeatured:', error)
-    return res.status(500).json({ error: 'Internal server error' })
+    res.status(error.status || 500).json({ error: error.message })
   }
 }
 
@@ -470,8 +459,7 @@ const getProductByFeature = async (req, res) => {
 
     return res.status(200).json(products)
   } catch (error) {
-    console.log(error)
-    return res
+    res
       .status(500)
       .json({ error: 'Error en la búsqueda de productos por característica' })
   }
