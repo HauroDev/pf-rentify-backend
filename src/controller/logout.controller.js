@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 const { CustomError } = require('../utils/customErrors')
 const {
   getBlackList,
@@ -20,7 +21,7 @@ const logout = async (req, res) => {
     await saveTokenInBlackList(blacklist)
 
     res.clearCookie('auth_token')
-    res.status(200).send('hola')
+    res.sendStatus(200)
   } catch (error) {
     const status = error.status || 500
     res.status(status).json({ error: error.message })
