@@ -663,7 +663,7 @@ const sendContactEmail = async (nameUser, userEmail, message) => {
     await transporter.sendMail({
       subject: 'Contact Form - Support',
       from: 'Rent-ify <rent.ify.contact@gmail.com>',
-      to: 'rent.ify.contact@gmail.com',
+      to: 'rent.ify.soporte@gmail.com',
       html: `<!DOCTYPE html>
         <html>
         <head>
