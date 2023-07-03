@@ -1,5 +1,8 @@
 /* eslint-disable camelcase */
-const { mercadopago: mp, configMercadoPago } = require('../mercadopago.js')
+const {
+  mercadopago: mp,
+  configMercadoPago
+} = require('../utils/mercadopago.js')
 const { User, Product, Order, Suscription } = require('../db/db.js')
 const {
   urlApi,
@@ -10,8 +13,8 @@ const {
 const { CustomError } = require('../utils/customErrors.js')
 
 // Configuración de Nodemailer
-const { sendPaymentPendingEmail } = require('../config/nodemailer')
-const { sendPaymentConfirmationEmail } = require('../config/nodemailer')
+const { sendPaymentPendingEmail } = require('../config/nodemailer.js')
+const { sendPaymentConfirmationEmail } = require('../config/nodemailer.js')
 
 const urlWebHook = urlApi + '/payments/feedback'
 

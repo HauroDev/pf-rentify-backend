@@ -1,5 +1,5 @@
 /* eslint-disable camelcase */
-const { Country } = require('./db/db.js')
+const { Country } = require('../db/db.js')
 const mercadopago = require('mercadopago')
 const {
   MP_ACCESS_TOKEN_AR,
@@ -9,8 +9,8 @@ const {
   MP_ACCESS_TOKEN_MX,
   MP_ACCESS_TOKEN_BR,
   MP_ACCESS_TOKEN_UY
-} = require('../config')
-const { CustomError } = require('./utils/customErrors')
+} = require('../../config.js')
+const { CustomError } = require('./customErrors.js')
 
 const configMercadoPago = async (idCountry = 1) => {
   const country = await Country.findByPk(idCountry)

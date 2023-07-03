@@ -121,7 +121,6 @@ const deletedComment = async (req, res) => {
     if (!idUser) throw new CustomError(400, 'idUser is required')
     if (!idProd) throw new CustomError(400, 'idProd is required')
     if (!idComment) throw new CustomError(400, 'idComment is required')
-    if (!commentStatus) throw new CustomError(400, 'commentStatus is required')
 
     const user = await User.findByPk(idUser)
     const product = await Product.findByPk(idProd)
@@ -139,7 +138,6 @@ const deletedComment = async (req, res) => {
     }
 
     commentUser.commentStatus = commentStatus
-
     commentUser.save()
 
     res.json(commentStatus)
