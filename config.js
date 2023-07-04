@@ -25,7 +25,8 @@ const {
   REDIRECT_URI,
   REFRESH_TOKEN,
   EMAIL_RENTIFY,
-  API_KEY_GEO
+  API_KEY_GEO,
+  GEONAMES_USER
 } = process.env
 
 const PORT = 3001
@@ -60,6 +61,7 @@ module.exports = {
   REFRESH_TOKEN,
   EMAIL_RENTIFY,
   API_KEY_GEO,
+  GEONAMES_USER,
   url,
   urlApi,
   urlDoc

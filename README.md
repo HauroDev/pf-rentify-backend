@@ -2,11 +2,13 @@
 
 ## Como iniciarlo.
 
-Primero que nada tendras que instalar las dependencias usando el siguiente comando:
+tendras que instalar las dependencias usando el siguiente comando:
 
 ```bash
 $ npm install
 ```
 
 
-Luego tendras que crear un archivo .env
+Luego tendras que crear un archivo .env usando el archivo [.env.example](.env.example)
+
+Lista de Credenciales que necesitas para poder hacerlo funciona
