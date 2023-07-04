@@ -66,7 +66,7 @@ const createCountry = async (req, res) => {
 
 const getChildrenGeoname = async (req, res) => {
   const API = (id) =>
-    `http://api.geonames.org/childrenJSON?geonameId=${id}&username=gabriel`
+    `http://api.geonames.org/childrenJSON?geonameId=${id}&username=${GEONAMES_USER}`
 
   const { id } = req.params
   try {
