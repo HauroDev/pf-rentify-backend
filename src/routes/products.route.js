@@ -92,6 +92,11 @@ const router = Router()
  *         schema:
  *           type: integer
  *         description: Número máximo de registros a devolver
+ *       - in: query
+ *         name: name
+ *         schema:
+ *           type: string
+ *         description: para buscar por nombre
  *     responses:
  *       '200':
  *         description: Lista de productos obtenida exitosamente

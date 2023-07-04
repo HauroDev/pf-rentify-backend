@@ -221,13 +221,14 @@ const createProduct = async (req, res) => {
 
 const getAllProducts = async (req, res) => {
   try {
-    let { offset, limit } = req.query
+    let { offset, limit, name } = req.query
 
     offset = offset ? +offset : 0
     limit = limit ? +limit : 12
 
     // Realiza la consulta para obtener todos los productos con paginación
     const { rows, count } = await Product.findAndCountAll({
+      where: { name: { [Op.iLike]: `%${name}%` } },
       order: [['createdAt', 'DESC']],
       offset,
       limit
