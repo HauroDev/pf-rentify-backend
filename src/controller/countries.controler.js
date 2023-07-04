@@ -1,7 +1,7 @@
 const { CustomError } = require('../utils/customErrors.js')
 const { Country } = require('../db/db.js')
 const { default: axios } = require('axios')
-const { API_KEY_GEO } = require('../../config.js')
+const { API_KEY_GEO, GEONAMES_USER } = require('../../config.js')
 
 const getCountries = async (_req, res) => {
   try {
