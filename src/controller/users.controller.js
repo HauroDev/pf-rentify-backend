@@ -6,6 +6,7 @@ const { getNextPage } = require('../utils/paginado')
 // Configuración de Nodemailer
 const { sendWelcomeEmail } = require('../config/nodemailer')
 const { sendUserStatusChangeEmail } = require('../config/nodemailer')
+const { generateToken } = require('../utils/generateToken')
 // -- Obtener ususario por id (get userById)
 // -- Crear nuevo usuario (post user)
 // -- Actuliazar datos de usuario (put)
@@ -37,8 +38,20 @@ const postUser = async (req, res) => {
     // Nodemailer
     await sendWelcomeEmail(newUser.email, newUser.name)
 
+    // genera token para loguearlo automaticamente en el front
+
+    const { role } = newUser.toJSON()
+
+    const { token, expireIn } = generateToken(uid, email, role, res)
+
     // Envía la respuesta con el usuario creado
-    res.status(201).json(newUser)
+    res.status(201).json({
+      user: newUser,
+      auth_token: {
+        token,
+        expireIn
+      }
+    })
   } catch (error) {
     console.log(error)
     // En caso de error, envía una respuesta de error
