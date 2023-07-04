@@ -228,7 +228,7 @@ const getAllProducts = async (req, res) => {
 
     // Realiza la consulta para obtener todos los productos con paginación
     const { rows, count } = await Product.findAndCountAll({
-      where: { name: { [Op.iLike]: `%${name}%` } },
+      where: { name: { [Op.iLike]: name ? `%${name}%` : '' } },
       order: [['createdAt', 'DESC']],
       offset,
       limit
