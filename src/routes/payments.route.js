@@ -182,6 +182,39 @@ router.get(
   redirectToWebSiteHome
 )
 
+/**
+ * @swagger
+ * /payments/cancel-suscription:
+ *   get:
+ *     summary: Cancela la suscripcion del usuario
+ *     description: permite cancelar la suscripcion de un usuario. este lo devuelve a la membresia 'basic'
+ *     tags:
+ *       - Payments
+ *     parameters:
+ *         name: idUser
+ *         description: ID del usuario de la base de datos.
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     responses:
+ *       200:
+ *         description: Información de feedback recibida correctamente.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 payment_id:
+ *                   type: string
+ *                   description: ID del pago de mercadopago.
+ *                   example: "1234567890"
+ *                 status:
+ *                   type: string
+ *                   description: estado del pago.
+ *                   example: "pending"
+ */
+
 router.get(
   '/cancel-suscription/:idUser',
   verificationCountryMercadoPago,
