@@ -39,8 +39,8 @@ const postUser = async (req, res) => {
       phone,
       image,
       uid,
-      membership:'standard',
-      status:'active'
+      membership: 'standard',
+      status: 'active'
     })
 
     // Envía la respuesta con el usuario creado
@@ -88,7 +88,6 @@ const getUsersByStatus = async (req, res) => {
   }
 }
 
-
 // // Eliminar usuario (DELETE)
 // const deleteUser = async (req, res) => {
 //     try {
@@ -105,9 +104,6 @@ const getUsersByStatus = async (req, res) => {
 //         res.status(500).json({ error: 'Error al eliminar el usuario' });
 //     }
 // }
-
-
-<<<<<<< HEAD
 
 module.exports = {
   postUser,
