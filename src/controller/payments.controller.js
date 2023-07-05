@@ -24,7 +24,6 @@ const verificationCountryMercadoPago = (req, res, next) => {
   configMercadoPago() // cuando este habilitado en el front la seleccion de paises, entonces se podra hacer esto
     .then(() => next())
     .catch((e) => {
-      console.log(e)
       res.status(e?.status || 500).json({ error: e.message })
     })
 }
@@ -100,8 +99,6 @@ const createOrder = async (req, res) => {
       },
       auto_return: 'approved'
     })
-
-    console.log(info)
 
     /*
     {
@@ -186,8 +183,6 @@ const createOrder = async (req, res) => {
     const newOrder = await Order.create({ preferenceId: info.id })
     await newOrder.setUser(user)
 
-    console.log('items:', items)
-
     // Nodemailer
     // const preference = await mp.preferences.findByPk(info.id)
     // const paymentStatus = preference.status
@@ -202,8 +197,6 @@ const createOrder = async (req, res) => {
       items.length,
       'pending'
     )
-
-    console.log('correo enviado')
 
     res.json({ preferenceId: info.id })
   } catch (error) {
@@ -261,8 +254,6 @@ const confirmOrder = async (req, res, next) => {
       preference_id
     )
 
-    console.log(payment)
-
     let hasFound = await Order.findOne({
       where: { preferenceId: preference_id }
     })
@@ -293,7 +284,7 @@ const confirmOrder = async (req, res, next) => {
 
       await Promise.all(promise)
     }
-    console.log(user)
+
     /* esto es lo que devuelve user.toJSON()
     {
       idUser: 'd89a1a1c-c415-4a38-9f22-d5e4fbe34a21',
@@ -319,7 +310,6 @@ const confirmOrder = async (req, res, next) => {
       await sendPaymentConfirmationEmail(userEmail, paymentAmount, itemCount)
     }
 
-    console.log(payment)
     /* esto es lo que devuelve payment
       {
         accounts_info: null,
@@ -458,11 +448,39 @@ const confirmSuscription = async (req, res, next) => {
 
     next()
   } catch (error) {
-    console.log(error)
     res.status(500).json({ error: error.message })
   }
 }
 
+const cancelSuscription = async (req, res) => {
+  const { idUser } = req.params
+
+  try {
+    const user = await User.findByPk(idUser)
+
+    if (!user) throw new CustomError(404, 'User is not exists')
+
+    const suscript = await Suscription.findOne({
+      where: { idUser, status: 'authorized' }
+    })
+
+    if (!suscript) {
+      throw new CustomError(404, 'User does not have any subscriptions')
+    }
+
+    await mp.preapproval.cancel(suscript.toJSON().preApprovalId)
+
+    await Suscription.destroy({ where: { idUser } })
+
+    user.membership = 'basic'
+
+    await user.save()
+
+    res.json({ message: 'User has successfully canceled the subscription' })
+  } catch (error) {
+    res.status(error.status || 500).json({ error: error.message })
+  }
+}
 module.exports = {
   verificationCountryMercadoPago,
   createSuscription,
@@ -470,5 +488,6 @@ module.exports = {
   redirectToWebSiteCheckOut,
   redirectToWebSiteHome,
   confirmOrder,
-  confirmSuscription
+  confirmSuscription,
+  cancelSuscription
 }

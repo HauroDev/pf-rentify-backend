@@ -53,7 +53,6 @@ const postUser = async (req, res) => {
       }
     })
   } catch (error) {
-    console.log(error)
     // En caso de error, envía una respuesta de error
     res.status(error?.status || 500).json({ error: error?.message })
   }
@@ -179,7 +178,6 @@ const getUsersByStatus = async (req, res) => {
       results: rows
     })
   } catch (error) {
-    console.log(error)
     res
       .status(500)
       .json({ error: 'Error en la búsqueda de usuarios por estado' })
