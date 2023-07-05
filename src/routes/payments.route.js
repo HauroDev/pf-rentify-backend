@@ -218,6 +218,8 @@ router.get(
 router.get(
   '/cancel-suscription/:idUser',
   verificationCountryMercadoPago,
+  verifyAuthToken,
+  isBannedUser,
   cancelSuscription
 )
 
