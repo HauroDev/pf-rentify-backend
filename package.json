@@ -1,7 +1,7 @@
 {
-  "name": "api",
+  "name": "api-rentify",
   "version": "1.0.0",
-  "description": "",
+  "description": "api/backend del proyecto final",
   "main": "index.js",
   "scripts": {
     "dev": "nodemon index.js",
@@ -14,27 +14,26 @@
     "axios": "^1.4.0",
     "body-parser": "^1.20.2",
     "cookie-parser": "^1.4.6",
-    "dotenv": "^16.1.4",
+    "dotenv": "^16.3.1",
     "express": "^4.18.2",
-    "firebase-admin": "^11.9.0",
-    "googleapis": "^118.0.0",
+    "googleapis": "^120.0.0",
     "jsonwebtoken": "^9.0.0",
     "mercadopago": "^1.5.16",
     "morgan": "^1.10.0",
     "nodemailer": "^6.9.3",
-    "pg": "^8.11.0",
+    "pg": "^8.11.1",
     "pg-hstore": "^2.3.4",
-    "sequelize": "^6.32.0",
+    "sequelize": "^6.32.1",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^4.6.3"
   },
   "devDependencies": {
-    "eslint": "^8.43.0",
+    "eslint": "^8.44.0",
     "eslint-config-standard": "^17.1.0",
-    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-n": "^16.0.1",
     "eslint-plugin-promise": "^6.1.1",
-    "nodemon": "^1.14.9",
+    "nodemon": "^2.0.22",
     "standard": "^17.1.0"
   }
 }
