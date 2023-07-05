@@ -344,7 +344,11 @@ const getUserProducts = async (req, res) => {
       through: { attributes: [] }
     })
 
-    res.status(200).json(products)
+    const filteredProducts = products.filter(
+      (product) => product.statusPub !== 'deleted'
+    )
+
+    res.status(200).json(filteredProducts)
   } catch (error) {
     res.status(error.status || 500).json({ error: error.message })
   }
