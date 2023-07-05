@@ -23,7 +23,7 @@ const router = Router()
  */
 router.get('/',verifyAuthToken, getCountries)
 
-router.post('/',verifyAuthToken, createCountry)
+router.post('/',verifyAuthToken, createCountry)//ADMINS
 
 router.get('/childrens/:id',verifyAuthToken, getChildrenGeoname)
 

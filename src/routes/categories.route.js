@@ -66,6 +66,6 @@ router.get('/',verifyAuthToken, getCategories)
  *               $ref: '#/components/schemas/Category'
  */
 
-router.post('/',verifyAuthToken, createCategories)
+router.post('/',verifyAuthToken, createCategories)//ADMIN
 
 module.exports = router
