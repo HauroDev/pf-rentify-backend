@@ -3,7 +3,7 @@ module.exports = {
     browser: true,
     es2021: true
   },
-  extends: ['standard', 'eslint:recommended'],
+  extends: ['./node_modules/standard/eslintrc.json', 'eslint:recommended'],
   overrides: [],
   parserOptions: {
     ecmaVersion: 'latest',
