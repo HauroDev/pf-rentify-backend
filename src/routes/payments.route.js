@@ -8,10 +8,10 @@ const {
   createSuscription,
   confirmOrder,
   confirmSuscription,
-  redirectToWebSiteHome
+  redirectToWebSiteHome,
+  cancelSuscription
 } = require('../controller/payments.controller.js')
 const { isBannedUser } = require('../utils/usersVerify')
-
 const router = Router()
 
 /**
@@ -180,6 +180,12 @@ router.get(
   verificationCountryMercadoPago,
   confirmSuscription,
   redirectToWebSiteHome
+)
+
+router.get(
+  '/cancel-suscription/:idUser',
+  verificationCountryMercadoPago,
+  cancelSuscription
 )
 
 module.exports = router

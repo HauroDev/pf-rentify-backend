@@ -38,8 +38,6 @@ const logoPath = path.join(__dirname, 'logo.png')
 
 const sendWelcomeEmail = async (userEmail) => {
   try {
-    console.log('userEmail:', userEmail)
-
     await transporter.sendMail({
       subject: 'Welcome to Rent-ify!',
       from: 'Rent-ify <rent.ify.contact@gmail.com>',
@@ -121,18 +119,13 @@ const sendWelcomeEmail = async (userEmail) => {
         }
       ]
     })
-
-    console.log('Email sent successfully')
   } catch (error) {
-    console.log('Error sending email:', error)
     throw new Error('Error sending email')
   }
 }
 
 const sendProductCreatedEmail = async (userEmail, product) => {
   try {
-    console.log('userEmail:', userEmail)
-
     await transporter.sendMail({
       subject: 'Product Created - Rent-ify',
       from: 'Rent-ify <rent.ify.contact@gmail.com>',
@@ -235,10 +228,7 @@ const sendProductCreatedEmail = async (userEmail, product) => {
         }
       ]
     })
-
-    console.log('Email sent successfully')
   } catch (error) {
-    console.log('Error sending email:', error)
     throw new Error('Error sending email')
   }
 }
@@ -250,8 +240,6 @@ const sendPaymentPendingEmail = async (
   paymentStatus
 ) => {
   try {
-    console.log('userEmail:', userEmail)
-
     await transporter.sendMail({
       subject: 'Payment Confirmation - Rent-ify',
       from: 'Rent-ify <rent.ify.contact@gmail.com>',
@@ -337,10 +325,7 @@ const sendPaymentPendingEmail = async (
         }
       ]
     })
-
-    console.log('Email sent successfully')
   } catch (error) {
-    console.log('Error sending email:', error)
     throw new Error('Error sending email')
   }
 }
@@ -351,8 +336,6 @@ const sendPaymentConfirmationEmail = async (
   itemCount
 ) => {
   try {
-    console.log('userEmail:', userEmail)
-
     await transporter.sendMail({
       subject: 'Payment Confirmation - Rent-ify',
       from: 'Rent-ify <rent.ify.contact@gmail.com>',
@@ -438,18 +421,13 @@ const sendPaymentConfirmationEmail = async (
         }
       ]
     })
-
-    console.log('Email sent successfully')
   } catch (error) {
-    console.log('Error sending email:', error)
     throw new Error('Error sending email')
   }
 }
 
 const sendUserStatusChangeEmail = async (userEmail, newStatus) => {
   try {
-    console.log('userEmail:', userEmail)
-
     await transporter.sendMail({
       subject: 'User Status Change - Rent-ify',
       from: 'Rent-ify <rent.ify.contact@gmail.com>',
@@ -531,10 +509,7 @@ const sendUserStatusChangeEmail = async (userEmail, newStatus) => {
         }
       ]
     })
-
-    console.log('Email sent successfully')
   } catch (error) {
-    console.log('Error sending email:', error)
     throw new Error('Error sending email')
   }
 }
@@ -650,10 +625,7 @@ const sendOwnerEmail = async (nameUser, emailUser, ownerEmail, product) => {
         }
       ]
     })
-
-    console.log('Email sent successfully')
   } catch (error) {
-    console.log('Error sending email:', error)
     throw new Error('Error sending email')
   }
 }
@@ -735,9 +707,7 @@ const sendContactEmail = async (nameUser, userEmail, message) => {
         }
       ]
     })
-    console.log('Email sent successfully')
   } catch (error) {
-    console.log('Error sending email:', error)
     throw new Error('Error sending email')
   }
 }

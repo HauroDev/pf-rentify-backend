@@ -214,7 +214,6 @@ const createProduct = async (req, res) => {
       country: countrySearch
     })
   } catch (error) {
-    console.log(error)
     res.status(error.status || 500).json({ error: error.message })
   }
 }
