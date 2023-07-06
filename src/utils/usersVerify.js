@@ -17,6 +17,8 @@ const isBannedUser = async (req, res, next) => {
 
   const user = await User.findOne({ where: { uid } })
 
+  if (!user) next() // temporal ?
+
   if (user.toJSON().status === 'banned') {
     res.status(403).json({ error: 'user is banned' })
   } else next()
