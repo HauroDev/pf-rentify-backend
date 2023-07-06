@@ -343,8 +343,6 @@ const getUserProducts = async (req, res) => {
       through: { attributes: [] }
     })
 
-    console.log(products)
-
     const filteredProducts = products.filter(
       (product) =>
         product.statusPub !== 'deleted' && product.UserProduct.type === 'owner'
