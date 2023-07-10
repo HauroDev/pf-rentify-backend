@@ -8,7 +8,6 @@ module.exports = (sequelize) => {
         type: DataTypes.INTEGER,
         autoIncrement: true,
         primaryKey: true,
-        allowNull: false,
         comment: 'Unique identifier for the product'
       },
       name: {
@@ -56,7 +55,9 @@ module.exports = (sequelize) => {
         type: DataTypes.FLOAT,
         allowNull: false,
         defaultValue: 0,
-
+        validate: {
+          min: 0
+        },
         comment: 'Price of the product'
       },
       location: {
@@ -70,17 +71,25 @@ module.exports = (sequelize) => {
         },
         comment: 'Location of the product'
       },
+      state: {
+        type: DataTypes.TEXT,
+        allowNull: false,
+        validate: {
+          notEmpty: {
+            args: true,
+            msg: 'State is required'
+          }
+        }
+      },
       statusPub: {
-        type: DataTypes.ENUM('active', 'inactive', 'paused'),
-        // allowNull: false,
+        type: DataTypes.ENUM('active', 'inactive', 'deleted'),
         defaultValue: 'active',
         comment: 'Status of the publication'
       },
       statusProd: {
         type: DataTypes.ENUM('available', 'rented'),
-        // allowNull: false,
         defaultValue: 'available',
-        comment: 'Status of the product'
+        comment: 'NO USADO'
       },
       isFeatured: {
         type: DataTypes.BOOLEAN,

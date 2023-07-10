@@ -7,30 +7,41 @@ module.exports = (sequelize) => {
       idUser: {
         primaryKey: true,
         type: DataTypes.UUID,
-        defaultValue: DataTypes.UUIDV4,
-        unique: true
+        defaultValue: DataTypes.UUIDV4
       },
       name: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: true
       },
       email: {
         type: DataTypes.STRING,
         allowNull: false
       },
       phone: {
-        type: DataTypes.STRING
+        type: DataTypes.STRING,
+        allowNull: true
       },
       image: {
-        type: DataTypes.TEXT, // !cambie
-        allowNull: true // consultar
+        type: DataTypes.TEXT,
+        allowNull: true
       },
       membership: {
-        type: DataTypes.ENUM(['standard', 'premium']), //
-        allowNull: false
+        type: DataTypes.ENUM(['basic', 'standard', 'premium']),
+        defaultValue: 'basic'
       },
       status: {
-        type: DataTypes.ENUM('active', 'inactive', 'paused', 'banned') // !cambie
+        type: DataTypes.ENUM('active', 'inactive', 'banned'),
+        defaultValue: 'active'
+      },
+      uid: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true
+      },
+      role: {
+        type: DataTypes.ENUM('sudo', 'admin', 'user'),
+        allowNull: false,
+        defaultValue: 'user'
       }
     },
     {

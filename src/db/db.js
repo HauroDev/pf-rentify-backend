@@ -7,7 +7,8 @@ const { DB_NAME, DB_USER, DB_PASSWORD, HOST, MODE } = require('../../config')
 const sequelize = new Sequelize(DB_NAME, DB_USER, DB_PASSWORD, {
   host: HOST,
   dialect: 'postgres',
-  logging: MODE === 'PRODUCTION' ? false : console.log, // mostrara cada ves que se levante el servidor la respuesta de la base de datos
+  // mostrara cada ves que se levante el servidor la respuesta de la base de datos mientras 'MODE' sea distinto de 'PRODUCTION'
+  logging: MODE === 'PRODUCTION' ? false : console.log,
   native: false, // lets Sequelize know we can use pg-native for ~30% more speed
   dialectOptions: {
     ssl: {
@@ -41,39 +42,72 @@ const capsEntries = entries.map((entry) => [
 ])
 sequelize.models = Object.fromEntries(capsEntries)
 
-const { User, Product, Comment, Category } = sequelize.models
+const {
+  User,
+  Product,
+  Comment,
+  Order,
+  Suscription,
+  Category,
+  Country,
+  UserProduct,
+  BlackList
+} = sequelize.models
 
+// un Usuario tiene muchas Ordenes/Pagos,y una Orden/Pago tiene un solo Usuario
+User.hasMany(Order, { as: 'orders', foreignKey: 'idUser' })
+Order.belongsTo(User, { foreignKey: 'idUser' })
+
+// un Usuario tiene una Suscripcion,y una Suscripcion tiene un solo Usuario
+User.hasOne(Suscription, { as: 'suscription', foreignKey: 'idUser' })
+Suscription.belongsTo(User, { foreignKey: 'idUser' })
+
+// un Usuario tiene muchos Productos (dueño o "comprador"), y un Producto tiene muchos Usuario
 User.belongsToMany(Product, {
-  through: 'UserProduct',
+  through: UserProduct,
   as: 'products',
   foreignKey: 'idUser'
 })
-
 Product.belongsToMany(User, {
-  through: 'UserProduct',
+  through: UserProduct,
   as: 'users',
   foreignKey: 'idProd'
 })
 
+// un Producto tiene muchos Comentarios, y un Comentario tiene un Producto
 Product.hasMany(Comment, { as: 'comments', foreignKey: 'idProd' })
 Comment.belongsTo(Product, { foreignKey: 'idProd' })
 
+// una Categoria tiene muchos Productos, y un Productos tiene muchas Categorias
 Category.belongsToMany(Product, {
   through: 'CategoryProduct',
   as: 'products',
   foreignKey: 'idCategory'
 })
-
 Product.belongsToMany(Category, {
   through: 'CategoryProduct',
   as: 'categories',
   foreignKey: 'idProd'
 })
 
+// un Usuario tiene muchos Comentarios, y un Comentario tiene un Usuario
 User.hasMany(Comment, { as: 'comments', foreignKey: 'idUser' })
-Comment.belongsTo(User, { foreignKey: 'idUser' })
+Comment.belongsTo(User, { as: 'user', foreignKey: 'idUser' })
+
+// un Pais tiene muchos Productos, y un Producto tiene un Pais
+Country.hasMany(Product, { as: 'products', foreignKey: 'idCountry' })
+Product.belongsTo(Country, { as: 'country', foreignKey: 'idCountry' })
 
 module.exports = {
   conn: sequelize,
+  User,
+  Product,
+  Comment,
+  Order,
+  Suscription,
+  Category,
+  Country,
+  UserProduct,
+  BlackList,
   ...sequelize.models
 }
